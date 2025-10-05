@@ -1,0 +1,147 @@
+// app global css in SCSS form
+
+// Import Header Design System
+@import './header-system.scss';
+
+// Global ElijoHoy Styles
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f5f7fa;
+}
+
+// Custom Quasar color overrides
+.q-primary {
+  background-color: #1976d2 !important;
+}
+
+.q-secondary {
+  background-color: #26a69a !important;
+}
+
+// Utility classes
+.full-height {
+  height: 100vh;
+}
+
+.min-height-inherit {
+  min-height: inherit;
+}
+
+// Custom card styles
+.q-card {
+  border-radius: 12px !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08) !important;
+  
+  &:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12) !important;
+  }
+}
+
+// Custom button styles
+.q-btn {
+  border-radius: 8px !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+}
+
+// Custom input styles
+.q-field--outlined .q-field__control {
+  border-radius: 8px !important;
+}
+
+// Custom animations
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+// Responsive utilities
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .show-on-mobile {
+    display: none !important;
+  }
+}
+
+// Custom scrollbar
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+// Loading states
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+// Error states
+.error-message {
+  color: #f44336;
+  font-size: 0.875rem;
+  margin-top: 4px;
+}
+
+.success-message {
+  color: #4caf50;
+  font-size: 0.875rem;
+  margin-top: 4px;
+}
+
+// Custom spacing
+.q-mb-xs { margin-bottom: 4px !important; }
+.q-mb-sm { margin-bottom: 8px !important; }
+.q-mb-md { margin-bottom: 16px !important; }
+.q-mb-lg { margin-bottom: 24px !important; }
+.q-mb-xl { margin-bottom: 32px !important; }
+
+.q-mt-xs { margin-top: 4px !important; }
+.q-mt-sm { margin-top: 8px !important; }
+.q-mt-md { margin-top: 16px !important; }
+.q-mt-lg { margin-top: 24px !important; }
+.q-mt-xl { margin-top: 32px !important; }
+
+.q-pa-xs { padding: 4px !important; }
+.q-pa-sm { padding: 8px !important; }
+.q-pa-md { padding: 16px !important; }
+.q-pa-lg { padding: 24px !important; }
+.q-pa-xl { padding: 32px !important; }
