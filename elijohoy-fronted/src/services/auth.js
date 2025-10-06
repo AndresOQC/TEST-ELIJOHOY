@@ -25,10 +25,17 @@ export class AuthService {
       if (response.data.success) {
         const { user, access_token, refresh_token } = response.data.data
         
+        console.log('✅ Registro exitoso - Guardando tokens')
+        console.log('👤 Usuario:', user)
+        console.log('🔑 Access token length:', access_token.length)
+        console.log('🔄 Refresh token length:', refresh_token.length)
+        
         // Store tokens and user data in sessionStorage
         sessionStorage.setItem('access_token', access_token)
         sessionStorage.setItem('refresh_token', refresh_token)
         sessionStorage.setItem('user', JSON.stringify(user))
+        
+        console.log('💾 Tokens guardados en sessionStorage')
         
         return {
           success: true,

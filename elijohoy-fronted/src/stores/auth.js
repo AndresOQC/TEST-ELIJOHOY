@@ -35,8 +35,6 @@ export const useAuthStore = defineStore('auth', () => {
       if (result.success) {
         user.value = result.user
         isAuthenticated.value = true
-        // Don't call refreshUser immediately after login since we already have user data
-        // await refreshUser()
         return { success: true }
       }
 

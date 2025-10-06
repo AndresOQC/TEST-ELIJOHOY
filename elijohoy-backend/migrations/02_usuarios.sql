@@ -14,3 +14,4 @@ CREATE TABLE IF NOT EXISTS usuarios (
 
 -- Índice para email
 CREATE INDEX IF NOT EXISTS idx_usuarios_email ON usuarios(email);
+

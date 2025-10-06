@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import (
     jwt_required, get_jwt_identity, create_access_token, 
-    create_refresh_token, get_jwt
+    create_refresh_token, get_jwt, decode_token
 )
 from app.core.extensions import db, limiter
 from app.models.usuario import Usuario
@@ -9,14 +9,30 @@ from app.models.alumno import Alumno
 from app.models.rol import Rol
 from app.models.usuario_rol import UsuarioRol
 from app.models.token import Token
+from app.models.sesion_test import SesionTest
 from app.utils.auth_utils import hash_password, verify_password, get_current_user, revoke_token
 from app.utils.validators import validate_user_data, sanitize_string
 from app.utils.email_utils import send_password_reset_email
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timedelta
 import uuid
 
 # Crear blueprint
 auth_bp = Blueprint('auth', __name__)
+@auth_bp.route('/usuarios/buscar-por-email', methods=['POST'])
+def buscar_usuario_por_email():
+    """Buscar usuario por email y devolver su id."""
+    try:
+        data = request.get_json(force=True, silent=True)
+        email = data.get('email') if data else None
+        if not email:
+            return jsonify({'success': False, 'message': 'Email requerido'}), 400
+        usuario = Usuario.query.filter_by(email=email.lower()).first()
+        if not usuario:
+            return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
+        return jsonify({'success': True, 'id_usuario': usuario.id}), 200
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
+
 
 @auth_bp.route('/login', methods=['POST'])
 @limiter.limit("5 per minute")
@@ -46,15 +62,36 @@ def login():
         
         # Actualizar último acceso
         user.ultimo_login = datetime.utcnow()
+
+        # Crear tokens JWT
+        access_token = create_access_token(identity=str(user.id))
+        refresh_token = create_refresh_token(identity=str(user.id))
+
+        # Guardar tokens en BD
+        access_jti = decode_token(access_token)['jti']
+        refresh_jti = decode_token(refresh_token)['jti']
+
+        access_expires = datetime.utcnow() + timedelta(hours=1)  # Configurar según JWT_ACCESS_TOKEN_EXPIRES
+        refresh_expires = datetime.utcnow() + timedelta(days=30)  # Configurar según JWT_REFRESH_TOKEN_EXPIRES
+
+        token_access = Token(
+            usuario_id=user.id,
+            jti=access_jti,
+            tipo='access',
+            fecha_expiracion=access_expires
+        )
+        token_refresh = Token(
+            usuario_id=user.id,
+            jti=refresh_jti,
+            tipo='refresh',
+            fecha_expiracion=refresh_expires
+        )
+
+        db.session.add(token_access)
+        db.session.add(token_refresh)
+
         db.session.commit()
-        
-        # Crear tokens
-        access_token = create_access_token(identity=user.id)
-        refresh_token = create_refresh_token(identity=user.id)
-        
-        # Guardar tokens en BD (opcional, para tracking)
-        # ... código para guardar tokens en BD si es necesario
-        
+
         return jsonify({
             'success': True,
             'message': 'Login exitoso',
@@ -75,75 +112,106 @@ def register():
     """Endpoint para registro de nuevo usuario."""
     try:
         data = request.get_json()
-        
+
         if not data:
             return jsonify({'success': False, 'message': 'No se enviaron datos'}), 400
-        
+
         # Validar datos
         errors = validate_user_data(data, is_registration=True)
         if errors:
-            return jsonify({'success': False, 'message': '; '.join(errors)}), 400
-        
-        # Verificar si el usuario ya existe
-        existing_user = Usuario.query.filter_by(email=data['email'].lower()).first()
-        if existing_user:
-            return jsonify({'success': False, 'message': 'El email ya está registrado'}), 409
-        
+            return jsonify({'success': False, 'message': errors}), 400
+
+        # Validar que `nombre`, `apellidos` y `edad` estén presentes
+        nombre = data.get('nombre')
+        apellidos = data.get('apellidos')
+        edad = data.get('edad')
+
+        if not nombre or not apellidos:
+            return jsonify({'success': False, 'message': 'Los campos nombre y apellidos son requeridos'}), 400
+
+        if not edad:
+            return jsonify({'success': False, 'message': 'El campo edad es requerido'}), 400
+
         # Crear usuario
-        hashed_password = hash_password(data['password'])
-        
-        new_user = Usuario(
+        nuevo_usuario = Usuario(
             email=data['email'].lower(),
-            password_hash=hashed_password,
-            activo=True,
-            email_verificado=True
+            password_hash=hash_password(data['password']),
+            activo=True
         )
-        
-        db.session.add(new_user)
-        db.session.flush()  # Para obtener el ID
-        
-        # Asignar rol de estudiante por defecto
-        student_role = Rol.query.filter_by(nombre='estudiante').first()
-        if student_role:
-            user_role = UsuarioRol(usuario_id=new_user.id, rol_id=student_role.id)
-            db.session.add(user_role)
-        
-        # Crear perfil de alumno (obligatorio para registro)
-        alumno = Alumno(
-            usuario_id=new_user.id,
-            nombre=sanitize_string(data['nombre'], 100),
-            apellidos=sanitize_string(data['apellidos'], 100),
-            edad=data['edad'],
-            genero=data.get('genero', '').lower() if data.get('genero') else None,
+        db.session.add(nuevo_usuario)
+        db.session.flush()  # Obtener el ID sin hacer commit completo
+
+        # Crear alumno asociado
+        nuevo_alumno = Alumno(
+            usuario_id=nuevo_usuario.id,
+            nombre=nombre,
+            apellidos=apellidos,
+            edad=edad,
             email=data['email'].lower(),
-            ciudad=sanitize_string(data.get('ciudad'), 100),
-            pais=sanitize_string(data.get('pais'), 100),
-            institucion_educativa=sanitize_string(data.get('institucion_educativa'), 200),
-            grado=sanitize_string(data.get('grado'), 50),
-            seccion=sanitize_string(data.get('seccion'), 50),
-            turno=sanitize_string(data.get('turno'), 50) if data.get('turno') else None
+            genero=data.get('genero'),
+            ciudad=data.get('ciudad'),
+            pais=data.get('pais'),
+            institucion_educativa=data.get('institucion_educativa'),
+            grado=data.get('grado'),
+            seccion=data.get('seccion'),
+            turno=data.get('turno')
         )
-        db.session.add(alumno)
-        
+        db.session.add(nuevo_alumno)
+
+        # Asignar rol de alumno por defecto
+        rol_alumno = Rol.query.filter_by(nombre='alumno').first()
+        if rol_alumno:
+            usuario_rol = UsuarioRol(usuario_id=nuevo_usuario.id, rol_id=rol_alumno.id)
+            db.session.add(usuario_rol)
+
         db.session.commit()
-        
-        # Crear tokens
-        access_token = create_access_token(identity=new_user.id)
-        refresh_token = create_refresh_token(identity=new_user.id)
-        
+
+        # Verificar que el usuario tenga ID válido
+        if not nuevo_usuario.id:
+            return jsonify({'success': False, 'message': 'Error al crear usuario'}), 500
+
+        # Crear tokens JWT
+        access_token = create_access_token(identity=str(nuevo_usuario.id))
+        refresh_token = create_refresh_token(identity=str(nuevo_usuario.id))
+
+        # Guardar tokens en BD
+        access_jti = decode_token(access_token)['jti']
+        refresh_jti = decode_token(refresh_token)['jti']
+
+        access_expires = datetime.utcnow() + timedelta(hours=1)  # Configurar según JWT_ACCESS_TOKEN_EXPIRES
+        refresh_expires = datetime.utcnow() + timedelta(days=30)  # Configurar según JWT_REFRESH_TOKEN_EXPIRES
+
+        token_access = Token(
+            usuario_id=nuevo_usuario.id,
+            jti=access_jti,
+            tipo='access',
+            fecha_expiracion=access_expires
+        )
+        token_refresh = Token(
+            usuario_id=nuevo_usuario.id,
+            jti=refresh_jti,
+            tipo='refresh',
+            fecha_expiracion=refresh_expires
+        )
+
+        db.session.add(token_access)
+        db.session.add(token_refresh)
+
+        db.session.commit()
+
         return jsonify({
             'success': True,
-            'message': 'Usuario registrado exitosamente',
+            'message': 'Registro exitoso',
             'data': {
-                'user': new_user.to_dict(include_roles=True),
+                'user': nuevo_usuario.to_dict(include_roles=True),
                 'access_token': access_token,
                 'refresh_token': refresh_token
             }
         }), 201
-        
+
     except Exception as e:
-        db.session.rollback()
         current_app.logger.error(f'Error en registro: {str(e)}')
+        db.session.rollback()
         return jsonify({'success': False, 'message': 'Error interno del servidor'}), 500
 
 @auth_bp.route('/me', methods=['GET'])
@@ -201,7 +269,21 @@ def refresh():
         
         # Crear nuevo access token
         new_access_token = create_access_token(identity=current_user_id)
-        
+
+        # Guardar token en BD
+        from flask_jwt_extended import decode_token
+        access_jti = decode_token(new_access_token)['jti']
+        access_expires = datetime.utcnow() + timedelta(hours=1)
+
+        token_access = Token(
+            usuario_id=current_user_id,
+            jti=access_jti,
+            tipo='access',
+            fecha_expiracion=access_expires
+        )
+        db.session.add(token_access)
+        db.session.commit()
+
         return jsonify({
             'success': True,
             'access_token': new_access_token
@@ -217,15 +299,15 @@ def logout():
     """Cerrar sesión del usuario."""
     try:
         jti = get_jwt()['jti']
-        
-        # Revocar el token
-        revoke_token(jti)
-        
+
+        # Revocar el token en la base de datos
+        Token.revoke_token(jti)
+
         return jsonify({
             'success': True,
             'message': 'Sesión cerrada exitosamente'
         }), 200
-        
+
     except Exception as e:
         current_app.logger.error(f'Error en logout: {str(e)}')
         return jsonify({'success': False, 'message': 'Error interno del servidor'}), 500

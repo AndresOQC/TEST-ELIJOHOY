@@ -1,3 +1,4 @@
+<!-- Eliminado script setup para evitar duplicidad de imports y lógica -->
 <template>
   <q-page class="landing-page">
     <!-- Hero Section -->
@@ -24,7 +25,7 @@
                 color="purple-7"
                 label="Comenzar Test Gratuito"
                 icon="rocket_launch"
-                to="/auth/registro"
+                to="/test"
                 class="q-mr-md q-mb-sm btn-gradient-purple"
                 no-caps
               />
@@ -478,7 +479,7 @@
             size="xl"
             label="Realizar Test Vocacional Ahora"
             icon="rocket_launch"
-            to="/auth/registro"
+            to="/test"
             class="q-mr-md q-mb-md btn-gradient-yellow"
             no-caps
           />
@@ -576,13 +577,23 @@ export default defineComponent({
     const currentYear = computed(() => new Date().getFullYear())
 
     onMounted(() => {
-      // Limpiar tokens al visitar la landing page
+      // Limpiar TODOS los datos al entrar al landing (test, autenticación, etc.)
+      console.log('Landing: Limpiando todos los datos del test y sesión')
+
+      // Datos de test
+      localStorage.removeItem('testSesion')
+      localStorage.removeItem('testRespuestas')
+      localStorage.removeItem('tokenAnonimo')
+
+      // Datos de autenticación
       localStorage.removeItem('access_token')
       localStorage.removeItem('refresh_token')
       localStorage.removeItem('user')
       localStorage.removeItem('user_data')
       localStorage.removeItem('user_token')
       localStorage.removeItem('idUsuario')
+
+      console.log('Landing: Limpieza completada')
     })
 
     return {

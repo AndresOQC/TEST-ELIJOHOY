@@ -9,6 +9,6 @@ CREATE TABLE IF NOT EXISTS roles (
 -- Insertar roles por defecto
 INSERT INTO roles (nombre, descripcion)
 VALUES
-    ('admin', 'Administrador del sistema'),
-    ('estudiante', 'Estudiante del sistema')
+    ('administrador', 'Administrador del sistema'),
+    ('alumno', 'Alumno del sistema')
 ON CONFLICT (nombre) DO NOTHING;
