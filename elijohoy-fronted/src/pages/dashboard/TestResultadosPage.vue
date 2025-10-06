@@ -8,106 +8,129 @@
             <q-icon name="quiz" size="48px" color="purple-7" class="q-mr-md" />
             <div>
               <h1 class="text-h4 text-weight-bold" style="color: #7C3AED;">
-                Test Vocacional
+                Resultados de Tests
               </h1>
               <p class="text-body1 text-grey-7">
-                Descubre tu vocación profesional
+                {{ isAdmin ? 'Administra todos los tests realizados' : 'Tus tests vocacionales completados' }}
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Coming Soon Card -->
+      <!-- Filtros y Estadísticas -->
+      <div class="col-12" v-if="isAdmin">
+        <q-card flat bordered class="q-mb-lg">
+          <q-card-section>
+            <div class="row q-gutter-md items-center">
+              <div class="col-auto">
+                <div class="text-h6 text-weight-bold">Estadísticas</div>
+              </div>
+              <div class="col-auto">
+                <q-chip color="primary" text-color="white">
+                  Total: {{ sesiones.length }}
+                </q-chip>
+              </div>
+              <div class="col-auto">
+                <q-chip color="positive" text-color="white">
+                  Completados: {{ sesionesCompletadas.length }}
+                </q-chip>
+              </div>
+              <div class="col-auto">
+                <q-chip color="warning" text-color="white">
+                  Pendientes: {{ sesionesPendientes.length }}
+                </q-chip>
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+      </div>
+
+      <!-- Lista de Sesiones -->
       <div class="col-12">
-        <q-card class="coming-soon-card" flat>
-          <q-card-section class="text-center q-pa-xl">
-            <div class="coming-soon-icon-wrapper q-mb-lg">
-              <q-icon name="construction" size="80px" color="white" />
+        <q-card flat bordered>
+          <q-card-section>
+            <div v-if="loading" class="text-center q-py-xl">
+              <q-spinner color="primary" size="50px" />
+              <p class="text-body1 text-grey-7 q-mt-md">Cargando resultados...</p>
             </div>
 
-            <div class="text-h3 text-weight-bold text-white q-mb-md">
-              ¡Próximamente!
-            </div>
-
-            <div class="text-h6 text-white-7 q-mb-xl" style="max-width: 600px; margin: 0 auto;">
-              Estamos trabajando en traerte la mejor experiencia de test vocacional.
-              Pronto podrás descubrir tu futuro profesional aquí.
-            </div>
-
-            <div class="features-grid q-mb-xl">
-              <div class="feature-item">
-                <q-icon name="psychology" size="48px" color="yellow-9" class="q-mb-sm" />
-                <div class="text-subtitle1 text-white text-weight-bold">Test Personalizado</div>
-                <div class="text-body2 text-white-7">Análisis detallado de tus intereses</div>
+            <div v-else-if="sesiones.length === 0" class="text-center q-py-xl">
+              <q-icon name="quiz" size="80px" color="grey-5" class="q-mb-lg" />
+              <div class="text-h6 text-grey-7 q-mb-md">
+                {{ isAdmin ? 'No hay tests realizados aún' : 'No has completado ningún test aún' }}
               </div>
-
-              <div class="feature-item">
-                <q-icon name="school" size="48px" color="yellow-9" class="q-mb-sm" />
-                <div class="text-subtitle1 text-white text-weight-bold">Carreras Sugeridas</div>
-                <div class="text-body2 text-white-7">Recomendaciones personalizadas</div>
-              </div>
-
-              <div class="feature-item">
-                <q-icon name="insights" size="48px" color="yellow-9" class="q-mb-sm" />
-                <div class="text-subtitle1 text-white text-weight-bold">Resultados Detallados</div>
-                <div class="text-body2 text-white-7">Informes completos de tu perfil</div>
-              </div>
+              <q-btn
+                unelevated
+                color="primary"
+                icon="quiz"
+                label="Realizar Test"
+                @click="$router.push('/dashboard/test')"
+                no-caps
+              />
             </div>
 
-            <q-btn
-              unelevated
-              size="lg"
-              color="yellow-9"
-              text-color="purple-10"
-              label="Volver al Dashboard"
-              icon="dashboard"
-              @click="$router.push('/dashboard')"
-              class="btn-gradient"
-              no-caps
-            />
-          </q-card-section>
-        </q-card>
-      </div>
+            <div v-else class="sesiones-list">
+              <q-list separator>
+                <q-item
+                  v-for="sesion in sesiones"
+                  :key="sesion.id_sesion"
+                  clickable
+                  @click="verResultados(sesion)"
+                  class="sesion-item"
+                >
+                  <q-item-section avatar>
+                    <q-icon
+                      :name="sesion.completado ? 'check_circle' : 'pending'"
+                      :color="sesion.completado ? 'positive' : 'warning'"
+                      size="32px"
+                    />
+                  </q-item-section>
 
-      <!-- Info Cards -->
-      <div class="col-12 col-md-4">
-        <q-card class="info-card" flat bordered>
-          <q-card-section class="text-center">
-            <q-icon name="timer" size="48px" color="purple-7" class="q-mb-md" />
-            <div class="text-h6 text-weight-bold text-purple-10 q-mb-sm">
-              15-20 minutos
-            </div>
-            <div class="text-body2 text-grey-7">
-              Tiempo estimado del test
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
+                  <q-item-section>
+                    <q-item-label class="text-weight-bold">
+                      Test #{{ sesion.id_sesion }}
+                      <q-badge
+                        v-if="sesion.tipo_personalidad"
+                        :color="getTipoColor(sesion.tipo_personalidad)"
+                        class="q-ml-sm"
+                      >
+                        {{ sesion.tipo_personalidad }}
+                      </q-badge>
+                    </q-item-label>
 
-      <div class="col-12 col-md-4">
-        <q-card class="info-card" flat bordered>
-          <q-card-section class="text-center">
-            <q-icon name="checklist" size="48px" color="purple-7" class="q-mb-md" />
-            <div class="text-h6 text-weight-bold text-purple-10 q-mb-sm">
-              50+ preguntas
-            </div>
-            <div class="text-body2 text-grey-7">
-              Test completo y detallado
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
+                    <q-item-label caption>
+                      <div class="row q-gutter-sm">
+                        <span>📅 {{ formatDate(sesion.fecha_inicio) }}</span>
+                        <span v-if="sesion.fecha_fin">⏱️ {{ formatDate(sesion.fecha_fin) }}</span>
+                        <span v-if="isAdmin && sesion.usuario">
+                          👤 {{ sesion.usuario.nombre }} {{ sesion.usuario.apellidos }}
+                        </span>
+                      </div>
+                    </q-item-label>
 
-      <div class="col-12 col-md-4">
-        <q-card class="info-card" flat bordered>
-          <q-card-section class="text-center">
-            <q-icon name="trending_up" size="48px" color="purple-7" class="q-mb-md" />
-            <div class="text-h6 text-weight-bold text-purple-10 q-mb-sm">
-              Resultados inmediatos
-            </div>
-            <div class="text-body2 text-grey-7">
-              Obtén tu perfil vocacional al instante
+                    <q-item-label caption v-if="sesion.completado && sesion.tipo">
+                      {{ sesion.tipo.nombre }} - {{ sesion.tipo.descripcion_corta }}
+                    </q-item-label>
+                  </q-item-section>
+
+                  <q-item-section side>
+                    <div class="text-right">
+                      <div class="text-caption text-grey-7">
+                        {{ sesion.completado ? 'Completado' : 'Pendiente' }}
+                      </div>
+                      <q-btn
+                        flat
+                        dense
+                        round
+                        icon="arrow_forward"
+                        color="primary"
+                        @click.stop="verResultados(sesion)"
+                      />
+                    </div>
+                  </q-item-section>
+                </q-item>
+              </q-list>
             </div>
           </q-card-section>
         </q-card>
@@ -116,133 +139,135 @@
   </q-page>
 </template>
 
-<script>
-import { defineComponent } from 'vue'
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
+import { useAuthStore } from 'src/stores/auth'
+import api from 'src/services/api'
 
-export default defineComponent({
-  name: 'TestResultadosPage'
+const router = useRouter()
+const $q = useQuasar()
+const authStore = useAuthStore()
+
+const loading = ref(false)
+const sesiones = ref([])
+
+const isAdmin = computed(() => {
+  return authStore.user?.roles?.some(role => role.nombre === 'administrador') || false
+})
+
+const sesionesCompletadas = computed(() => {
+  return sesiones.value.filter(s => s.completado)
+})
+
+const sesionesPendientes = computed(() => {
+  return sesiones.value.filter(s => !s.completado)
+})
+
+const formatDate = (dateString) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return date.toLocaleDateString('es-ES', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
+
+const getTipoColor = (tipo) => {
+  const colors = {
+    'INTJ': 'purple',
+    'INTP': 'blue',
+    'ENTJ': 'red',
+    'ENTP': 'orange',
+    'INFJ': 'pink',
+    'INFP': 'green',
+    'ENFJ': 'yellow',
+    'ENFP': 'cyan',
+    'ISTJ': 'brown',
+    'ISFJ': 'teal',
+    'ESTJ': 'deep-orange',
+    'ESFJ': 'lime',
+    'ISTP': 'indigo',
+    'ISFP': 'light-green',
+    'ESTP': 'amber',
+    'ESFP': 'light-blue'
+  }
+  return colors[tipo] || 'grey'
+}
+
+const cargarSesiones = async () => {
+  loading.value = true
+  try {
+    const response = await api.get('/test/mis-sesiones')
+    if (response.data.success) {
+      sesiones.value = response.data.sesiones
+      console.log('Sesiones cargadas:', sesiones.value)
+    } else {
+      $q.notify({
+        type: 'negative',
+        message: 'Error al cargar sesiones',
+        icon: 'error'
+      })
+    }
+  } catch (error) {
+    console.error('Error cargando sesiones:', error)
+    $q.notify({
+      type: 'negative',
+      message: 'Error de conexión al cargar sesiones',
+      icon: 'error'
+    })
+  } finally {
+    loading.value = false
+  }
+}
+
+const verResultados = (sesion) => {
+  if (sesion.completado) {
+    router.push(`/dashboard/test-resultados/${sesion.id_sesion}`)
+  } else {
+    $q.notify({
+      type: 'warning',
+      message: 'Este test aún no está completado',
+      icon: 'warning'
+    })
+  }
+}
+
+onMounted(() => {
+  cargarSesiones()
 })
 </script>
 
 <style scoped>
 .test-resultados-page {
-  max-width: 1200px;
-  margin: 0 auto;
-  background: linear-gradient(to bottom, #F3F4F6, #FFFFFF);
-  min-height: calc(100vh - 64px);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
 }
 
 .page-header {
-  padding: 20px 0;
-}
-
-.coming-soon-card {
-  border-radius: 24px;
-  background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%);
-  box-shadow: 0 12px 40px rgba(124, 58, 237, 0.3);
-}
-
-.coming-soon-icon-wrapper {
-  width: 160px;
-  height: 160px;
-  margin: 0 auto;
-  background: rgba(253, 184, 19, 0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 4px solid rgba(253, 184, 19, 0.4);
-  animation: rotate 4s linear infinite;
-}
-
-@keyframes rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.text-white-7 {
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 32px;
-  padding: 0 32px;
-}
-
-.feature-item {
-  padding: 24px;
   background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
   border-radius: 16px;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.feature-item:hover {
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-4px);
+.sesion-item {
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
 }
 
-.btn-gradient {
-  background: linear-gradient(135deg, #FDB813 0%, #F59E0B 100%);
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  padding: 14px 32px;
-  box-shadow: 0 4px 20px rgba(253, 184, 19, 0.4);
-  transition: all 0.3s ease;
+.sesion-item:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
-.btn-gradient:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 28px rgba(253, 184, 19, 0.6);
-}
-
-.info-card {
-  border-radius: 20px;
-  border: 2px solid #E5E7EB;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-  background: white;
-}
-
-.info-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 32px rgba(124, 58, 237, 0.15);
-  border-color: #7C3AED;
-}
-
-@media (max-width: 768px) {
-  .test-resultados-page {
-    padding: 12px;
-  }
-
-  .coming-soon-card {
-    border-radius: 16px;
-  }
-
-  .coming-soon-icon-wrapper {
-    width: 120px;
-    height: 120px;
-  }
-
-  .coming-soon-icon-wrapper .q-icon {
-    font-size: 60px !important;
-  }
-
-  .features-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    padding: 0;
-  }
-
-  .text-h3 {
-    font-size: 1.75rem;
-  }
+.sesiones-list {
+  max-height: 70vh;
+  overflow-y: auto;
 }
 </style>

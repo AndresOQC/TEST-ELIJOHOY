@@ -13,6 +13,10 @@ export const useAuthStore = defineStore('auth', () => {
     return user.value?.nombre_completo || ''
   })
 
+  const userRoles = computed(() => {
+    return user.value?.roles || []
+  })
+
   // Actions
   const initializeAuth = () => {
     const token = sessionStorage.getItem('access_token')
@@ -35,8 +39,6 @@ export const useAuthStore = defineStore('auth', () => {
       if (result.success) {
         user.value = result.user
         isAuthenticated.value = true
-        // Don't call refreshUser immediately after login since we already have user data
-        // await refreshUser()
         return { success: true }
       }
 
@@ -128,6 +130,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     // Getters
     userName,
+    userRoles,
 
     // Actions
     initializeAuth,

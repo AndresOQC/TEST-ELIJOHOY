@@ -7,7 +7,11 @@
           <div class="register-icon-wrapper q-mb-lg">
             <q-icon name="how_to_reg" size="44px" color="white" />
           </div>
-          <div class="text-h3 text-weight-bold text-white q-mb-sm">
+          <div class="text-h3 text-weighimport { defineComponent, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { Notify } from 'quasar'
+import { useAuthStore } from 'src/stores/auth'
+import { useTestStore } from 'src/stores/test' text-white q-mb-sm">
             ¡Únete a nosotros!
           </div>
           <div class="text-body1 text-white-7">
@@ -465,7 +469,30 @@ export default defineComponent({
             icon: 'check_circle',
             position: 'top'
           })
-          router.push('/dashboard')
+
+          // Verificar si hay respuestas de test en localStorage
+          const respuestasGuardadas = localStorage.getItem('testRespuestas')
+
+          // Verificar si hay una finalización de test pendiente
+          const pendingFinalization = localStorage.getItem('pendingTestFinalization')
+
+          if (pendingFinalization === 'true') {
+            console.log('Finalización de test pendiente, redirigiendo al test...')
+            // Mantener el indicador para que el test se finalice automáticamente
+            router.push('/dashboard/test')
+          } else if (respuestasGuardadas) {
+            console.log('Detectadas respuestas de test, se sincronizarán en la página del test...')
+            
+            Notify.create({
+              message: 'Respuestas detectadas, continuando con el test...',
+              color: 'positive',
+              icon: 'save',
+              position: 'top'
+            })
+            router.push('/dashboard/test')
+          } else {
+            router.push('/dashboard')
+          }
         } else {
           Notify.create({
             message: result.message || 'Error al registrar usuario',

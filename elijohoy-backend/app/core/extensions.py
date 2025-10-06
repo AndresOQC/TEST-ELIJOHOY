@@ -46,8 +46,9 @@ def setup_logging(app):
 @jwt.token_in_blocklist_loader
 def check_if_token_revoked(jwt_header, jwt_payload):
     """Verificar si un token está en la blacklist."""
+    from app.models.token import Token
     jti = jwt_payload['jti']
-    return jti in blacklisted_tokens
+    return Token.is_token_revoked(jti)
 
 @jwt.expired_token_loader
 def expired_token_callback(jwt_header, jwt_payload):

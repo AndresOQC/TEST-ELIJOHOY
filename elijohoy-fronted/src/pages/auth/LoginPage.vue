@@ -149,15 +149,36 @@ export default defineComponent({
         const result = await authStore.login(form.value)
 
         if (result.success && authStore.isAuthenticated) {
-          // Ya tenemos los datos del usuario del login, no necesitamos refrescar
           Notify.create({
             message: '¡Bienvenido de nuevo!',
             color: 'positive',
             icon: 'check_circle',
             position: 'top'
           })
-          
-          router.push('/dashboard')
+
+          // Verificar si hay respuestas de test en localStorage
+          const respuestasGuardadas = localStorage.getItem('testRespuestas')
+
+          // Verificar si hay una finalización de test pendiente
+          const pendingFinalization = localStorage.getItem('pendingTestFinalization')
+
+          if (pendingFinalization === 'true') {
+            console.log('Finalización de test pendiente, redirigiendo al test...')
+            // Mantener el indicador para que el test se finalice automáticamente
+            router.push('/dashboard/test')
+          } else if (respuestasGuardadas) {
+            console.log('Detectadas respuestas de test, se sincronizarán en la página del test...')
+            
+            Notify.create({
+              message: 'Respuestas detectadas, continuando con el test...',
+              color: 'positive',
+              icon: 'save',
+              position: 'top'
+            })
+            router.push('/dashboard/test')
+          } else {
+            router.push('/dashboard')
+          }
         } else {
           Notify.create({
             message: result.message || 'Credenciales incorrectas',

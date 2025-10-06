@@ -8,7 +8,7 @@
             Configuraciones
           </h1>
           <p class="text-body1 text-grey-7">
-            Administra tu perfiL
+            Administra tu perfil
           </p>
         </div>
       </div>
@@ -415,7 +415,15 @@ export default defineComponent({
       profileLoading.value = true
 
       try {
-        const result = await authStore.updateProfile(profileForm.value)
+        // Preparar datos para enviar
+        const profileData = { ...profileForm.value }
+        
+        // Convertir género a minúsculas para el backend
+        if (profileData.genero) {
+          profileData.genero = profileData.genero.toLowerCase()
+        }
+
+        const result = await authStore.updateProfile(profileData)
 
         if (result.success) {
           $q.notify({
@@ -497,19 +505,30 @@ export default defineComponent({
 
     onMounted(() => {
       if (authStore.user) {
-        const alumno = authStore.user.alumno || {}
+        // Los datos del alumno están directamente en authStore.user
+        // No hay un objeto separado 'alumno'
+        
+        // Función para capitalizar género
+        const capitalizeGenero = (genero) => {
+          if (!genero) return null
+          if (genero === 'masculino') return 'Masculino'
+          if (genero === 'femenino') return 'Femenino'
+          if (genero === 'otro') return 'Otro'
+          return genero
+        }
+        
         profileForm.value = {
-          nombre: alumno.nombre || '',
-          apellidos: alumno.apellidos || '',
-          edad: alumno.edad || null,
-          genero: alumno.genero || null,
+          nombre: authStore.user.nombre || '',
+          apellidos: authStore.user.apellidos || '',
+          edad: authStore.user.edad || null,
+          genero: capitalizeGenero(authStore.user.genero) || null,
           email: authStore.user.email || '',
-          ciudad: alumno.ciudad || '',
-          pais: alumno.pais || '',
-          institucion_educativa: alumno.institucion_educativa || '',
-          grado: alumno.grado || '',
-          seccion: alumno.seccion || '',
-          turno: alumno.turno || ''
+          ciudad: authStore.user.ciudad || '',
+          pais: authStore.user.pais || '',
+          institucion_educativa: authStore.user.institucion_educativa || '',
+          grado: authStore.user.grado || '',
+          seccion: authStore.user.seccion || '',
+          turno: authStore.user.turno || ''
         }
       }
     })

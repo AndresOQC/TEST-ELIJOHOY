@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title class="landing-title">
-          <div class="brand-container">
+          <div class="brand-container" @click="$router.push('/')" style="cursor: pointer;">
             <div class="brand-icon-wrapper">
               <q-icon name="school" size="36px" class="brand-icon q-mr-sm" />
               <div class="icon-pulse"></div>
@@ -31,20 +31,44 @@
           <q-btn
             flat
             no-caps
-            label="Características"
+            label="Inicio"
             class="nav-link"
+            @click="scrollToSection('hero')"
           />
           <q-btn
             flat
             no-caps
-            label="Precios"
+            label="Características"
             class="nav-link"
+            @click="scrollToSection('features')"
+          />
+          <q-btn
+            flat
+            no-caps
+            label="Cómo Funciona"
+            class="nav-link"
+            @click="scrollToSection('how-it-works')"
+          />
+          <q-btn
+            flat
+            no-caps
+            label="Testimonios"
+            class="nav-link"
+            @click="scrollToSection('testimonials')"
+          />
+          <q-btn
+            flat
+            no-caps
+            label="FAQ"
+            class="nav-link"
+            @click="scrollToSection('faq')"
           />
           <q-btn
             flat
             no-caps
             label="Contacto"
             class="nav-link"
+            @click="scrollToSection('contact')"
           />
         </div>
 
@@ -80,6 +104,88 @@
       bordered
     >
       <q-list padding>
+        <!-- Navigation Links -->
+        <q-item
+          clickable
+          v-ripple
+          @click="scrollToSection('hero'); drawer = false"
+        >
+          <q-item-section avatar>
+            <q-icon name="home" color="primary" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Inicio</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item
+          clickable
+          v-ripple
+          @click="scrollToSection('features'); drawer = false"
+        >
+          <q-item-section avatar>
+            <q-icon name="verified" color="primary" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Características</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item
+          clickable
+          v-ripple
+          @click="scrollToSection('how-it-works'); drawer = false"
+        >
+          <q-item-section avatar>
+            <q-icon name="timeline" color="primary" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Cómo Funciona</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item
+          clickable
+          v-ripple
+          @click="scrollToSection('testimonials'); drawer = false"
+        >
+          <q-item-section avatar>
+            <q-icon name="star" color="primary" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Testimonios</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item
+          clickable
+          v-ripple
+          @click="scrollToSection('faq'); drawer = false"
+        >
+          <q-item-section avatar>
+            <q-icon name="help" color="primary" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>FAQ</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item
+          clickable
+          v-ripple
+          @click="scrollToSection('contact'); drawer = false"
+        >
+          <q-item-section avatar>
+            <q-icon name="contact_mail" color="primary" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Contacto</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-separator class="q-my-md" />
+
+        <!-- Auth Links -->
         <q-item
           clickable
           v-ripple
@@ -105,6 +211,21 @@
             <q-item-label>Registrarse</q-item-label>
           </q-item-section>
         </q-item>
+
+        <!-- Quick Test Link -->
+        <q-item
+          clickable
+          v-ripple
+          to="/test"
+        >
+          <q-item-section avatar>
+            <q-icon name="quiz" color="secondary" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Hacer Test</q-item-label>
+            <q-item-label caption>Comienza tu evaluación</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -122,8 +243,22 @@ export default defineComponent({
   setup() {
     const drawer = ref(false)
 
+    const scrollToSection = (sectionId) => {
+      // Si estamos en la página de landing, hacer scroll
+      if (window.location.pathname === '/' || window.location.pathname === '/#') {
+        const element = document.getElementById(sectionId)
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      } else {
+        // Si no estamos en landing, ir a landing con el hash
+        window.location.href = `/#${sectionId}`
+      }
+    }
+
     return {
-      drawer
+      drawer,
+      scrollToSection
     }
   }
 })
@@ -179,6 +314,16 @@ export default defineComponent({
 .brand-container {
   display: flex;
   align-items: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 8px 12px;
+  border-radius: 12px;
+  position: relative;
+}
+
+.brand-container:hover {
+  background: rgba(124, 58, 237, 0.08);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
 }
 
 .brand-icon-wrapper {

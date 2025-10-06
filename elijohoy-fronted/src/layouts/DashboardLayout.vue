@@ -147,6 +147,39 @@
           </q-list>
         </div>
 
+        <!-- Menú de Administración (solo para admin) -->
+        <template v-if="isAdmin">
+          <q-separator class="q-my-md" />
+
+          <div class="q-pa-md">
+            <div class="drawer-header q-mb-md">
+              <div class="text-h6 text-weight-bold text-orange-9">
+                <q-icon name="admin_panel_settings" class="q-mr-sm" />
+                Administración
+              </div>
+              <div class="text-caption text-grey-7">Panel de Admin</div>
+            </div>
+
+            <q-list class="menu-list">
+              <q-item
+                clickable
+                :active="$route.path === '/dashboard/admin/preguntas'"
+                @click="$router.push('/dashboard/admin/preguntas')"
+                active-class="active-menu-item"
+                class="menu-item"
+              >
+                <q-item-section avatar>
+                  <q-icon name="help_outline" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>Administrar Preguntas</q-item-label>
+                  <q-item-label caption>Editar test OEJTS</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </div>
+        </template>
+
         <q-separator class="q-my-md" />
 
         <div class="q-pa-md">
@@ -178,7 +211,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import ConfirmDialog from 'src/components/common/ConfirmDialog.vue'
 import { Notify } from 'quasar'
@@ -194,6 +227,10 @@ export default defineComponent({
     const authStore = useAuthStore()
     const leftDrawerOpen = ref(false)
     const showLogoutDialog = ref(false)
+
+    const isAdmin = computed(() => {
+      return authStore.userRoles?.includes('administrador') || false
+    })
 
     const toggleLeftDrawer = () => {
       leftDrawerOpen.value = !leftDrawerOpen.value
@@ -224,6 +261,7 @@ export default defineComponent({
     return {
       leftDrawerOpen,
       authStore,
+      isAdmin,
       toggleLeftDrawer,
       goToSettings,
       showLogoutDialog,

@@ -19,6 +19,16 @@ const routes = [
       { path: 'restablecer-password/:token', component: () => import('pages/auth/RestablecerPasswordPage.vue') }
     ]
   },
+
+  // Test público (sin autenticación requerida)
+  {
+    path: '/test',
+    component: () => import('layouts/LandingLayout.vue'),
+    children: [
+      { path: '', name: 'test-publico', component: () => import('pages/dashboard/TestPage.vue') },
+      { path: 'resultados/:id', name: 'test-resultados-publico', component: () => import('pages/dashboard/TestResultadosDetailPage.vue') }
+    ]
+  },
   
   // Dashboard routes (authenticated)
   {
@@ -28,7 +38,10 @@ const routes = [
     children: [
       { path: '', component: () => import('pages/dashboard/DashboardPage.vue') },
       { path: 'configuraciones', component: () => import('pages/dashboard/ConfiguracionesPage.vue') },
-      { path: 'test-resultados', component: () => import('pages/dashboard/TestResultadosPage.vue') }
+      { path: 'test', name: 'test', component: () => import('pages/dashboard/TestPage.vue') },
+      { path: 'test-resultados', component: () => import('pages/dashboard/TestResultadosPage.vue') },
+      { path: 'test-resultados/:id', name: 'test-resultados', component: () => import('pages/dashboard/TestResultadosDetailPage.vue') },
+      { path: 'admin/preguntas', name: 'admin-preguntas', component: () => import('pages/dashboard/AdminPreguntasPage.vue'), meta: { requiresAdmin: true } }
     ]
   },
 

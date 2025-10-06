@@ -228,22 +228,58 @@ export default defineComponent({
 .dashboard-page {
   max-width: 1200px;
   margin: 0 auto;
-  background: linear-gradient(to bottom, #F3F4F6, #FFFFFF);
+  background: linear-gradient(135deg,
+    rgba(99, 102, 241, 0.05) 0%,
+    rgba(236, 72, 153, 0.05) 50%,
+    rgba(245, 158, 11, 0.05) 100%);
   min-height: calc(100vh - 64px);
+  padding: 24px;
 }
 
 .welcome-card {
-  border-radius: 20px;
-  background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%);
+  border-radius: 24px;
+  background: linear-gradient(135deg,
+    rgba(99, 102, 241, 0.9) 0%,
+    rgba(236, 72, 153, 0.9) 50%,
+    rgba(245, 158, 11, 0.9) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   color: white;
-  box-shadow: 0 8px 32px rgba(124, 58, 237, 0.3);
-  border: none !important;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow:
+    0 20px 60px rgba(99, 102, 241, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 70%);
+  transform: rotate(45deg) translate(-100%, -100%);
+  transition: all 0.6s ease;
+  opacity: 0;
 }
 
 .welcome-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(124, 58, 237, 0.4);
+  transform: translateY(-8px);
+  box-shadow:
+    0 30px 80px rgba(99, 102, 241, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.welcome-card:hover::before {
+  opacity: 1;
+  transform: rotate(45deg) translate(100%, 100%);
 }
 
 .welcome-card :deep(.text-primary) {
@@ -251,71 +287,148 @@ export default defineComponent({
 }
 
 .welcome-card :deep(.text-grey-7) {
-  color: rgba(255, 255, 255, 0.9) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
 }
 
 .profile-status-card,
 .quick-actions-card,
 .stats-card,
 .activity-card {
-  border-radius: 20px;
-  border: 2px solid #E5E7EB !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-  background: white;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-status-card::before,
+.quick-actions-card::before,
+.stats-card::before,
+.activity-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg,
+    rgba(99, 102, 241, 0.05) 0%,
+    rgba(236, 72, 153, 0.05) 50%,
+    rgba(245, 158, 11, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
 .profile-status-card:hover,
 .quick-actions-card:hover,
 .stats-card:hover,
 .activity-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 32px rgba(124, 58, 237, 0.15);
-  border-color: #7C3AED !important;
+  transform: translateY(-8px);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(99, 102, 241, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.profile-status-card:hover::before,
+.quick-actions-card:hover::before,
+.stats-card:hover::before,
+.activity-card:hover::before {
+  opacity: 1;
 }
 
 .profile-status-card :deep(.text-primary),
 .stats-card :deep(.text-primary),
 .activity-card :deep(.text-primary) {
-  color: #7C3AED !important;
+  color: #6366F1 !important;
 }
 
 .quick-actions-card :deep(.text-secondary) {
-  color: #5B21B6 !important;
-}
-
-.stats-card :deep(.text-secondary) {
   color: #EC4899 !important;
 }
 
+.stats-card :deep(.text-secondary) {
+  color: #F59E0B !important;
+}
+
 .stat-item {
-  padding: 20px;
-  background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%);
-  border-radius: 16px;
-  transition: all 0.3s ease;
+  padding: 24px;
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(255, 255, 255, 0.3) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 20px;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .stat-item:hover {
-  transform: scale(1.05);
-  background: linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%);
+  transform: translateY(-4px) scale(1.02);
+  background: linear-gradient(135deg,
+    rgba(99, 102, 241, 0.1) 0%,
+    rgba(236, 72, 153, 0.1) 100%);
+  box-shadow:
+    0 8px 32px rgba(99, 102, 241, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .profile-info {
-  margin-top: 16px;
-  padding: 16px;
-  background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%);
-  border-radius: 12px;
+  margin-top: 20px;
+  padding: 20px;
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(255, 255, 255, 0.3) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.1),
+    0 2px 8px rgba(255, 255, 255, 0.1);
 }
 
 .quick-actions-card :deep(.q-btn) {
-  border-radius: 12px;
+  border-radius: 16px;
   font-weight: 600;
-  padding: 12px 24px;
-  transition: all 0.3s ease;
+  padding: 14px 28px;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-actions-card :deep(.q-btn::before) {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent);
+  transition: left 0.6s ease;
 }
 
 .quick-actions-card :deep(.q-btn:hover) {
-  transform: translateX(4px);
+  transform: translateY(-2px);
+}
+
+.quick-actions-card :deep(.q-btn:hover::before) {
+  left: 100%;
 }
 
 /* Contenedor horizontal para las tarjetas */
@@ -332,7 +445,7 @@ export default defineComponent({
 
 @media (max-width: 768px) {
   .dashboard-page {
-    padding: 12px;
+    padding: 16px;
   }
 
   .welcome-card,
@@ -340,20 +453,20 @@ export default defineComponent({
   .quick-actions-card,
   .stats-card,
   .activity-card {
-    border-radius: 16px;
+    border-radius: 20px;
   }
 
   .stat-item {
-    padding: 16px;
-    margin-bottom: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
   }
 
   /* Forzar columnas en móvil */
   .cards-horizontal-container {
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
   }
-  
+
   .card-half {
     flex: none;
   }
