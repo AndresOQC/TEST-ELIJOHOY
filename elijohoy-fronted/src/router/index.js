@@ -39,6 +39,13 @@ export default defineRouter(function (/* { store, ssrContext } */) {
         return
       }
       
+      // Check if route requires admin privileges
+      if (to.meta.requiresAdmin && !authStore.userRoles?.includes('administrador')) {
+        // Redirect to dashboard if user is not admin
+        next('/dashboard')
+        return
+      }
+      
       // Check if profile completion is required for dashboard access
       if (to.path.startsWith('/dashboard') && authStore.needsProfileCompletion) {
         next('/auth/completar-perfil')

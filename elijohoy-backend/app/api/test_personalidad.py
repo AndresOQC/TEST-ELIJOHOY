@@ -47,6 +47,185 @@ def obtener_preguntas():
         }), 500
 
 
+@bp.route('/admin/preguntas', methods=['GET'])
+@jwt_required()
+@admin_required
+def obtener_todas_preguntas():
+    """Obtener todas las preguntas (activas e inactivas) para administración."""
+    try:
+        preguntas = Pregunta.query.order_by(Pregunta.orden).all()
+        return jsonify({
+            'success': True,
+            'preguntas': [p.to_dict() for p in preguntas]
+        }), 200
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Error al obtener preguntas: {str(e)}'
+        }), 500
+
+
+@bp.route('/admin/preguntas', methods=['POST'])
+@jwt_required()
+@admin_required
+def crear_pregunta():
+    """Crear una nueva pregunta."""
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({'success': False, 'message': 'No se enviaron datos'}), 400
+
+        # Validar campos requeridos
+        texto_izquierda = data.get('texto_izquierda')
+        texto_derecha = data.get('texto_derecha')
+        dimension = data.get('dimension')
+        peso = data.get('peso')
+        orden = data.get('orden')
+
+        if not texto_izquierda or not texto_derecha:
+            return jsonify({'success': False, 'message': 'Los textos izquierda y derecha son requeridos'}), 400
+
+        if not dimension or dimension not in ['IE', 'SN', 'FT', 'JP']:
+            return jsonify({'success': False, 'message': 'La dimensión debe ser IE, SN, FT o JP'}), 400
+
+        if peso not in [-1, 1]:
+            return jsonify({'success': False, 'message': 'El peso debe ser -1 o 1'}), 400
+
+        if orden is None:
+            return jsonify({'success': False, 'message': 'El orden de la pregunta es requerido'}), 400
+
+        # Verificar que el orden no esté duplicado
+        pregunta_existente = Pregunta.query.filter_by(orden=orden).first()
+        if pregunta_existente:
+            return jsonify({'success': False, 'message': f'Ya existe una pregunta con el orden {orden}'}), 400
+
+        # Crear nueva pregunta
+        nueva_pregunta = Pregunta(
+            texto_izquierda=texto_izquierda.strip(),
+            texto_derecha=texto_derecha.strip(),
+            dimension=dimension,
+            peso=peso,
+            orden=orden,
+            activa=data.get('activa', True)
+        )
+
+        db.session.add(nueva_pregunta)
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'message': 'Pregunta creada exitosamente',
+            'pregunta': nueva_pregunta.to_dict()
+        }), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'success': False,
+            'message': f'Error al crear pregunta: {str(e)}'
+        }), 500
+
+
+@bp.route('/admin/preguntas/<int:id_pregunta>', methods=['PUT'])
+@jwt_required()
+@admin_required
+def actualizar_pregunta(id_pregunta):
+    """Actualizar una pregunta existente."""
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({'success': False, 'message': 'No se enviaron datos'}), 400
+
+        # Buscar la pregunta
+        pregunta = Pregunta.query.get(id_pregunta)
+        if not pregunta:
+            return jsonify({'success': False, 'message': 'Pregunta no encontrada'}), 404
+
+        # Validar y actualizar campos
+        if 'texto_izquierda' in data:
+            texto_izquierda = data['texto_izquierda']
+            if not texto_izquierda or not texto_izquierda.strip():
+                return jsonify({'success': False, 'message': 'El texto izquierda no puede estar vacío'}), 400
+            pregunta.texto_izquierda = texto_izquierda.strip()
+
+        if 'texto_derecha' in data:
+            texto_derecha = data['texto_derecha']
+            if not texto_derecha or not texto_derecha.strip():
+                return jsonify({'success': False, 'message': 'El texto derecha no puede estar vacío'}), 400
+            pregunta.texto_derecha = texto_derecha.strip()
+
+        if 'dimension' in data:
+            dimension = data['dimension']
+            if not dimension or dimension not in ['IE', 'SN', 'FT', 'JP']:
+                return jsonify({'success': False, 'message': 'La dimensión debe ser IE, SN, FT o JP'}), 400
+            pregunta.dimension = dimension
+
+        if 'peso' in data:
+            peso = data['peso']
+            if peso not in [-1, 1]:
+                return jsonify({'success': False, 'message': 'El peso debe ser -1 o 1'}), 400
+            pregunta.peso = peso
+
+        if 'orden' in data:
+            nuevo_orden = data['orden']
+            if nuevo_orden is None:
+                return jsonify({'success': False, 'message': 'El orden no puede ser nulo'}), 400
+
+            # Verificar que el nuevo orden no esté duplicado (excepto para la misma pregunta)
+            pregunta_existente = Pregunta.query.filter_by(orden=nuevo_orden).filter(Pregunta.id_pregunta != id_pregunta).first()
+            if pregunta_existente:
+                return jsonify({'success': False, 'message': f'Ya existe una pregunta con el orden {nuevo_orden}'}), 400
+
+            pregunta.orden = nuevo_orden
+
+        if 'activa' in data:
+            pregunta.activa = bool(data['activa'])
+
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'message': 'Pregunta actualizada exitosamente',
+            'pregunta': pregunta.to_dict()
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'success': False,
+            'message': f'Error al actualizar pregunta: {str(e)}'
+        }), 500
+
+
+@bp.route('/admin/preguntas/<int:id_pregunta>', methods=['DELETE'])
+@jwt_required()
+@admin_required
+def eliminar_pregunta(id_pregunta):
+    """Eliminar (desactivar) una pregunta."""
+    try:
+        pregunta = Pregunta.query.get(id_pregunta)
+        if not pregunta:
+            return jsonify({'success': False, 'message': 'Pregunta no encontrada'}), 404
+
+        # En lugar de eliminar físicamente, la desactivamos
+        pregunta.activa = False
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'message': 'Pregunta desactivada exitosamente'
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'success': False,
+            'message': f'Error al eliminar pregunta: {str(e)}'
+        }), 500
+
+
 @bp.route('/iniciar', methods=['POST'])
 @limiter.limit("10 per minute")
 @jwt_required(optional=True)
@@ -526,42 +705,6 @@ def obtener_tipo_por_codigo(codigo):
 
 
 # ============ ENDPOINTS DE ADMINISTRACIÓN DE PREGUNTAS ============
-
-@bp.route('/admin/preguntas/<int:id_pregunta>', methods=['PUT'])
-@jwt_required()
-@admin_required
-def actualizar_pregunta(id_pregunta):
-    """Actualizar textos de una pregunta (solo admin)."""
-    try:
-        pregunta = Pregunta.query.get(id_pregunta)
-        if not pregunta:
-            return jsonify({
-                'success': False,
-                'message': 'Pregunta no encontrada'
-            }), 404
-
-        data = request.get_json()
-
-        # Actualizar solo los textos
-        if 'texto_izquierda' in data:
-            pregunta.texto_izquierda = data['texto_izquierda']
-        if 'texto_derecha' in data:
-            pregunta.texto_derecha = data['texto_derecha']
-
-        db.session.commit()
-
-        return jsonify({
-            'success': True,
-            'message': 'Pregunta actualizada exitosamente',
-            'pregunta': pregunta.to_dict()
-        }), 200
-
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({
-            'success': False,
-            'message': f'Error al actualizar pregunta: {str(e)}'
-        }), 500
 
 
 @bp.route('/admin/preguntas/<int:id_pregunta>/toggle', methods=['PATCH'])

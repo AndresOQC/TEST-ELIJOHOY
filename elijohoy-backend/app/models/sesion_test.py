@@ -51,14 +51,20 @@ class SesionTest(db.Model):
         if include_tipo and self.tipo:
             data['tipo'] = self.tipo.to_dict()
 
-        if include_usuario and self.usuario:
+        if include_usuario and self.usuario and self.usuario.alumno:
             data['usuario'] = {
                 'id': self.usuario.id,
                 'email': self.usuario.email,
-                'nombre': self.usuario.nombre,
-                'apellidos': self.usuario.apellidos,
-                'institucion_educativa': self.usuario.institucion_educativa,
-                'grado': self.usuario.grado
+                'nombre': self.usuario.alumno.nombre,
+                'apellidos': self.usuario.alumno.apellidos,
+                'edad': self.usuario.alumno.edad,
+                'genero': self.usuario.alumno.genero,
+                'ciudad': self.usuario.alumno.ciudad,
+                'pais': self.usuario.alumno.pais,
+                'institucion_educativa': self.usuario.alumno.institucion_educativa,
+                'grado': self.usuario.alumno.grado,
+                'seccion': self.usuario.alumno.seccion,
+                'turno': self.usuario.alumno.turno
             }
 
         return data

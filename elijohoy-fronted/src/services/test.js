@@ -179,6 +179,60 @@ const testService = {
       throw error.response?.data || error
     }
   },
+
+  // ========== FUNCIONES DE ADMINISTRACIÓN DE PREGUNTAS ==========
+
+  /**
+   * Obtener todas las preguntas (solo administradores)
+   */
+  async obtenerTodasPreguntas() {
+    try {
+      const response = await api.get('/test/admin/preguntas')
+      return response.data
+    } catch (error) {
+      throw error.response?.data || error
+    }
+  },
+
+  /**
+   * Crear una nueva pregunta (solo administradores)
+   * @param {Object} preguntaData
+   */
+  async crearPregunta(preguntaData) {
+    try {
+      const response = await api.post('/test/admin/preguntas', preguntaData)
+      return response.data
+    } catch (error) {
+      throw error.response?.data || error
+    }
+  },
+
+  /**
+   * Actualizar una pregunta existente (solo administradores)
+   * @param {number} idPregunta
+   * @param {Object} preguntaData
+   */
+  async actualizarPregunta(idPregunta, preguntaData) {
+    try {
+      const response = await api.put(`/test/admin/preguntas/${idPregunta}`, preguntaData)
+      return response.data
+    } catch (error) {
+      throw error.response?.data || error
+    }
+  },
+
+  /**
+   * Eliminar (desactivar) una pregunta (solo administradores)
+   * @param {number} idPregunta
+   */
+  async eliminarPregunta(idPregunta) {
+    try {
+      const response = await api.delete(`/test/admin/preguntas/${idPregunta}`)
+      return response.data
+    } catch (error) {
+      throw error.response?.data || error
+    }
+  },
 }
 
 export default testService

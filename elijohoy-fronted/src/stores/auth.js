@@ -13,6 +13,10 @@ export const useAuthStore = defineStore('auth', () => {
     return user.value?.nombre_completo || ''
   })
 
+  const userRoles = computed(() => {
+    return user.value?.roles || []
+  })
+
   // Actions
   const initializeAuth = () => {
     const token = sessionStorage.getItem('access_token')
@@ -126,6 +130,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     // Getters
     userName,
+    userRoles,
 
     // Actions
     initializeAuth,
