@@ -94,15 +94,22 @@ def is_owner_or_admin(user_id, resource_user_id):
     Verificar si el usuario es propietario del recurso o es administrador.
 
     Args:
-        user_id: ID del usuario actual
-        resource_user_id: ID del usuario propietario del recurso
+        user_id: ID del usuario actual (puede ser string o int)
+        resource_user_id: ID del usuario propietario del recurso (puede ser int o None)
 
     Returns:
         bool: True si es propietario o admin, False en caso contrario
     """
-    usuario = Usuario.query.get(user_id)
+    # Convertir a int para comparación consistente
+    try:
+        user_id_int = int(user_id) if user_id is not None else None
+        resource_user_id_int = int(resource_user_id) if resource_user_id is not None else None
+    except (ValueError, TypeError):
+        return False
+
+    usuario = Usuario.query.get(user_id_int)
     if not usuario:
         return False
 
     # Es administrador o es el propietario
-    return usuario.has_role('administrador') or user_id == resource_user_id
+    return usuario.has_role('administrador') or user_id_int == resource_user_id_int

@@ -102,7 +102,7 @@ BEGIN
         resultado_jp = v_jp,
         tipo_personalidad = v_tipo,
         completado = TRUE,
-        fecha_fin = NOW()
+        fecha_fin = (NOW() AT TIME ZONE 'UTC')
     WHERE id_sesion = p_id_sesion;
 
     -- Retornar resultados

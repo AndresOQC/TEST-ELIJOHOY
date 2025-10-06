@@ -231,6 +231,7 @@ def finalizar_test(id_sesion):
             {'id_sesion': id_sesion}
         ).fetchone()
 
+        db.session.commit()  # Asegurar que los cambios se guarden
         db.session.refresh(sesion)
 
         return jsonify({
@@ -261,7 +262,8 @@ def obtener_resultados(id_sesion):
         # Verificar permisos si hay usuario autenticado
         try:
             verify_jwt_in_request(optional=True)
-            id_usuario = get_jwt_identity()
+            id_usuario_str = get_jwt_identity()
+            id_usuario = int(id_usuario_str) if id_usuario_str else None
 
             if id_usuario:
                 # Si está autenticado, verificar que sea el propietario o admin
@@ -270,7 +272,8 @@ def obtener_resultados(id_sesion):
                         'success': False,
                         'message': 'No tienes permiso para ver estos resultados'
                     }), 403
-        except:
+        except Exception as e:
+            current_app.logger.warning(f'Error en verificación JWT: {str(e)}')
             # Si la sesión no tiene usuario (es anónima), permitir acceso
             if sesion.id_usuario is not None:
                 return jsonify({
@@ -308,7 +311,8 @@ def obtener_resultados(id_sesion):
 def obtener_mis_sesiones():
     """Obtener todas las sesiones del usuario autenticado (alumno solo ve las suyas)."""
     try:
-        id_usuario = get_jwt_identity()
+        id_usuario_str = get_jwt_identity()
+        id_usuario = int(id_usuario_str) if id_usuario_str else None
         usuario = Usuario.query.get(id_usuario)
 
         # Alumno solo puede ver sus propias sesiones
@@ -340,7 +344,8 @@ def asociar_sesion_anonima():
     """Asociar una sesión anónima al usuario actual tras registro."""
     try:
         data = request.get_json(force=True, silent=True)
-        id_usuario = get_jwt_identity()
+        id_usuario_str = get_jwt_identity()
+        id_usuario = int(id_usuario_str) if id_usuario_str else None
 
         if not data or 'id_sesion' not in data:
             current_app.logger.error('id_sesion faltante o JSON mal formado.')

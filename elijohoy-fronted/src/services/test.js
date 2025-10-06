@@ -165,6 +165,20 @@ const testService = {
       throw error.response?.data || error
     }
   },
+
+  /**
+   * Obtener resultados detallados de una sesión específica
+   * @param {number} idSesion
+   */
+  async obtenerResultados(idSesion) {
+    try {
+      const response = await api.get(`/test/resultados/${idSesion}`)
+      return response.data
+    } catch (error) {
+      console.error('❌ Error en obtenerResultados:', error)
+      throw error.response?.data || error
+    }
+  },
 }
 
 export default testService
