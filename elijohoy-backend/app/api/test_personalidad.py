@@ -324,7 +324,7 @@ def obtener_mis_sesiones():
 
         return jsonify({
             'success': True,
-            'sesiones': [s.to_dict(include_tipo=True) for s in sesiones]
+            'sesiones': [s.to_dict(include_tipo=True, include_usuario=usuario.has_role('administrador')) for s in sesiones]
         }), 200
 
     except Exception as e:
