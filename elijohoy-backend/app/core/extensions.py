@@ -77,3 +77,12 @@ def missing_token_callback(error):
 def add_token_to_blacklist(jti):
     """Agregar un token a la blacklist."""
     blacklisted_tokens.add(jti)
+
+def init_cors(app):
+    from flask_cors import CORS
+    import os
+
+    cors = CORS()
+
+    allowed_origins = os.getenv("ALLOWED_ORIGINS", "").split(",")
+    CORS(app, resources={r"/*": {"origins": allowed_origins}})
