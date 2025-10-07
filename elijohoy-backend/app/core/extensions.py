@@ -15,7 +15,7 @@ cors = CORS()
 mail = Mail()
 limiter = Limiter(
     key_func=get_remote_address,
-    storage_uri=None  # This will use the app's RATELIMIT_STORAGE_URL
+    storage_uri=os.getenv("RATELIMIT_STORAGE_URL", "memory://")  # Use Redis from .env
 )
 
 # Set para almacenar tokens blacklistados
