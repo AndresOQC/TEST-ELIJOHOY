@@ -29,7 +29,7 @@ class Config:
     JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
     
     # CORS
-    FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:9000')
+    ALLOWED_ORIGINS = [url.strip() for url in os.environ.get('ALLOWED_ORIGINS', 'http://localhost:9000').split(',')]
     
     # Rate Limiting
     RATELIMIT_STORAGE_URL = os.environ.get('RATELIMIT_STORAGE_URL', 'memory://')
@@ -60,6 +60,11 @@ class ProductionConfig(Config):
     """Configuración para producción."""
     DEBUG = False
     TESTING = False
+    
+    # Sobrescribir para producción
+    DATABASE_URL = os.environ.get('PRODUCTION_DATABASE_URL', os.environ.get('DATABASE_URL'))
+    SQLALCHEMY_DATABASE_URI = DATABASE_URL
+    PASSWORD_RESET_URL = os.environ.get('PRODUCTION_PASSWORD_RESET_URL', os.environ.get('PASSWORD_RESET_URL'))
 
 class TestingConfig(Config):
     """Configuración para testing."""
