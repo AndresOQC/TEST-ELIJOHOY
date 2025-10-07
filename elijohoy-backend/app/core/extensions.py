@@ -15,7 +15,7 @@ cors = CORS()
 mail = Mail()
 limiter = Limiter(
     key_func=get_remote_address,
-    default_limits=["200 per day", "50 per hour"]
+    storage_uri=None  # This will use the app's RATELIMIT_STORAGE_URL
 )
 
 # Set para almacenar tokens blacklistados
