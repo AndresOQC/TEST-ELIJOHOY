@@ -17,7 +17,7 @@ def create_app(config_name=None):
     # Inicializar extensiones
     db.init_app(app)
     jwt.init_app(app)
-    cors.init_app(app, origins=app.config['ALLOWED_ORIGINS'])
+    cors.init_app(app, origins=app.config['ALLOWED_ORIGINS'], supports_credentials=True)
     mail.init_app(app)
     limiter.init_app(app)
     
