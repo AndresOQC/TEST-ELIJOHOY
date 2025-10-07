@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: elijhoy_db
+    environment:
+      POSTGRES_USER: elijohoy_user
+      POSTGRES_PASSWORD: elijohoy_password
+      POSTGRES_DB: elijohoy_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      # Montar las migraciones para que Postgres las ejecute al inicializar (solo en la primera creación)
+      - ./migrations:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5433:5432"
+
+volumes:
+  db_data:
