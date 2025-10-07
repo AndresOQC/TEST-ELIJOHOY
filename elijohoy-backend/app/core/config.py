@@ -65,6 +65,10 @@ class ProductionConfig(Config):
     DATABASE_URL = os.environ.get('PRODUCTION_DATABASE_URL', os.environ.get('DATABASE_URL'))
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
     PASSWORD_RESET_URL = os.environ.get('PRODUCTION_PASSWORD_RESET_URL', os.environ.get('PASSWORD_RESET_URL'))
+    ALLOWED_ORIGINS = [os.environ.get('PRODUCTION_FRONTEND_URL', 'https://elijohoy.com')]
+    
+    # Redis para rate limiting en producción
+    RATELIMIT_STORAGE_URL = os.environ.get('RATELIMIT_STORAGE_URL', 'redis://localhost:6379')
 
 class TestingConfig(Config):
     """Configuración para testing."""
