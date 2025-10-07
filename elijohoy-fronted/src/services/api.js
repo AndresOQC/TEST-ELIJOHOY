@@ -1,9 +1,11 @@
 import { api } from 'boot/axios'
 
-const API_BASE_URL = process.env.VUE_APP_API_URL || 'http://localhost:5000/api'
+const API_URL = process.env.NODE_ENV === 'production'
+  ? 'http://185.111.156.248:5000/api'
+  : 'http://localhost:5000/api';
 
 // Configure axios defaults
-api.defaults.baseURL = API_BASE_URL
+api.defaults.baseURL = API_URL
 api.defaults.headers.common['Content-Type'] = 'application/json'
 api.defaults.headers.common['Accept'] = 'application/json'
 
