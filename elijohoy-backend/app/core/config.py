@@ -13,8 +13,9 @@ class Config:
     FLASK_ENV = os.environ.get('FLASK_ENV', 'development')
     
     # Base de datos
-    DATABASE_URL = os.environ.get('DATABASE_URL') or 'postgresql://postgres:password@localhost:5432/elijhoy_db'
-    SQLALCHEMY_DATABASE_URI = DATABASE_URL
+    DATABASE_URL = os.environ.get('DATABASE_URL') or 'postgresql://elijohoy_user:elijohoy_password@185.111.156.248:5433/elijohoy_db'
+    LOCAL_DATABASE_URL = 'postgresql://postgres:password@localhost:5432/elijhoy_db'
+    SQLALCHEMY_DATABASE_URI = DATABASE_URL if os.environ.get('FLASK_ENV') == 'production' else LOCAL_DATABASE_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
         'pool_pre_ping': True,
