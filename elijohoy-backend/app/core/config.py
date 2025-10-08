@@ -30,7 +30,7 @@ class Config:
     JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
     
     # CORS
-    ALLOWED_ORIGINS = [url.strip() for url in os.environ.get('ALLOWED_ORIGINS', 'http://localhost:9000,http://185.111.156.248,https://elijohoy.com').split(',')]
+    ALLOWED_ORIGINS = [url.strip() for url in os.environ.get('ALLOWED_ORIGINS', 'http://localhost:9000,http://185.111.156.248').split(',')]
     
     # Rate Limiting
     RATELIMIT_STORAGE_URL = os.environ.get('RATELIMIT_STORAGE_URL', 'memory://')
