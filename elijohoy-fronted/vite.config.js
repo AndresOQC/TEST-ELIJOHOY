@@ -1,10 +1,10 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-    server: {
-        allowedHosts: ['elijohoy.com', 'www.elijohoy.com', 'localhost', '185.111.156.248'],
-        host: '0.0.0.0',
-        port: 9000,
-    }
-    // ...otras configuraciones
+  server: {
+    host: '0.0.0.0',
+    port: 9000,
+    allowedHosts: ['elijohoy.com', 'www.elijohoy.com', 'localhost', '127.0.0.1'],
+    hmr: { host: 'elijohoy.com', protocol: 'wss', clientPort: 443 } // detrás de HTTPS
+  }
 });
