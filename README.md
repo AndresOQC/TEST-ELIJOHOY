@@ -126,7 +126,7 @@ flask create-admin
 6. Ejecutar servidor:
 ```bash
 python app.py
-# El servidor correrá en http://localhost:5000
+# El servidor correrá en http://localhost:5001
 ```
 
 ### 3. Frontend
@@ -138,7 +138,7 @@ npm install
 ```
 
 2. Configurar API URL (si es necesario):
-Editar `src/boot/axios.js` si la URL del backend es diferente de `http://localhost:5000`
+Editar `src/boot/axios.js` si la URL del backend es diferente de `http://localhost:5001`
 
 3. Ejecutar en desarrollo:
 ```bash
