@@ -9,7 +9,7 @@ import axios from 'axios'
 // for each client)
 
 const api = axios.create({ 
-  baseURL: process.env.VUE_APP_API_URL || 'http://localhost:5001/api',
+  baseURL: process.env.VUE_APP_API_URL || 'https://elijohoy.com/api',
   timeout: 10000,
   withCredentials: false, // Explicit setting for CORS
   headers: {
@@ -106,7 +106,7 @@ api.interceptors.response.use(
     try {
       // Create a new axios instance for refresh to avoid interceptor loops
       const refreshApi = axios.create({
-  baseURL: process.env.VUE_APP_API_URL || 'http://localhost:5001/api',
+  baseURL: process.env.VUE_APP_API_URL || 'https://elijohoy.com/api',
         timeout: 10000
       });
 
