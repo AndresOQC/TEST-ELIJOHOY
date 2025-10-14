@@ -1,6 +1,7 @@
 import { api } from 'boot/axios';
 
-const API_URL = 'http://185.111.156.248:5000/api'; // Asigna directamente la URL del backend
+// Prefer HTTPS production domain by default; override with VUE_APP_API_URL
+const API_URL = process.env.VUE_APP_API_URL || 'https://elijohoy.com/api';
 
 // Configure axios defaults
 api.defaults.baseURL = API_URL;

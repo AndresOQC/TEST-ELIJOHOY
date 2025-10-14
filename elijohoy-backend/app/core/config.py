@@ -30,7 +30,8 @@ class Config:
     JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
     
     # CORS
-    ALLOWED_ORIGINS = [url.strip() for url in os.environ.get('ALLOWED_ORIGINS', 'http://localhost:9000,http://185.111.156.248').split(',')]
+    # By default allow localhost dev frontends, the current server IP and the production domain.
+    ALLOWED_ORIGINS = [url.strip() for url in os.environ.get('ALLOWED_ORIGINS', 'http://localhost:9000,http://185.111.156.248,https://www.elijohoy.com').split(',')]
     
     # Rate Limiting
     RATELIMIT_STORAGE_URL = os.environ.get('RATELIMIT_STORAGE_URL', 'memory://')
@@ -49,7 +50,7 @@ class Config:
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER', os.environ.get('MAIL_USERNAME'))
     
     # Password Recovery
-    PASSWORD_RESET_URL = os.environ.get('PASSWORD_RESET_URL', 'http://localhost:9000/auth/restablecer-password')
+    PASSWORD_RESET_URL = os.environ.get('PASSWORD_RESET_URL', 'https://www.elijohoy.com/auth/restablecer-password')
     PASSWORD_RESET_TOKEN_EXPIRES = int(os.environ.get('PASSWORD_RESET_TOKEN_EXPIRES', 3600))
 
 class DevelopmentConfig(Config):
