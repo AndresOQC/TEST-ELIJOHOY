@@ -3,7 +3,7 @@ import { api } from 'boot/axios';
 // Prefer HTTPS production domain by default; override with VUE_APP_API_URL
 const API_URL = process.env.VUE_APP_API_URL || 'https://elijohoy.com/api';
 
-// Configure axios defaults
+// Configure axios defaults sss
 api.defaults.baseURL = API_URL;
 api.defaults.headers.common['Content-Type'] = 'application/json';
 api.defaults.headers.common['Accept'] = 'application/json';
