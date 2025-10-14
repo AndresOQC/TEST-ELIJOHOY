@@ -31,7 +31,7 @@ class Config:
     
     # CORS
     # By default allow localhost dev frontends, the current server IP and the production domain.
-    ALLOWED_ORIGINS = ['https://elijohoy.com', 'https://www.elijohoy.com']
+    ALLOWED_ORIGINS = ['https://elijohoy.com', 'https://www.elijohoy.com','http://localhost:9000']
     
     # Rate Limiting
     RATELIMIT_STORAGE_URL = os.environ.get('RATELIMIT_STORAGE_URL', 'memory://')
