@@ -106,7 +106,7 @@ api.interceptors.response.use(
     try {
       // Create a new axios instance for refresh to avoid interceptor loops
       const refreshApi = axios.create({
-  baseURL: process.env.VUE_APP_API_URL || 'https://elijohoy.com/api',
+        baseURL: process.env.VUE_APP_API_URL || '/api',
         timeout: 10000
       });
 
