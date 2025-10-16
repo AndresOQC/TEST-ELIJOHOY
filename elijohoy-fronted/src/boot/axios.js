@@ -126,7 +126,11 @@ api.interceptors.response.use(
     try {
       // Create a new axios instance for refresh to avoid interceptor loops
       const refreshApi = axios.create({
+<<<<<<< HEAD
   baseURL: 'https://elijohoy.com/api',
+=======
+        baseURL: 'https://elijohoy.com/api',
+>>>>>>> 90582355ed0cf382f8a94a6aba2c1f3a3e35532b
         timeout: 10000
       });
 
