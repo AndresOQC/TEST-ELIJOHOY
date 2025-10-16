@@ -9,7 +9,7 @@ import axios from 'axios'
 // for each client)
 
 const api = axios.create({ 
-  baseURL: process.env.VUE_APP_API_URL || 'http://localhost:5001/api',
+  baseURL: 'https://elijohoy.com/api',
   timeout: 10000,
   withCredentials: false, // Explicit setting for CORS
   headers: {
@@ -20,12 +20,32 @@ const api = axios.create({
 // Add request interceptor to attach Authorization header
 api.interceptors.request.use(config => {
   const token = sessionStorage.getItem('access_token');
+  
+  // Lista de endpoints que NO requieren autenticación
+  const publicEndpoints = [
+    '/auth/login',
+    '/auth/register', 
+    '/auth/recover-password',
+    '/auth/reset-password',
+    '/auth/verify-email'
+  ];
+  
+  // Verificar si la URL es un endpoint público
+  const isPublicEndpoint = publicEndpoints.some(endpoint => 
+    config.url.includes(endpoint)
+  );
+  
   if (token) {
     config.headers['Authorization'] = `Bearer ${token}`;
     console.log('🔑 Token enviado en request:', config.url, token.substring(0, 20) + '...');
-  } else {
+  } else if (!isPublicEndpoint) {
+    // Solo mostrar advertencia si NO es un endpoint público
     console.warn('⚠️ No hay token para request:', config.url);
+  } else {
+    // Endpoint público, no se necesita token
+    console.log('🌐 Request pública a:', config.url);
   }
+  
   return config;
 });
 
@@ -106,7 +126,7 @@ api.interceptors.response.use(
     try {
       // Create a new axios instance for refresh to avoid interceptor loops
       const refreshApi = axios.create({
-  baseURL: process.env.VUE_APP_API_URL || 'http://localhost:5001/api',
+  baseURL: 'https://elijohoy.com/api',
         timeout: 10000
       });
 
