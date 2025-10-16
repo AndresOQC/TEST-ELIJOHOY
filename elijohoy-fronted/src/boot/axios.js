@@ -9,7 +9,7 @@ import axios from 'axios'
 // for each client)
 
 const api = axios.create({ 
-  baseURL: process.env.VUE_APP_API_URL || 'https://elijohoy.com/api',
+  baseURL: process.env.VUE_APP_API_URL || '/api',
   timeout: 10000,
   withCredentials: false, // Explicit setting for CORS
   headers: {

@@ -1,7 +1,7 @@
 import { api } from 'boot/axios';
 
-// Prefer HTTPS production domain by default; override with VUE_APP_API_URL
-const API_URL = process.env.VUE_APP_API_URL || 'https://elijohoy.com';
+// Prefer environment value, fall back to relative '/api' so requests are proxied correctly by nginx
+const API_URL = process.env.VUE_APP_API_URL || '/api';
 
 // Configure axios defaults sss
 api.defaults.baseURL = API_URL;
