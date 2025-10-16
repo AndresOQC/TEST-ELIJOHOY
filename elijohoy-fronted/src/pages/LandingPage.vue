@@ -31,23 +31,12 @@
               />
 
               <q-btn
-                outline
-                size="lg"
-                color="purple-7"
-                label="Iniciar Sesión"
-                icon="login"
-                to="/auth/login"
-                class="q-mb-sm btn-outline"
-                no-caps
-              />
-
-              <q-btn
                 flat
                 size="lg"
                 color="white"
-                label="Saber Más"
-                icon="expand_more"
-                @click="$emit('scroll-to', 'features')"
+                label="Iniciar Sesión"
+                icon="login"
+                to="/auth/login"
                 class="q-mb-sm btn-learn-more"
                 no-caps
               />
