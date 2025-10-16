@@ -181,18 +181,6 @@
         </template>
 
         <q-separator class="q-my-md" />
-
-        <div class="q-pa-md">
-          <q-btn
-            unelevated
-            color="purple-7"
-            icon="arrow_back"
-            label="Volver al Inicio"
-            @click="$router.push('/')"
-            class="full-width"
-            no-caps
-          />
-        </div>
       </q-scroll-area>
     </q-drawer>
 
