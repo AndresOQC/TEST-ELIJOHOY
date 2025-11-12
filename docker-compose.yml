@@ -41,6 +41,7 @@ services:
       - "5001:5001"
     volumes:
       - ./elijohoy-backend:/app
+      - ./AVATAR:/app/static/avatars:ro
       - /app/venv
       - /app/__pycache__
     depends_on:

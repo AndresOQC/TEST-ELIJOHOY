@@ -80,11 +80,15 @@
                   class="sesion-item"
                 >
                   <q-item-section avatar>
-                    <q-icon
-                      :name="sesion.completado ? 'check_circle' : 'pending'"
-                      :color="sesion.completado ? 'positive' : 'warning'"
-                      size="32px"
-                    />
+                    <q-avatar size="48px">
+                      <img :src="getAvatarUrl(sesion.tipo_personalidad)" alt="avatar" v-if="sesion.tipo_personalidad" />
+                      <q-icon
+                        v-else
+                        :name="sesion.completado ? 'check_circle' : 'pending'"
+                        :color="sesion.completado ? 'positive' : 'warning'"
+                        size="32px"
+                      />
+                    </q-avatar>
                   </q-item-section>
 
                   <q-item-section>
@@ -175,6 +179,12 @@ const formatDate = (dateString) => {
     hour: '2-digit',
     minute: '2-digit'
   })
+}
+
+const getAvatarUrl = (tipo) => {
+  if (!tipo) return ''
+  const encoded = encodeURIComponent(tipo)
+  return `http://localhost:5001/avatars/${encoded}`
 }
 
 const getTipoColor = (tipo) => {
