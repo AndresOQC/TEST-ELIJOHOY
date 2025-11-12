@@ -15,6 +15,7 @@ from app.utils.validators import validate_user_data, sanitize_string
 from app.utils.email_utils import send_password_reset_email
 from datetime import datetime, timedelta, timedelta
 import uuid
+import traceback
 
 # Crear blueprint
 auth_bp = Blueprint('auth', __name__)
@@ -271,7 +272,6 @@ def refresh():
         new_access_token = create_access_token(identity=current_user_id)
 
         # Guardar token en BD
-        from flask_jwt_extended import decode_token
         access_jti = decode_token(new_access_token)['jti']
         access_expires = datetime.utcnow() + timedelta(hours=1)
 
@@ -401,10 +401,16 @@ def recover_password():
                 current_app.config['PASSWORD_RESET_TOKEN_EXPIRES']
             )
             
+            # Determinar el nombre del usuario para el email
+            if user.alumno and user.alumno.nombre:
+                user_name = f"{user.alumno.nombre} {user.alumno.apellidos}" if user.alumno.apellidos else user.alumno.nombre
+            else:
+                user_name = user.email.split('@')[0]  # Usar la parte del email antes del @
+            
             # Enviar email de recuperación
             email_sent = send_password_reset_email(
                 user_email=user.email,
-                user_name=user.alumno.nombre if user.alumno else user.email,
+                user_name=user_name,
                 reset_token=reset_token.jti
             )
             
@@ -435,12 +441,16 @@ def recover_password():
 def reset_password():
     """Restablecer contraseña con token."""
     try:
+        current_app.logger.info('=== Inicio reset-password ===')
         data = request.get_json()
+        current_app.logger.info(f'Data recibida: {data}')
+        
         if not data or not data.get('token') or not data.get('new_password'):
             return jsonify({'success': False, 'message': 'Token y nueva contraseña son requeridos'}), 400
         
         token_string = data['token']
         new_password = data['new_password']
+        current_app.logger.info(f'Token recibido: {token_string[:20]}...')
         
         # Validar la nueva contraseña
         password_errors = []
@@ -456,6 +466,7 @@ def reset_password():
             password_errors.append('La contraseña debe contener al menos un símbolo')
         
         if password_errors:
+            current_app.logger.warning(f'Errores de validación de contraseña: {password_errors}')
             return jsonify({
                 'success': False, 
                 'message': 'Contraseña no válida',
@@ -463,35 +474,46 @@ def reset_password():
             }), 400
         
         # Verificar el token
+        current_app.logger.info('Verificando token...')
         reset_token = Token.verify_password_reset_token(token_string)
         
         if not reset_token:
+            current_app.logger.warning('Token inválido o expirado')
             return jsonify({
                 'success': False,
                 'message': 'Token inválido o expirado'
             }), 400
         
+        current_app.logger.info(f'Token válido para usuario_id: {reset_token.usuario_id}')
+        
         # Obtener el usuario
         user = Usuario.query.get(reset_token.usuario_id)
         if not user or not user.activo:
+            current_app.logger.warning(f'Usuario no encontrado o inactivo: {reset_token.usuario_id}')
             return jsonify({
                 'success': False,
                 'message': 'Usuario no encontrado'
             }), 404
         
+        current_app.logger.info(f'Usuario encontrado: {user.email}')
+        
         # Cambiar la contraseña
         user.password_hash = hash_password(new_password)
         user.actualizado_en = datetime.utcnow()
+        current_app.logger.info('Contraseña hasheada y usuario actualizado')
         
         # Marcar el token como usado
         reset_token.use_token()
+        current_app.logger.info('Token marcado como usado')
         
         # Revocar todos los tokens JWT activos del usuario
         existing_tokens = Token.query.filter_by(usuario_id=user.id, revocado=False).all()
         for token in existing_tokens:
             token.revocado = True
+        current_app.logger.info(f'Revocados {len(existing_tokens)} tokens JWT')
         
         db.session.commit()
+        current_app.logger.info('Cambios guardados en BD')
         
         current_app.logger.info(f'Contraseña restablecida para usuario {user.email}')
         
@@ -503,4 +525,7 @@ def reset_password():
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f'Error restableciendo contraseña: {str(e)}')
+        current_app.logger.error(f'Tipo de error: {type(e).__name__}')
+        import traceback
+        current_app.logger.error(f'Traceback: {traceback.format_exc()}')
         return jsonify({'success': False, 'message': 'Error interno del servidor'}), 500

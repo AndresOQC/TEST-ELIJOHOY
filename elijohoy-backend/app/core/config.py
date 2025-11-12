@@ -29,9 +29,8 @@ class Config:
     JWT_BLACKLIST_ENABLED = True
     JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
     
-    # CORS
-    # By default allow localhost dev frontends, the current server IP and the production domain.
-    ALLOWED_ORIGINS = ['https://elijohoy.com', 'https://www.elijohoy.com','http://localhost:9000', 'http://185.111.156.248:9000']
+    # CORS - Lee desde .env o usa valores por defecto según entorno
+    ALLOWED_ORIGINS = os.environ.get('ALLOWED_ORIGINS', 'http://localhost:9000,http://127.0.0.1:9000').split(',')
     
     # Rate Limiting
     RATELIMIT_STORAGE_URL = os.environ.get('RATELIMIT_STORAGE_URL', 'memory://')
@@ -49,8 +48,9 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER', os.environ.get('MAIL_USERNAME'))
     
-    # Password Recovery
-    PASSWORD_RESET_URL = os.environ.get('PASSWORD_RESET_URL', 'https://www.elijohoy.com/auth/restablecer-password')
+    # Password Recovery - URL del frontend para reseteo de contraseña
+    FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:9000')
+    PASSWORD_RESET_URL = os.environ.get('PASSWORD_RESET_URL', FRONTEND_URL)
     PASSWORD_RESET_TOKEN_EXPIRES = int(os.environ.get('PASSWORD_RESET_TOKEN_EXPIRES', 3600))
 
 class DevelopmentConfig(Config):
@@ -63,10 +63,16 @@ class ProductionConfig(Config):
     DEBUG = False
     TESTING = False
     
-    # Sobrescribir para producción
+    # En producción, usar las variables de entorno con prefijo PRODUCTION si existen
     DATABASE_URL = os.environ.get('PRODUCTION_DATABASE_URL', os.environ.get('DATABASE_URL'))
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
-    PASSWORD_RESET_URL = os.environ.get('PRODUCTION_PASSWORD_RESET_URL', os.environ.get('PASSWORD_RESET_URL'))
+    
+    # URLs de producción
+    FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://elijohoy.com')
+    PASSWORD_RESET_URL = os.environ.get('PASSWORD_RESET_URL', FRONTEND_URL)
+    
+    # CORS para producción
+    ALLOWED_ORIGINS = os.environ.get('ALLOWED_ORIGINS', 'https://elijohoy.com,https://www.elijohoy.com').split(',')
 
 class TestingConfig(Config):
     """Configuración para testing."""

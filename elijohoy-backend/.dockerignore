@@ -1,10 +1,61 @@
-venv
-__pycache__
+# Python
+venv/
+__pycache__/
 *.pyc
-.pytest_cache
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+ENV/
+.venv/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment
 .env
-env
-logs
-node_modules
-dist
-.git
+.env.local
+.env.*.local
+
+# Database files (no incluir en imagen)
+*.db
+*.sqlite
+*.sqlite3
+
+# Git
+.git/
+.gitignore
+
+# Node modules (si existen)
+node_modules/
+dist/
+
+# Docker
+docker-compose.yml
+docker-compose.prod.yml
+docker-compose.override.yml
+Dockerfile
+.dockerignore
+
+# README y docs de desarrollo
+README.md
+DOCKER-README.md

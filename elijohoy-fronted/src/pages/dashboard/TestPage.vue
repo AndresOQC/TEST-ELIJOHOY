@@ -130,7 +130,8 @@ const error = ref(false)
 const errorMessage = ref('')
 
 const PREGUNTAS_POR_PAGINA = 3
-const BUBBLE_SIZES = [64, 48, 32, 48, 64] // Tamaños mejorados: grandes, medianas, pequeña, medianas, grandes
+// Tamaños crecientes de izquierda a derecha: 1→2→3→4→5
+const BUBBLE_SIZES = [32, 40, 48, 56, 64]
 
 const totalPaginas = computed(() => Math.ceil(preguntas.value.length / PREGUNTAS_POR_PAGINA))
 
@@ -438,10 +439,14 @@ onMounted(async () => {
   min-height: calc(100vh - 64px);
   height: 100%;
   padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .container {
-  max-width: 1000px;
+  max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   padding: 8px;
 }
@@ -574,64 +579,70 @@ onMounted(async () => {
 .question-options {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 24px;
+  justify-content: center;
 }
 
 .option-label {
   flex: 1;
-  font-size: 1.2rem;
+  max-width: 350px;
+  font-size: 1.15rem;
   font-weight: 600;
   color: #1F2937;
-  line-height: 1.5;
-  padding: 16px;
+  line-height: 1.6;
+  padding: 20px 24px;
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  text-transform: none !important;
 }
 
 .option-label.left {
-  text-align: right;
   background: linear-gradient(135deg,
-    rgba(99, 102, 241, 0.1) 0%,
-    rgba(99, 102, 241, 0.05) 100%);
+    rgba(99, 102, 241, 0.12) 0%,
+    rgba(99, 102, 241, 0.06) 100%);
+  border-left: 3px solid rgba(99, 102, 241, 0.4);
 }
 
 .option-label.right {
-  text-align: left;
   background: linear-gradient(135deg,
-    rgba(245, 158, 11, 0.1) 0%,
-    rgba(245, 158, 11, 0.05) 100%);
+    rgba(245, 158, 11, 0.12) 0%,
+    rgba(245, 158, 11, 0.06) 100%);
+  border-right: 3px solid rgba(245, 158, 11, 0.4);
 }
 
-/* Bubbles Selector */
+/* Bubbles Selector - Sistema de escala 1-5 creciente */
 .bubbles-selector {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
-  padding: 16px;
+  gap: 16px;
+  padding: 20px 16px;
   position: relative;
-  margin: 16px 0;
+  margin: 20px 0;
+  min-width: 300px;
 }
 
+/* Escala creciente de izquierda a derecha: 1 (pequeño) → 5 (grande) */
 .bubble {
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%);
+  background: linear-gradient(135deg, rgba(226, 232, 240, 0.95) 0%, rgba(203, 213, 225, 0.95) 100%);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  border: 2px solid rgba(148, 163, 184, 0.3);
   overflow: hidden;
 }
 
@@ -644,66 +655,73 @@ onMounted(async () => {
   bottom: 0;
   border-radius: 50%;
   background: linear-gradient(135deg,
-    rgba(156, 163, 175, 0.1) 0%,
-    rgba(209, 213, 219, 0.1) 100%);
+    rgba(100, 116, 139, 0.1) 0%,
+    rgba(148, 163, 184, 0.1) 100%);
   opacity: 0;
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
   z-index: -1;
 }
 
+/* Hover effect - azul suave */
 .bubble:hover {
-  transform: scale(1.08);
+  transform: scale(1.15);
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.12),
-    0 0 0 1px rgba(99, 102, 241, 0.2),
+    0 8px 24px rgba(59, 130, 246, 0.25),
+    0 0 0 1px rgba(59, 130, 246, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.7);
-  border-color: rgba(99, 102, 241, 0.3);
+  border-color: rgba(59, 130, 246, 0.5);
+  background: linear-gradient(135deg, rgba(191, 219, 254, 0.95) 0%, rgba(147, 197, 253, 0.95) 100%);
 }
 
 .bubble:hover::before {
-  opacity: 0.6;
+  opacity: 0.8;
   background: linear-gradient(135deg,
-    rgba(59, 130, 246, 0.15) 0%,
-    rgba(99, 102, 241, 0.15) 100%);
+    rgba(59, 130, 246, 0.2) 0%,
+    rgba(96, 165, 250, 0.2) 100%);
 }
 
+/* Seleccionado - azul brillante */
 .bubble.selected {
   background: linear-gradient(135deg,
-    rgba(59, 130, 246, 0.95) 0%,
-    rgba(99, 102, 241, 0.95) 100%);
+    rgba(37, 99, 235, 1) 0%,
+    rgba(59, 130, 246, 1) 100%);
   box-shadow:
-    0 8px 32px rgba(59, 130, 246, 0.4),
-    0 0 0 3px rgba(255, 255, 255, 0.6),
+    0 8px 32px rgba(59, 130, 246, 0.5),
+    0 0 0 4px rgba(255, 255, 255, 0.8),
+    0 0 24px rgba(59, 130, 246, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  border-color: rgba(255, 255, 255, 0.6);
-  transform: scale(1.12);
-  animation: bubble-selected-glow 2s ease-in-out infinite;
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: scale(1.2);
+  animation: bubble-pulse 2s ease-in-out infinite;
 }
 
 .bubble.selected::before {
   opacity: 1;
   background: linear-gradient(135deg,
-    rgba(255, 255, 255, 0.3) 0%,
-    rgba(255, 255, 255, 0.1) 100%);
-  animation: bubble-selected-rotate 3s linear infinite;
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.15) 100%);
+  animation: bubble-shimmer 3s linear infinite;
 }
 
-@keyframes bubble-selected-glow {
+/* Animaciones mejoradas */
+@keyframes bubble-pulse {
   0%, 100% {
     box-shadow:
-      0 8px 32px rgba(59, 130, 246, 0.4),
-      0 0 0 3px rgba(255, 255, 255, 0.6),
+      0 8px 32px rgba(59, 130, 246, 0.5),
+      0 0 0 4px rgba(255, 255, 255, 0.8),
+      0 0 24px rgba(59, 130, 246, 0.3),
       inset 0 1px 0 rgba(255, 255, 255, 0.4);
   }
   50% {
     box-shadow:
-      0 12px 40px rgba(59, 130, 246, 0.6),
-      0 0 0 4px rgba(255, 255, 255, 0.8),
+      0 12px 48px rgba(59, 130, 246, 0.7),
+      0 0 0 5px rgba(255, 255, 255, 0.9),
+      0 0 32px rgba(59, 130, 246, 0.5),
       inset 0 1px 0 rgba(255, 255, 255, 0.5);
   }
 }
 
-@keyframes bubble-selected-rotate {
+@keyframes bubble-shimmer {
   0% {
     transform: rotate(0deg);
   }
@@ -719,7 +737,7 @@ onMounted(async () => {
     rgba(255, 255, 255, 0.2) 100%);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
   box-shadow:
     inset 0 2px 4px rgba(0, 0, 0, 0.1),
     0 2px 8px rgba(255, 255, 255, 0.2);
@@ -728,13 +746,24 @@ onMounted(async () => {
 
 .bubble.selected .bubble-inner {
   background: linear-gradient(135deg,
-    rgba(255, 255, 255, 0.7) 0%,
-    rgba(255, 255, 255, 0.4) 100%);
-  transform: scale(0.9);
+    rgba(255, 255, 255, 0.75) 0%,
+    rgba(255, 255, 255, 0.45) 100%);
+  transform: scale(0.85);
   box-shadow:
     inset 0 4px 8px rgba(0, 0, 0, 0.15),
-    0 4px 16px rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.5);
+    0 4px 16px rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+/* Indicadores de escala opcionales (números) */
+.bubbles-selector::after {
+  content: '1 → 5';
+  position: absolute;
+  bottom: -4px;
+  font-size: 0.75rem;
+  color: rgba(100, 116, 139, 0.6);
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 /* Loading */

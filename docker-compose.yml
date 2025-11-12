@@ -4,13 +4,13 @@ services:
   # Base de datos PostgreSQL
   db:
     image: postgres:15-alpine
-    container_name: elijhoy_db
+    container_name: elijohoy_db_dev
     environment:
       POSTGRES_USER: elijohoy_user
       POSTGRES_PASSWORD: elijohoy_password
       POSTGRES_DB: elijohoy_db
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data_dev:/var/lib/postgresql/data
       - ./elijohoy-backend/migrations:/docker-entrypoint-initdb.d:ro
     ports:
       - "5433:5432"
@@ -22,18 +22,20 @@ services:
     networks:
       - elijohoy_network
 
-  # API Backend Flask
+  # API Backend Flask (Desarrollo)
   backend:
     build:
       context: ./elijohoy-backend
       dockerfile: Dockerfile
-    container_name: elijhoy_backend
+    container_name: elijohoy_backend_dev
+    env_file:
+      - ./elijohoy-backend/.env
     environment:
       FLASK_ENV: development
-      SECRET_KEY: dev-secret-key-change-in-production
-      JWT_SECRET_KEY: dev-jwt-secret-key-change-in-production
       DATABASE_URL: postgresql://elijohoy_user:elijohoy_password@db:5432/elijohoy_db
       FRONTEND_URL: http://localhost:9000
+      PASSWORD_RESET_URL: http://localhost:9000/auth/restablecer-password
+      ALLOWED_ORIGINS: http://localhost:9000,http://127.0.0.1:9000,http://localhost:80
       PORT: 5001
     ports:
       - "5001:5001"
@@ -47,15 +49,17 @@ services:
     networks:
       - elijohoy_network
     restart: unless-stopped
+    command: python app.py
 
   # Frontend Vue.js + Quasar (Desarrollo con hot-reload)
   frontend:
     build:
       context: ./elijohoy-fronted
       dockerfile: Dockerfile.dev
-    container_name: elijhoy_frontend
+    container_name: elijohoy_frontend_dev
     environment:
       - CHOKIDAR_USEPOLLING=true
+      - NODE_ENV=development
     ports:
       - "9000:9000"
     volumes:
@@ -71,7 +75,7 @@ services:
     tty: true
 
 volumes:
-  db_data:
+  db_data_dev:
 
 networks:
   elijohoy_network:

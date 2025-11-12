@@ -1,31 +1,64 @@
 import { boot } from 'quasar/wrappers'
 import axios from 'axios'
 
-// Be careful when using SSR for cross-request state pollution
-// due to creating a Singleton instance here;
-// If any client changes this (global) instance, it might be a
-// good idea to move this instance creation inside of the
-// "export default () => {}" function below (which runs individually
-// for each client)
+// =============================================================================
+// CONFIGURACIÓN DE API BASE URL
+// =============================================================================
+// Detectar automáticamente el entorno basado en el hostname
+// - Desarrollo: localhost o 127.0.0.1 -> usa localhost:5001
+// - Producción: cualquier otro dominio -> usa el dominio actual con /api
+// =============================================================================
+
+const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+
+// Construir la URL base de la API según el entorno
+let API_BASE_URL
+
+if (isDevelopment) {
+  // Desarrollo: usar localhost:5001
+  API_BASE_URL = 'http://localhost:5001/api'
+  console.log('🔧 Modo DESARROLLO - API:', API_BASE_URL)
+} else {
+  // Producción: usar el protocolo y dominio actual
+  const protocol = window.location.protocol
+  const hostname = window.location.hostname
+  API_BASE_URL = `${protocol}//${hostname}/api`
+  console.log('🚀 Modo PRODUCCIÓN - API:', API_BASE_URL)
+}
 
 const api = axios.create({ 
-  baseURL: 'http://localhost:5001/api',
+  baseURL: API_BASE_URL,
   timeout: 10000,
-  withCredentials: false, // Explicit setting for CORS
+  withCredentials: false,
   headers: {
     'Content-Type': 'application/json',
   }
 })
 
+
 // Add request interceptor to attach Authorization header
 api.interceptors.request.use(config => {
-  const token = sessionStorage.getItem('access_token');
-  if (token) {
-    config.headers['Authorization'] = `Bearer ${token}`;
-    console.log('🔑 Token enviado en request:', config.url, token.substring(0, 20) + '...');
-  } else {
-    console.warn('⚠️ No hay token para request:', config.url);
+  // Lista de endpoints que NO requieren autenticación
+  const publicEndpoints = [
+    '/auth/login',
+    '/auth/register',
+    '/auth/recover-password',
+    '/auth/reset-password'
+  ];
+  
+  // Verificar si la URL actual es un endpoint público
+  const isPublicEndpoint = publicEndpoints.some(endpoint => config.url.includes(endpoint));
+  
+  if (!isPublicEndpoint) {
+    const token = sessionStorage.getItem('access_token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+      console.log('🔑 Token enviado en request:', config.url, token.substring(0, 20) + '...');
+    } else {
+      console.warn('⚠️ No hay token para request:', config.url);
+    }
   }
+  
   return config;
 });
 
@@ -105,8 +138,9 @@ api.interceptors.response.use(
 
     try {
       // Create a new axios instance for refresh to avoid interceptor loops
+      // Usar la misma API_BASE_URL detectada automáticamente
       const refreshApi = axios.create({
-        baseURL: 'https://elijohoy.com/api',
+        baseURL: API_BASE_URL,
         timeout: 10000
       });
 

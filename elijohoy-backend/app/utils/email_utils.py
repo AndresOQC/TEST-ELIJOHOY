@@ -33,12 +33,20 @@ def send_email(to, subject, template, **kwargs):
 
 def send_password_reset_email(user_email, user_name, reset_token):
     """Enviar email de recuperación de contraseña."""
-    # Usar la URL base del .env y agregar el hash si es necesario
+    # Construir la URL de restablecimiento
+    # La configuración debe ser la URL base del frontend (ej: https://www.elijohoy.com)
     base_url = current_app.config['PASSWORD_RESET_URL']
-    if base_url.endswith('/'):
-        reset_url = f"{base_url}#/auth/restablecer-password/{reset_token}"
+    
+    # Si la URL base ya incluye la ruta completa, usarla directamente
+    if '/auth/restablecer-password' in base_url:
+        # El .env ya tiene la ruta completa, solo agregamos el token
+        reset_url = f"{base_url}/{reset_token}"
     else:
-        reset_url = f"{base_url}/#/auth/restablecer-password/{reset_token}"
+        # El .env solo tiene el dominio, construimos la ruta completa
+        if base_url.endswith('/'):
+            reset_url = f"{base_url}#/auth/restablecer-password/{reset_token}"
+        else:
+            reset_url = f"{base_url}/#/auth/restablecer-password/{reset_token}"
     
     # Template HTML para el email
     html_template = """
