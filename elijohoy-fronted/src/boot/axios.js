@@ -20,32 +20,12 @@ const api = axios.create({
 // Add request interceptor to attach Authorization header
 api.interceptors.request.use(config => {
   const token = sessionStorage.getItem('access_token');
-  
-  // Lista de endpoints que NO requieren autenticación
-  const publicEndpoints = [
-    '/auth/login',
-    '/auth/register', 
-    '/auth/recover-password',
-    '/auth/reset-password',
-    '/auth/verify-email'
-  ];
-  
-  // Verificar si la URL es un endpoint público
-  const isPublicEndpoint = publicEndpoints.some(endpoint => 
-    config.url.includes(endpoint)
-  );
-  
   if (token) {
     config.headers['Authorization'] = `Bearer ${token}`;
     console.log('🔑 Token enviado en request:', config.url, token.substring(0, 20) + '...');
-  } else if (!isPublicEndpoint) {
-    // Solo mostrar advertencia si NO es un endpoint público
-    console.warn('⚠️ No hay token para request:', config.url);
   } else {
-    // Endpoint público, no se necesita token
-    console.log('🌐 Request pública a:', config.url);
+    console.warn('⚠️ No hay token para request:', config.url);
   }
-  
   return config;
 });
 
@@ -126,11 +106,7 @@ api.interceptors.response.use(
     try {
       // Create a new axios instance for refresh to avoid interceptor loops
       const refreshApi = axios.create({
-<<<<<<< HEAD
-  baseURL: 'https://elijohoy.com/api',
-=======
         baseURL: 'https://elijohoy.com/api',
->>>>>>> 90582355ed0cf382f8a94a6aba2c1f3a3e35532b
         timeout: 10000
       });
 
