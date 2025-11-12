@@ -236,3 +236,74 @@ async function reiniciarTest() {
   }
 }
 </script>
+
+<style scoped>
+.q-page {
+  min-height: calc(100vh - 64px);
+  height: 100%;
+  padding: 24px !important;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+@media (max-width: 768px) {
+  .q-page {
+    min-height: calc(100vh - 60px);
+    padding: 16px !important;
+  }
+  
+  .text-h3 {
+    font-size: 2rem;
+  }
+  
+  .text-h5 {
+    font-size: 1.3rem;
+  }
+  
+  .text-h6 {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .q-page {
+    padding: 12px !important;
+  }
+  
+  .text-h3 {
+    font-size: 1.8rem;
+  }
+  
+  .text-h5 {
+    font-size: 1.2rem;
+  }
+  
+  .text-h6 {
+    font-size: 1rem;
+  }
+}
+
+@media (max-height: 700px) {
+  .q-page {
+    padding: 16px !important;
+  }
+  
+  .text-h3 {
+    font-size: 1.8rem;
+    margin-bottom: 4px !important;
+  }
+  
+  .text-h5 {
+    font-size: 1.2rem;
+  }
+  
+  .text-h6 {
+    font-size: 1rem;
+    margin-bottom: 8px !important;
+  }
+  
+  :deep(.q-card-section) {
+    padding: 16px;
+  }
+}
+</style>
+

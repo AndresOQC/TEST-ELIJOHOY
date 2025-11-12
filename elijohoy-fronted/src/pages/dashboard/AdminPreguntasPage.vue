@@ -492,11 +492,61 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.q-page {
+  min-height: calc(100vh - 64px);
+  height: 100%;
+  padding: 24px !important;
+}
+
 :deep(.q-table tbody td) {
   font-size: 0.9rem;
 }
 
 :deep(.q-table__card) {
   box-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .q-page {
+    min-height: calc(100vh - 60px);
+    padding: 16px !important;
+  }
+  
+  .text-h4 {
+    font-size: 1.8rem;
+  }
+  
+  :deep(.q-table) {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .q-page {
+    padding: 12px !important;
+  }
+  
+  .text-h4 {
+    font-size: 1.5rem;
+  }
+  
+  :deep(.q-table tbody td) {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-height: 700px) {
+  .q-page {
+    padding: 16px !important;
+  }
+  
+  .text-h4 {
+    font-size: 1.4rem;
+    margin-bottom: 4px !important;
+  }
+  
+  .text-subtitle2 {
+    font-size: 0.875rem;
+  }
 }
 </style>

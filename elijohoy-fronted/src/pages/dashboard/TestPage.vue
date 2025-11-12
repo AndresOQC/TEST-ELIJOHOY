@@ -435,20 +435,21 @@ onMounted(async () => {
 <style scoped>
 .test-page {
   background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
-  min-height: 100vh;
-  padding: 8px;
+  min-height: calc(100vh - 64px);
+  height: 100%;
+  padding: 16px;
 }
 
 .container {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 0.1px;
+  padding: 8px;
 }
 
 /* Header */
 .test-header {
   text-align: center;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
 }
 
 .test-title {
@@ -461,12 +462,12 @@ onMounted(async () => {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 2px;
+  margin-bottom: 8px;
   letter-spacing: -0.02em;
 }
 
 .progress-info {
-  margin-top: 2px;
+  margin-top: 8px;
 }
 
 .progress-text {
@@ -520,7 +521,7 @@ onMounted(async () => {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-radius: 24px;
-  padding: 8px;
+  padding: 16px;
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
@@ -837,11 +838,12 @@ onMounted(async () => {
 /* Responsive */
 @media (max-width: 768px) {
   .test-page {
-    padding: 10px;
+    min-height: calc(100vh - 60px);
+    padding: 12px;
   }
 
   .test-header {
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
 
   .test-title {
@@ -849,7 +851,7 @@ onMounted(async () => {
   }
 
   .question-card {
-    padding: 10px;
+    padding: 14px;
   }
 
   .question-options {
@@ -870,14 +872,10 @@ onMounted(async () => {
     margin: 12px 0;
   }
 
-  .bubble {
-    width: 70px;
-    height: 70px;
-  }
-
   .navigation-buttons {
     flex-direction: column;
     gap: 16px;
+    margin-top: 24px;
   }
 
   .nav-btn {
@@ -888,15 +886,15 @@ onMounted(async () => {
 
 @media (max-width: 480px) {
   .test-page {
-    padding: 12px;
+    padding: 10px;
   }
 
   .test-header {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
 
   .test-title {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
   .question-card {
@@ -905,12 +903,12 @@ onMounted(async () => {
 
   .question-number {
     font-size: 0.85rem;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   .option-label {
     font-size: 1rem;
-    padding: 5px;
+    padding: 10px;
   }
 
   .bubbles-selector {
@@ -919,14 +917,61 @@ onMounted(async () => {
     margin: 10px 0;
   }
 
-  .bubble {
-    width: 60px;
-    height: 60px;
-  }
-
   .nav-btn {
     font-size: 1rem;
     padding: 12px 20px;
+  }
+}
+
+@media (max-height: 700px) {
+  .test-page {
+    padding: 8px;
+  }
+  
+  .test-header {
+    margin-bottom: 8px;
+  }
+  
+  .test-title {
+    font-size: 1.8rem;
+    margin-bottom: 4px;
+  }
+  
+  .progress-text {
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+  
+  .questions-container {
+    gap: 12px;
+  }
+  
+  .question-card {
+    padding: 10px;
+  }
+  
+  .option-label {
+    padding: 10px;
+    font-size: 1rem;
+  }
+  
+  .bubbles-selector {
+    padding: 8px;
+    margin: 8px 0;
+    gap: 12px;
+  }
+  
+  .navigation-buttons {
+    margin-top: 16px;
+    gap: 12px;
+  }
+  
+  .nav-btn {
+    padding: 12px 24px;
+  }
+  
+  .loading-container {
+    padding: 40px;
   }
 }
 </style>

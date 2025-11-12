@@ -245,7 +245,9 @@ onMounted(() => {
 <style scoped>
 .test-resultados-page {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
+  min-height: calc(100vh - 64px);
+  height: 100%;
+  padding: 24px;
 }
 
 .page-header {
@@ -269,5 +271,70 @@ onMounted(() => {
 .sesiones-list {
   max-height: 70vh;
   overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .test-resultados-page {
+    min-height: calc(100vh - 60px);
+    padding: 16px;
+  }
+  
+  .page-header {
+    padding: 16px;
+  }
+  
+  .page-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .page-header .q-icon {
+    font-size: 36px !important;
+  }
+  
+  .sesiones-list {
+    max-height: 65vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .test-resultados-page {
+    padding: 12px;
+  }
+  
+  .page-header {
+    padding: 12px;
+  }
+  
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .page-header .q-icon {
+    font-size: 32px !important;
+    margin-right: 8px !important;
+  }
+}
+
+@media (max-height: 700px) {
+  .test-resultados-page {
+    padding: 16px;
+  }
+  
+  .page-header {
+    padding: 16px;
+  }
+  
+  .page-header h1 {
+    font-size: 1.4rem;
+    margin-bottom: 4px !important;
+  }
+  
+  .page-header p {
+    font-size: 0.875rem;
+  }
+  
+  .sesiones-list {
+    max-height: 60vh;
+  }
 }
 </style>

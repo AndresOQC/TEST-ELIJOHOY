@@ -5,20 +5,20 @@
     <div id="hero" class="hero-section">
       <div class="container">
         <div class="row items-center">
-          <div class="col-12 col-md-6 q-pr-md">
-            <div class="hero-badge q-mb-md">
-              <q-icon name="stars" size="20px" class="q-mr-xs" />
+          <div class="col-12 col-md-6 q-pr-md q-pa-md">
+            <div class="hero-badge q-mb-sm">
+              <q-icon name="stars" size="15px" class="q-mr-xs" />
               Plataforma #1 en Orientación Vocacional
             </div>
-            <h1 class="hero-title text-h2 text-weight-bold q-mb-md">
+            <h1 class="hero-title text-h2 text-weight-bold q-mb-sm">
               ElijeHoy: Descubre tu Vocación y Construye tu Futuro
             </h1>
 
-            <p class="hero-subtitle text-h6 q-mb-xl">
+            <p class="hero-subtitle text-h6 q-mb-md">
               La plataforma líder en orientación vocacional que ha ayudado a miles de jóvenes a encontrar su verdadero camino profesional. Descubre tus talentos únicos y toma decisiones educativas con confianza absoluta.
             </p>
 
-            <div class="hero-actions">
+            <div class="hero-actions" style="position: relative; z-index: 10;">
               <q-btn
                 unelevated
                 size="lg"
@@ -26,7 +26,7 @@
                 label="Comenzar Test Gratuito"
                 icon="rocket_launch"
                 to="/test"
-                class="q-mr-md q-mb-sm btn-gradient-purple"
+                class="q-mr-sm q-mb-xs btn-gradient-purple"
                 no-caps
               />
 
@@ -37,25 +37,9 @@
                 label="Iniciar Sesión"
                 icon="login"
                 to="/auth/login"
-                class="q-mb-sm btn-learn-more"
+                class="q-mb-xs btn-learn-more"
                 no-caps
               />
-            </div>
-
-            <!-- Stats -->
-            <div class="row q-mt-xl q-gutter-md">
-              <div class="stat-item">
-                <div class="stat-number">10,000+</div>
-                <div class="stat-label">Estudiantes</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-number">95%</div>
-                <div class="stat-label">Satisfacción</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-number">50+</div>
-                <div class="stat-label">Carreras</div>
-              </div>
             </div>
           </div>
 
@@ -95,33 +79,8 @@
           </p>
         </div>
 
-        <div class="row q-col-gutter-lg">
-          <div class="col-12 col-md-4">
-            <q-card class="feature-card full-height">
-              <q-card-section>
-                <div class="feature-icon bg-purple-1">
-                  <q-icon name="groups" size="48px" color="purple-7" />
-                </div>
-                <h3 class="text-h5 text-weight-bold text-purple-10 q-mb-md q-mt-md">
-                  Más de 10,000 Estudiantes
-                </h3>
-                <p class="text-body1 text-grey-7">
-                  Miles de jóvenes han encontrado su camino profesional utilizando nuestro test vocacional personalizado y científicamente validado.
-                </p>
-                <q-btn
-                  flat
-                  no-caps
-                  label="Comenzar Test"
-                  to="/test"
-                  color="purple-7"
-                  class="q-mt-md feature-link"
-                  icon="arrow_forward"
-                />
-              </q-card-section>
-            </q-card>
-          </div>
-
-          <div class="col-12 col-md-4">
+        <div class="row q-col-gutter-lg justify-center">
+          <div class="col-12 col-md-5">
             <q-card class="feature-card full-height">
               <q-card-section>
                 <div class="feature-icon bg-amber-1">
@@ -146,7 +105,7 @@
             </q-card>
           </div>
 
-          <div class="col-12 col-md-4">
+          <div class="col-12 col-md-5">
             <q-card class="feature-card full-height">
               <q-card-section>
                 <div class="feature-icon bg-pink-1">
@@ -300,114 +259,6 @@
               </q-card-section>
             </q-card>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Testimonios -->
-        <!-- Testimonios -->
-    <div id="testimonials" class="testimonials-section q-py-xl">
-      <div class="container">
-        <div class="text-center q-mb-xl">
-          <div class="section-badge q-mb-md">
-            <q-icon name="format_quote" size="20px" class="q-mr-xs" />
-            Testimonios
-          </div>
-          <h2 class="text-h3 text-weight-bold text-purple-10 q-mb-md">
-            Testimonios Reales que Inspiran
-          </h2>
-          <p class="text-h6 text-grey-7" style="max-width: 700px; margin: 0 auto;">
-            Descubre cómo ElijeHoy ha transformado la vida de miles de estudiantes
-          </p>
-        </div>
-
-        <div class="row q-col-gutter-lg">
-          <div class="col-12 col-md-4">
-            <q-card class="testimonial-card">
-              <q-card-section>
-                <div class="row items-center q-mb-md">
-                  <q-rating
-                    v-model="rating1"
-                    size="md"
-                    color="amber-8"
-                    readonly
-                  />
-                </div>
-                <p class="text-body1 text-grey-8 q-mb-md">
-                  "Gracias a ElijeHoy, supe exactamente qué estudiar y ahora estoy en la universidad que siempre soñé. ¡Cambió mi vida completamente!"
-                </p>
-                <div class="row items-center q-mt-md">
-                  <q-avatar size="48px" color="purple-7" text-color="white" icon="person" />
-                  <div class="q-ml-md">
-                    <div class="text-weight-bold text-purple-10">Ana G.</div>
-                    <div class="text-caption text-grey-6">Estudiante de Medicina</div>
-                  </div>
-                </div>
-              </q-card-section>
-            </q-card>
-          </div>
-
-          <div class="col-12 col-md-4">
-            <q-card class="testimonial-card">
-              <q-card-section>
-                <div class="row items-center q-mb-md">
-                  <q-rating
-                    v-model="rating2"
-                    size="md"
-                    color="amber-8"
-                    readonly
-                  />
-                </div>
-                <p class="text-body1 text-grey-8 q-mb-md">
-                  "El test ayudó a mi hijo a descubrir su verdadera pasión por la ingeniería y tomar una decisión sin miedo ni incertidumbre."
-                </p>
-                <div class="row items-center q-mt-md">
-                  <q-avatar size="48px" color="amber-8" text-color="white" icon="person" />
-                  <div class="q-ml-md">
-                    <div class="text-weight-bold text-purple-10">Carlos M.</div>
-                    <div class="text-caption text-grey-6">Padre de Familia</div>
-                  </div>
-                </div>
-              </q-card-section>
-            </q-card>
-          </div>
-
-          <div class="col-12 col-md-4">
-            <q-card class="testimonial-card">
-              <q-card-section>
-                <div class="row items-center q-mb-md">
-                  <q-rating
-                    v-model="rating3"
-                    size="md"
-                    color="amber-8"
-                    readonly
-                  />
-                </div>
-                <p class="text-body1 text-grey-8 q-mb-md">
-                  "Plataforma fácil, rápida y extremadamente útil para orientarme en un momento muy difícil y confuso de mi vida académica."
-                </p>
-                <div class="row items-center q-mt-md">
-                  <q-avatar size="48px" color="pink-7" text-color="white" icon="person" />
-                  <div class="q-ml-md">
-                    <div class="text-weight-bold text-purple-10">Luis P.</div>
-                    <div class="text-caption text-grey-6">Bachiller</div>
-                  </div>
-                </div>
-              </q-card-section>
-            </q-card>
-          </div>
-        </div>
-
-        <div class="text-center q-mt-xl">
-          <q-btn
-            outline
-            color="purple-7"
-            label="Ver Más Historias de Éxito"
-            to="/auth/registro"
-            icon="arrow_forward"
-            class="btn-more-testimonials"
-            no-caps
-          />
         </div>
       </div>
     </div>
@@ -833,11 +684,12 @@ export default defineComponent({
 
 /* Hero Section */
 .hero-section {
-  min-height: 90vh;
+  height: calc(100vh - 3.5rem);
+  min-height: 500px;
   background: linear-gradient(135deg, #6366F1 0%, #4F46E5 25%, #3730A3 50%, #1E1B4B 100%);
   display: flex;
   align-items: center;
-  padding: 100px 0 80px;
+  padding: clamp(1rem, 2vh, 2rem) 0;
   position: relative;
   overflow: hidden;
 }
@@ -847,8 +699,8 @@ export default defineComponent({
   position: absolute;
   top: 0;
   right: 0;
-  width: 600px;
-  height: 600px;
+  width: clamp(18.75rem, 45vw, 37.5rem);
+  height: clamp(18.75rem, 45vw, 37.5rem);
   background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%);
   border-radius: 50%;
   animation: floatOrb 6s ease-in-out infinite;
@@ -859,8 +711,8 @@ export default defineComponent({
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 400px;
-  height: 400px;
+  width: clamp(12.5rem, 30vw, 25rem);
+  height: clamp(12.5rem, 30vw, 25rem);
   background: radial-gradient(circle, rgba(236, 72, 153, 0.1) 0%, transparent 70%);
   border-radius: 50%;
   animation: floatOrb 8s ease-in-out infinite reverse;
@@ -878,43 +730,43 @@ export default defineComponent({
 }
 
 .container {
-  max-width: 1200px;
+  max-width: clamp(56.25rem, 90vw, 75rem);
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 clamp(0.75rem, 2vw, 1.25rem);
 }
 
 .hero-badge {
   display: inline-flex;
   align-items: center;
-  padding: 10px 20px;
+  padding: clamp(1rem, 1.2vw, 0.625rem) clamp(0.875rem, 2vw, 1.25rem);
   background: rgba(245, 158, 11, 0.15);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(0.625rem);
   border: 1px solid rgba(245, 158, 11, 0.3);
-  border-radius: 50px;
+  border-radius: clamp(1.5rem, 4vw, 3.125rem);
   color: #F59E0B;
   font-weight: 600;
-  font-size: 14px;
+  font-size: clamp(0.75rem, 1.2vw, 0.875rem);
   letter-spacing: 0.025em;
-  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.1);
+  box-shadow: 0 0.25rem 1rem rgba(245, 158, 11, 0.1);
   animation: fadeInScale 0.8s ease-out;
 }
 
 .hero-title {
   color: white;
-  font-size: 3.5rem;
+  font-size: clamp(1.75rem, 5vw, 3.5rem);
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.025em;
-  margin-bottom: 1.5rem;
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
   animation: fadeInUp 1s ease-out 0.2s both;
 }
 
 .hero-subtitle {
   color: rgba(255, 255, 255, 0.9);
-  font-size: 1.25rem;
+  font-size: clamp(1rem, 2vw, 1.25rem);
   font-weight: 400;
   line-height: 1.6;
-  max-width: 600px;
+  max-width: clamp(18.75rem, 90vw, 37.5rem);
   animation: fadeInUp 1s ease-out 0.4s both;
 }
 
@@ -922,13 +774,14 @@ export default defineComponent({
   background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
   color: white;
   font-weight: 600;
-  border-radius: 12px;
-  padding: 16px 32px;
-  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+  border-radius: clamp(0.5rem, 1.5vw, 0.75rem);
+  padding: clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2rem);
+  box-shadow: 0 0.5rem 1.5rem rgba(99, 102, 241, 0.4);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
   position: relative;
   overflow: hidden;
+  z-index: 10;
 }
 
 .btn-gradient-purple::before {
@@ -943,8 +796,8 @@ export default defineComponent({
 }
 
 .btn-gradient-purple:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(99, 102, 241, 0.6);
+  transform: translateY(-0.1875rem);
+  box-shadow: 0 0.75rem 2rem rgba(99, 102, 241, 0.6);
 }
 
 .btn-gradient-purple:hover::before {
@@ -952,98 +805,100 @@ export default defineComponent({
 }
 
 .btn-outline {
-  border: 2px solid rgba(255, 255, 255, 0.8);
+  border: 0.125rem solid rgba(255, 255, 255, 0.8);
   color: white;
   font-weight: 600;
-  border-radius: 12px;
-  padding: 14px 32px;
+  border-radius: clamp(0.5rem, 1.5vw, 0.75rem);
+  padding: clamp(0.625rem, 1.8vw, 0.875rem) clamp(1.5rem, 4vw, 2rem);
   background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(0.625rem);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-outline:hover {
   background: rgba(255, 255, 255, 0.15);
   border-color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.1);
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.5rem 1.5rem rgba(255, 255, 255, 0.1);
 }
 
 .btn-learn-more {
-  border: 2px solid rgba(99, 102, 241, 0.3);
+  border: 0.125rem solid rgba(99, 102, 241, 0.3);
   color: #6366F1;
   font-weight: 600;
-  border-radius: 12px;
-  padding: 12px 24px;
+  border-radius: clamp(0.5rem, 1.5vw, 0.75rem);
+  padding: clamp(0.625rem, 1.5vw, 0.75rem) clamp(1.25rem, 3vw, 1.5rem);
   background: rgba(99, 102, 241, 0.05);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(0.625rem);
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  z-index: 10;
 }
 
 .btn-learn-more:hover {
   background: rgba(99, 102, 241, 0.1);
   border-color: rgba(99, 102, 241, 0.5);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.2);
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.5rem 1.5rem rgba(99, 102, 241, 0.2);
 }
 
 .feature-link {
   font-weight: 600;
-  border-radius: 8px;
-  padding: 8px 16px;
+  border-radius: clamp(0.4rem, 1vw, 0.5rem);
+  padding: clamp(0.4rem, 1vw, 0.5rem) clamp(0.75rem, 2vw, 1rem);
   transition: all 0.3s ease;
   opacity: 0.8;
 }
 
 .feature-link:hover {
   opacity: 1;
-  transform: translateX(4px);
+  transform: translateX(0.25rem);
 }
 
 .btn-more-testimonials {
-  border: 2px solid rgba(99, 102, 241, 0.3);
+  border: 0.125rem solid rgba(99, 102, 241, 0.3);
   font-weight: 600;
-  border-radius: 16px;
-  padding: 14px 32px;
+  border-radius: clamp(0.75rem, 2vw, 1rem);
+  padding: clamp(0.625rem, 1.8vw, 0.875rem) clamp(1.5rem, 4vw, 2rem);
   background: rgba(99, 102, 241, 0.05);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(0.625rem);
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .btn-more-testimonials:hover {
   background: rgba(99, 102, 241, 0.1);
   border-color: rgba(99, 102, 241, 0.5);
-  transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(99, 102, 241, 0.3);
+  transform: translateY(-0.25rem);
+  box-shadow: 0 0.75rem 2rem rgba(99, 102, 241, 0.3);
 }
 
 .faq-support-btn,
 .faq-guide-btn {
-  border-radius: 12px;
+  border-radius: clamp(0.5rem, 1.5vw, 0.75rem);
   font-weight: 600;
-  padding: 12px 24px;
-  margin: 0 8px;
+  padding: clamp(0.625rem, 1.5vw, 0.75rem) clamp(1.25rem, 3vw, 1.5rem);
+  margin: 0 clamp(0.4rem, 1vw, 0.5rem);
   transition: all 0.3s ease;
 }
 
 .faq-support-btn:hover,
 .faq-guide-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.2);
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.5rem 1.5rem rgba(99, 102, 241, 0.2);
 }
 
 .footer-link {
   text-align: left;
   justify-content: flex-start;
   min-height: auto;
-  padding: 4px 0;
-  font-size: 0.875rem;
+  padding: clamp(0.2rem, 0.5vw, 0.25rem) 0;
+  font-size: clamp(0.775rem, 1.1vw, 0.875rem);
   transition: all 0.3s ease;
 }
 
 .footer-link:hover {
   color: #6366F1 !important;
-  transform: translateX(4px);
+  transform: translateX(0.25rem);
 }
 
 .social-btn {
@@ -1051,7 +906,7 @@ export default defineComponent({
 }
 
 .social-btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-0.125rem);
   color: #6366F1 !important;
 }
 
@@ -1060,7 +915,7 @@ export default defineComponent({
 }
 
 .stat-number {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: 700;
   color: #FDB813;
   line-height: 1;
@@ -1068,33 +923,33 @@ export default defineComponent({
 
 .stat-label {
   color: rgba(255, 255, 255, 0.8);
-  font-size: 0.9rem;
-  margin-top: 4px;
+  font-size: clamp(0.8rem, 1.2vw, 0.9rem);
+  margin-top: clamp(0.2rem, 0.5vw, 0.25rem);
 }
 
 /* Hero Image */
 .hero-image-wrapper {
   position: relative;
-  height: 500px;
+  height: clamp(250px, 35vh, 450px);
   animation: fadeInRight 1.2s ease-out 0.4s both;
 }
 
 .floating-card {
   position: absolute;
   background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(1.25rem);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.15);
+  border-radius: clamp(0.75rem, 2vw, 1.25rem);
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  box-shadow: 0 0.75rem 2.5rem rgba(15, 23, 42, 0.15);
   text-align: center;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   animation: floatCard 4s ease-in-out infinite;
 }
 
 .floating-card:hover {
-  transform: translateY(-8px) scale(1.05);
-  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.25);
+  transform: translateY(-0.5rem) scale(1.05);
+  box-shadow: 0 1.25rem 3.75rem rgba(15, 23, 42, 0.25);
 }
 
 .card-1 {
@@ -1117,10 +972,10 @@ export default defineComponent({
 
 @keyframes floatCard {
   0%, 100% {
-    transform: translateY(0px) rotate(0deg);
+    transform: translateY(0) rotate(0deg);
   }
   50% {
-    transform: translateY(-15px) rotate(1deg);
+    transform: translateY(-0.9375rem) rotate(1deg);
   }
 }
 
@@ -1128,50 +983,50 @@ export default defineComponent({
 .features-section,
 .benefits-section,
 .faq-section {
-  padding: 100px 0;
+  padding: clamp(2.5rem, 6vh, 5rem) 0;
   background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
 }
 
 .process-section,
 .testimonials-section {
-  padding: 100px 0;
+  padding: clamp(2.5rem, 6vh, 5rem) 0;
   background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
 }
 
 .section-badge {
   display: inline-flex;
   align-items: center;
-  padding: 8px 16px;
+  padding: clamp(0.4rem, 1vw, 0.5rem) clamp(0.75rem, 2vw, 1rem);
   background: rgba(99, 102, 241, 0.1);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(0.625rem);
   border: 1px solid rgba(99, 102, 241, 0.2);
-  border-radius: 50px;
+  border-radius: clamp(1.5rem, 4vw, 3.125rem);
   color: #6366F1;
   font-weight: 600;
-  font-size: 13px;
+  font-size: clamp(0.725rem, 1.1vw, 0.8125rem);
   letter-spacing: 0.025em;
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.1);
+  box-shadow: 0 0.25rem 1rem rgba(99, 102, 241, 0.1);
   animation: fadeInScale 0.8s ease-out;
 }
 
 /* Feature Cards */
 .feature-card {
-  border-radius: 16px;
-  border: 2px solid #F3F4F6;
+  border-radius: clamp(0.75rem, 2vw, 1rem);
+  border: 0.125rem solid #F3F4F6;
   transition: all 0.3s ease;
   overflow: hidden;
 }
 
 .feature-card:hover {
   border-color: #7C3AED;
-  transform: translateY(-8px);
-  box-shadow: 0 12px 40px rgba(124, 58, 237, 0.15);
+  transform: translateY(-0.5rem);
+  box-shadow: 0 0.75rem 2.5rem rgba(124, 58, 237, 0.15);
 }
 
 .feature-icon {
-  width: 80px;
-  height: 80px;
-  border-radius: 16px;
+  width: clamp(3.5rem, 8vw, 5rem);
+  height: clamp(3.5rem, 8vw, 5rem);
+  border-radius: clamp(0.75rem, 2vw, 1rem);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1180,33 +1035,33 @@ export default defineComponent({
 /* Process Cards */
 .process-card {
   background: white;
-  border-radius: 20px;
-  padding: 32px;
+  border-radius: clamp(0.75rem, 2.5vw, 1.25rem);
+  padding: clamp(1.5rem, 4vw, 2rem);
   text-align: center;
   position: relative;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 0.25rem 1.25rem rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
 }
 
 .process-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  transform: translateY(-0.5rem);
+  box-shadow: 0 0.5rem 1.875rem rgba(0, 0, 0, 0.12);
 }
 
 .process-number {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 3rem;
+  top: clamp(1rem, 2.5vw, 1.25rem);
+  right: clamp(1rem, 2.5vw, 1.25rem);
+  font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 700;
   color: rgba(124, 58, 237, 0.1);
   line-height: 1;
 }
 
 .process-icon {
-  width: 80px;
-  height: 80px;
-  border-radius: 16px;
+  width: clamp(3.5rem, 8vw, 5rem);
+  height: clamp(3.5rem, 8vw, 5rem);
+  border-radius: clamp(0.75rem, 2vw, 1rem);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1215,56 +1070,56 @@ export default defineComponent({
 
 /* Benefit Cards */
 .benefit-card {
-  border-radius: 16px;
-  border: 2px solid #F3F4F6;
+  border-radius: clamp(0.75rem, 2vw, 1rem);
+  border: 0.125rem solid #F3F4F6;
   transition: all 0.3s ease;
 }
 
 .benefit-card:hover {
   border-color: #FDB813;
-  transform: translateY(-8px);
-  box-shadow: 0 12px 40px rgba(253, 184, 19, 0.15);
+  transform: translateY(-0.5rem);
+  box-shadow: 0 0.75rem 2.5rem rgba(253, 184, 19, 0.15);
 }
 
 .benefit-icon {
-  width: 80px;
-  height: 80px;
-  border-radius: 16px;
+  width: clamp(3.5rem, 8vw, 5rem);
+  height: clamp(3.5rem, 8vw, 5rem);
+  border-radius: clamp(0.75rem, 2vw, 1rem);
   background: rgba(124, 58, 237, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: clamp(1rem, 2.5vw, 1.25rem);
 }
 
 /* Testimonial Cards */
 .testimonial-card {
   background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-radius: clamp(0.75rem, 2vw, 1rem);
+  box-shadow: 0 0.25rem 1.25rem rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   height: 100%;
 }
 
 .testimonial-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  transform: translateY(-0.5rem);
+  box-shadow: 0 0.5rem 1.875rem rgba(0, 0, 0, 0.12);
 }
 
 /* FAQ */
 .faq-list {
-  border-radius: 12px;
+  border-radius: clamp(0.5rem, 1.5vw, 0.75rem);
   overflow: hidden;
 }
 
 .faq-list :deep(.q-item) {
-  padding: 20px;
+  padding: clamp(1rem, 2.5vw, 1.25rem);
   border-bottom: 1px solid #F3F4F6;
 }
 
 /* CTA Section */
 .cta-section {
-  padding: 120px 0;
+  padding: clamp(3rem, 8vh, 6rem) 0;
   background: linear-gradient(135deg, #6366F1 0%, #4F46E5 25%, #3730A3 50%, #1E1B4B 100%);
   position: relative;
   overflow: hidden;

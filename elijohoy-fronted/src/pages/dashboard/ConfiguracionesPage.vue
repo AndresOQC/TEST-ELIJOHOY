@@ -559,6 +559,8 @@ export default defineComponent({
   margin: 0 auto;
   background: linear-gradient(to bottom, #F3F4F6, #FFFFFF);
   min-height: calc(100vh - 64px);
+  height: 100%;
+  padding: 24px;
 }
 
 .page-header {
@@ -633,13 +635,67 @@ export default defineComponent({
 
 @media (max-width: 768px) {
   .configuraciones-page {
-    padding: 12px;
+    min-height: calc(100vh - 60px);
+    padding: 16px;
   }
 
   .profile-card,
   .account-card,
   .status-card {
     border-radius: 16px;
+  }
+  
+  .page-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .page-header {
+    margin-bottom: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .configuraciones-page {
+    padding: 12px;
+  }
+  
+  .profile-card,
+  .account-card,
+  .status-card {
+    border-radius: 14px;
+  }
+  
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .page-header {
+    margin-bottom: 20px;
+    padding-top: 10px;
+  }
+}
+
+@media (max-height: 700px) {
+  .configuraciones-page {
+    padding: 16px;
+  }
+  
+  .page-header {
+    margin-bottom: 16px;
+    padding-top: 10px;
+  }
+  
+  .page-header h1 {
+    font-size: 1.4rem;
+    margin-bottom: 4px !important;
+  }
+  
+  .page-header p {
+    font-size: 0.875rem;
+  }
+  
+  .profile-card :deep(.q-card-section) {
+    padding: 16px;
   }
 }
 </style>

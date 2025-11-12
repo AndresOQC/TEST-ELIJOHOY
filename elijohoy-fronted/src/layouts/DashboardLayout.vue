@@ -279,15 +279,15 @@ export default defineComponent({
 }
 
 .dashboard-toolbar {
-  min-height: 70px;
-  padding: 0 24px;
+  min-height: clamp(3rem, 6vh, 3.5rem);
+  padding: 0 clamp(0.5rem, 1.5vw, 0.75rem);
   position: relative;
   z-index: 1;
 }
 
 .menu-btn {
   background: rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
+  border-radius: clamp(0.5rem, 1.5vw, 0.625rem);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

@@ -174,7 +174,8 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100%;
+  min-height: calc(100vh - 64px);
+  height: 100%;
   padding: 20px;
   background: transparent;
 }
@@ -184,6 +185,7 @@ export default defineComponent({
   max-width: 520px;
   position: relative;
   z-index: 10;
+  margin: auto;
 }
 
 /* Tarjeta con efecto glass */
@@ -264,6 +266,25 @@ export default defineComponent({
 }
 
 /* Responsive */
+@media (max-width: 768px) {
+  .recover-page {
+    min-height: calc(100vh - 60px);
+    padding: 16px;
+  }
+  
+  .glass-card {
+    padding: 24px;
+  }
+  
+  .text-h4 {
+    font-size: 1.8rem;
+  }
+  
+  .text-h6 {
+    font-size: 1.1rem;
+  }
+}
+
 @media (max-width: 600px) {
   .recover-page {
     padding: 15px;
@@ -282,13 +303,13 @@ export default defineComponent({
 
   .recover-icon-wrapper,
   .success-icon-wrapper {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
   }
 
   .recover-icon-wrapper .q-icon,
   .success-icon-wrapper .q-icon {
-    font-size: 48px !important;
+    font-size: 42px !important;
   }
 
   .text-h4 {
@@ -297,11 +318,60 @@ export default defineComponent({
 }
 
 @media (max-width: 400px) {
+  .recover-page {
+    padding: 12px;
+  }
+  
+  .glass-card {
+    padding: 16px;
+  }
+  
   .shape-1,
   .shape-2,
   .shape-3 {
     width: 150px;
     height: 150px;
+  }
+  
+  .text-h4 {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-height: 700px) {
+  .recover-page {
+    padding: 10px;
+  }
+  
+  .recover-icon-wrapper,
+  .success-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 8px !important;
+  }
+  
+  .recover-icon-wrapper .q-icon,
+  .success-icon-wrapper .q-icon {
+    font-size: 36px !important;
+  }
+  
+  .text-h4 {
+    font-size: 1.4rem;
+    margin-bottom: 4px !important;
+  }
+  
+  .text-h6 {
+    font-size: 1rem;
+    margin-bottom: 4px !important;
+  }
+  
+  .text-body1 {
+    font-size: 0.875rem;
+    margin-bottom: 8px !important;
+  }
+  
+  .glass-card {
+    padding: 16px;
   }
 }
 </style>

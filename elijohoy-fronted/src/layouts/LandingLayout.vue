@@ -52,13 +52,6 @@
           <q-btn
             flat
             no-caps
-            label="Testimonios"
-            class="nav-link"
-            @click="scrollToSection('testimonials')"
-          />
-          <q-btn
-            flat
-            no-caps
             label="FAQ"
             class="nav-link"
             @click="scrollToSection('faq')"
@@ -144,18 +137,6 @@
           </q-item-section>
         </q-item>
 
-        <q-item
-          clickable
-          v-ripple
-          @click="scrollToSection('testimonials'); drawer = false"
-        >
-          <q-item-section avatar>
-            <q-icon name="star" color="primary" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Testimonios</q-item-label>
-          </q-item-section>
-        </q-item>
 
         <q-item
           clickable
@@ -288,8 +269,8 @@ export default defineComponent({
 }
 
 .landing-toolbar {
-  min-height: 64px;
-  padding: 0 24px;
+  min-height: clamp(3rem, 6vh, 3.5rem);
+  padding: 0 clamp(0.5rem, 1.5vw, 0.75rem);
   position: relative;
   z-index: 1;
   margin: 0;
@@ -298,7 +279,7 @@ export default defineComponent({
 .mobile-menu-btn {
   background: rgba(124, 58, 237, 0.1);
   color: #7C3AED;
-  border-radius: 12px;
+  border-radius: clamp(0.625rem, 2vw, 0.75rem);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -315,15 +296,15 @@ export default defineComponent({
   display: flex;
   align-items: center;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  padding: 8px 12px;
-  border-radius: 12px;
+  padding: clamp(0.25rem, 0.5vw, 0.35rem) clamp(0.4rem, 1vw, 0.5rem);
+  border-radius: clamp(0.5rem, 1.5vw, 0.625rem);
   position: relative;
 }
 
 .brand-container:hover {
   background: rgba(124, 58, 237, 0.08);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+  transform: translateY(-0.0625rem);
+  box-shadow: 0 0.25rem 0.75rem rgba(124, 58, 237, 0.15);
 }
 
 .brand-icon-wrapper {
@@ -334,9 +315,10 @@ export default defineComponent({
 
 .brand-icon {
   color: #7C3AED;
-  filter: drop-shadow(0 2px 8px rgba(124, 58, 237, 0.3));
+  filter: drop-shadow(0 0.125rem 0.5rem rgba(124, 58, 237, 0.3));
   z-index: 2;
   position: relative;
+  font-size: clamp(1.25rem, 3vw, 1.75rem) !important;
 }
 
 .icon-pulse {
@@ -344,8 +326,8 @@ export default defineComponent({
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 40px;
-  height: 40px;
+  width: clamp(2rem, 5vw, 2.5rem);
+  height: clamp(2rem, 5vw, 2.5rem);
   background: radial-gradient(circle, rgba(124, 58, 237, 0.2) 0%, transparent 70%);
   border-radius: 50%;
   animation: pulse-landing 3s infinite;
@@ -359,38 +341,39 @@ export default defineComponent({
 .brand-text {
   display: flex;
   flex-direction: column;
-  margin-left: 12px;
+  margin-left: clamp(0.35rem, 1vw, 0.5rem);
 }
 
 .brand-name {
-  font-size: 1.6rem;
+  font-size: clamp(1rem, 2.5vw, 1.35rem);
   font-weight: 800;
   line-height: 1.2;
   background: linear-gradient(135deg, #7C3AED 0%, #3B82F6 50%, #06B6D4 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
 }
 
 .brand-tagline {
-  font-size: 0.75rem;
+  font-size: clamp(0.6rem, 1vw, 0.7rem);
   font-weight: 500;
   color: #64748b;
-  margin-top: -2px;
+  margin-top: -0.125rem;
   opacity: 0.8;
 }
 
 .nav-links {
   display: flex;
-  gap: 8px;
+  gap: clamp(0.25rem, 1vw, 0.5rem);
 }
 
 .nav-link {
   color: #475569;
   font-weight: 500;
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: clamp(0.3rem, 0.8vw, 0.4rem) clamp(0.5rem, 1.5vw, 0.75rem);
+  border-radius: clamp(0.35rem, 1vw, 0.4rem);
+  font-size: clamp(0.75rem, 1vw, 0.85rem);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -419,16 +402,17 @@ export default defineComponent({
 
 .auth-buttons {
   display: flex;
-  gap: 12px;
+  gap: clamp(0.35rem, 1vw, 0.5rem);
   align-items: center;
 }
 
 .login-btn {
   color: #7C3AED;
   font-weight: 600;
-  padding: 10px 20px;
-  border-radius: 12px;
-  border: 2px solid transparent;
+  padding: clamp(0.4rem, 1vw, 0.5rem) clamp(0.65rem, 2vw, 0.875rem);
+  border-radius: clamp(0.5rem, 1.5vw, 0.625rem);
+  font-size: clamp(0.75rem, 1vw, 0.85rem);
+  border: 0.125rem solid transparent;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -448,8 +432,8 @@ export default defineComponent({
 
 .login-btn:hover {
   border-color: rgba(124, 58, 237, 0.3);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(124, 58, 237, 0.15);
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.5rem 1.5625rem rgba(124, 58, 237, 0.15);
 }
 
 .login-btn:hover::before {
@@ -460,8 +444,9 @@ export default defineComponent({
   background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%);
   color: white;
   font-weight: 600;
-  padding: 10px 24px;
-  border-radius: 12px;
+  padding: clamp(0.4rem, 1vw, 0.5rem) clamp(0.75rem, 2.5vw, 1rem);
+  border-radius: clamp(0.5rem, 1.5vw, 0.625rem);
+  font-size: clamp(0.75rem, 1vw, 0.85rem);
   border: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -480,8 +465,8 @@ export default defineComponent({
 }
 
 .register-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(124, 58, 237, 0.3);
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.75rem 2.1875rem rgba(124, 58, 237, 0.3);
 }
 
 .register-btn:hover::before {
@@ -499,19 +484,14 @@ export default defineComponent({
   margin-top: 0 !important;
 }
 
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
+/* Mobile Responsiveness con unidades fluidas */
+@media (max-width: 48rem) {
   .landing-toolbar {
-    padding: 0 16px;
-    min-height: 60px;
-  }
-  
-  .brand-name {
-    font-size: 1.3rem;
+    padding: 0 clamp(0.4rem, 1.5vw, 0.6rem);
   }
   
   .brand-tagline {
-    font-size: 0.7rem;
+    display: none;
   }
 }
 </style>

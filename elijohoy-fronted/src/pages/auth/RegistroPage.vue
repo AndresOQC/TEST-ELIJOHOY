@@ -534,44 +534,45 @@ export default defineComponent({
 <style scoped>
 .register-page {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  min-height: 100%;
-  padding: 20px;
+  min-height: 100vh;
+  height: 100%;
+  padding: clamp(0.4rem, 1vw, 0.6rem);
   background: transparent;
   overflow-y: auto;
 }
 
 .register-container {
   width: 100%;
-  max-width: 650px;
+  max-width: clamp(18rem, 95vw, 35rem);
   position: relative;
   z-index: 10;
-  margin: 20px auto;
+  margin: clamp(0.4rem, 1vw, 0.6rem) auto;
 }
 
 /* Tarjeta con efecto glass */
 .glass-card {
   background: rgba(255, 255, 255, 0.1) !important;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 24px !important;
+  backdrop-filter: blur(1.25rem);
+  -webkit-backdrop-filter: blur(1.25rem);
+  border-radius: clamp(0.75rem, 2.5vw, 1.25rem) !important;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  padding: 20px;
+  box-shadow: 0 0.5rem 2rem 0 rgba(0, 0, 0, 0.37);
+  padding: clamp(0.6rem, 2vw, 0.875rem);
 }
 
 .register-icon-wrapper {
-  width: 85px;
-  height: 85px;
+  width: clamp(2.5rem, 5.5vw, 3.75rem);
+  height: clamp(2.5rem, 5.5vw, 3.75rem);
   margin: 0 auto;
   background: linear-gradient(135deg, rgba(253, 184, 19, 0.3), rgba(251, 146, 60, 0.3));
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid rgba(253, 184, 19, 0.5);
-  box-shadow: 0 8px 24px rgba(253, 184, 19, 0.2);
+  border: 0.1875rem solid rgba(253, 184, 19, 0.5);
+  box-shadow: 0 0.5rem 1.5rem rgba(253, 184, 19, 0.2);
 }
 
 .text-white-7 {
@@ -628,7 +629,7 @@ export default defineComponent({
 /* Inputs modernos */
 .modern-input :deep(.q-field__control) {
   background: rgba(255, 255, 255, 0.95);
-  border-radius: 12px;
+  border-radius: clamp(0.625rem, 2vw, 0.75rem);
 }
 
 .modern-input :deep(.q-field__control):before {
@@ -642,11 +643,13 @@ export default defineComponent({
 .modern-input :deep(.q-field__native) {
   color: #4C1D95;
   font-weight: 500;
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
 }
 
 .modern-input :deep(.q-field__label) {
   color: #7C3AED;
   font-weight: 500;
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
 }
 
 .modern-input :deep(.q-field__append .q-icon) {
@@ -656,76 +659,41 @@ export default defineComponent({
 /* Botón con gradiente */
 .btn-gradient {
   background: linear-gradient(135deg, #FDB813 0%, #F59E0B 100%);
-  border-radius: 12px;
-  font-size: 15px;
+  border-radius: clamp(0.625rem, 2vw, 0.75rem);
+  font-size: clamp(0.875rem, 1.5vw, 0.9375rem);
   font-weight: 600;
-  box-shadow: 0 4px 15px rgba(253, 184, 19, 0.4);
+  box-shadow: 0 0.25rem 0.9375rem rgba(253, 184, 19, 0.4);
   transition: all 0.3s ease;
 }
 
 .btn-gradient:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(253, 184, 19, 0.6);
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.375rem 1.25rem rgba(253, 184, 19, 0.6);
 }
 
-/* Responsive */
-@media (max-width: 700px) {
+/* Responsive con unidades fluidas */
+@media (max-width: 48rem) {
   .register-page {
-    padding: 10px;
-  }
-
-  .register-container {
-    margin: 10px auto;
-  }
-
-  .glass-card {
-    padding: 15px;
-  }
-
-  .shape-1,
-  .shape-2,
-  .shape-3 {
-    width: 200px;
-    height: 200px;
-  }
-
-  .register-icon-wrapper {
-    width: 60px;
-    height: 60px;
-  }
-
-  .register-icon-wrapper .q-icon {
-    font-size: 36px !important;
-  }
-
-  .text-h4 {
-    font-size: 1.5rem;
-  }
-
-  .transparent-stepper :deep(.q-stepper__header) {
-    flex-wrap: wrap;
-  }
-
-  .transparent-stepper :deep(.q-stepper__tab) {
-    padding: 8px;
-    min-height: auto;
-  }
-
-  .transparent-stepper :deep(.q-stepper__title) {
-    font-size: 0.75rem;
+    padding: clamp(0.5rem, 2vw, 1rem);
   }
 }
 
-@media (max-width: 400px) {
-  .shape-1,
-  .shape-2,
-  .shape-3 {
-    width: 150px;
-    height: 150px;
+@media (max-height: 43.75rem) {
+  .register-page {
+    padding: clamp(0.5rem, 1.5vw, 0.75rem);
   }
-
-  .transparent-stepper :deep(.q-stepper__title) {
-    display: none;
+  
+  .register-container {
+    margin: clamp(0.5rem, 1.5vw, 0.75rem) auto;
+  }
+  
+  .glass-card {
+    padding: clamp(0.75rem, 2vw, 1rem);
+  }
+  
+  .transparent-stepper :deep(.q-stepper__header) {
+    padding: clamp(0.375rem, 1vw, 0.5rem);
+    margin-bottom: clamp(0.5rem, 1.5vw, 0.75rem);
   }
 }
 </style>

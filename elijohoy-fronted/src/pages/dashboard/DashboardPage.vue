@@ -233,6 +233,7 @@ export default defineComponent({
     rgba(236, 72, 153, 0.05) 50%,
     rgba(245, 158, 11, 0.05) 100%);
   min-height: calc(100vh - 64px);
+  height: 100%;
   padding: 24px;
 }
 
@@ -358,22 +359,22 @@ export default defineComponent({
 }
 
 .stat-item {
-  padding: 24px;
+  padding: clamp(0.875rem, 2.5vw, 1.25rem);
   background: linear-gradient(135deg,
     rgba(255, 255, 255, 0.6) 0%,
     rgba(255, 255, 255, 0.3) 100%);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 20px;
+  backdrop-filter: blur(0.625rem);
+  -webkit-backdrop-filter: blur(0.625rem);
+  border-radius: clamp(0.75rem, 2vw, 1.25rem);
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    0 0.25rem 1rem rgba(0, 0, 0, 0.1),
+    inset 0 0.0625rem 0 rgba(255, 255, 255, 0.2);
 }
 
 .stat-item:hover {
-  transform: translateY(-4px) scale(1.02);
+  transform: translateY(-0.25rem) scale(1.02);
   background: linear-gradient(135deg,
     rgba(99, 102, 241, 0.1) 0%,
     rgba(236, 72, 153, 0.1) 100%);
@@ -445,6 +446,7 @@ export default defineComponent({
 
 @media (max-width: 768px) {
   .dashboard-page {
+    min-height: calc(100vh - 60px);
     padding: 16px;
   }
 
@@ -469,6 +471,68 @@ export default defineComponent({
 
   .card-half {
     flex: none;
+  }
+  
+  .text-h4 {
+    font-size: 1.8rem;
+  }
+  
+  .text-h6 {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-page {
+    padding: 12px;
+  }
+  
+  .welcome-card,
+  .profile-status-card,
+  .quick-actions-card,
+  .stats-card,
+  .activity-card {
+    border-radius: 16px;
+  }
+  
+  .text-h4 {
+    font-size: 1.5rem;
+  }
+  
+  .stat-item {
+    padding: 16px;
+  }
+  
+  .text-h3 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-height: 700px) {
+  .dashboard-page {
+    padding: 12px;
+  }
+  
+  .welcome-card :deep(.q-card-section) {
+    padding: 12px;
+  }
+  
+  .text-h4 {
+    font-size: 1.4rem;
+    margin-bottom: 4px !important;
+  }
+  
+  .stat-item {
+    padding: 16px;
+  }
+  
+  .text-h3 {
+    font-size: 1.8rem;
+  }
+  
+  .profile-info {
+    padding: 16px;
+    margin-top: 16px;
   }
 }
 </style>

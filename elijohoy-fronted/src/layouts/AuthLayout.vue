@@ -77,41 +77,41 @@ export default defineComponent({
 }
 
 .auth-toolbar {
-  min-height: 64px;
-  padding: 0 24px;
+  min-height: clamp(3rem, 6vh, 3.5rem);
+  padding: 0 clamp(0.5rem, 1.5vw, 0.75rem);
   color: white;
 }
 
 .back-btn {
   background: rgba(255, 255, 255, 0.15);
   color: white;
-  border-radius: 12px;
+  border-radius: clamp(0.5rem, 1.5vw, 0.625rem);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .back-btn:hover {
   background: rgba(255, 255, 255, 0.25);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-0.0625rem);
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.15);
 }
 
 .brand-container {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: clamp(0.5rem, 1.5vw, 0.75rem);
 }
 
 .brand-logo {
-  width: 48px;
-  height: 48px;
+  width: clamp(2.25rem, 5vw, 3rem);
+  height: clamp(2.25rem, 5vw, 3rem);
   background: linear-gradient(135deg, rgba(253, 184, 19, 0.2), rgba(251, 146, 60, 0.2));
-  border-radius: 12px;
+  border-radius: clamp(0.5rem, 1.5vw, 0.625rem);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid rgba(253, 184, 19, 0.3);
-  box-shadow: 0 4px 16px rgba(253, 184, 19, 0.2);
+  border: 0.125rem solid rgba(253, 184, 19, 0.3);
+  box-shadow: 0 0.25rem 1rem rgba(253, 184, 19, 0.2);
 }
 
 .brand-icon {
@@ -126,32 +126,32 @@ export default defineComponent({
 }
 
 .brand-name {
-  font-size: 1.4rem;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
   font-weight: 800;
   color: white;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.3);
   letter-spacing: -0.5px;
 }
 
 .brand-subtitle {
-  font-size: 0.7rem;
+  font-size: clamp(0.625rem, 1.2vw, 0.7rem);
   font-weight: 500;
   color: rgba(253, 184, 19, 0.9);
   margin-top: 1px;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 0.0625rem 0.1875rem rgba(0, 0, 0, 0.2);
 }
 
 .security-badge {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: clamp(0.3rem, 0.8vw, 0.4rem);
   background: rgba(16, 185, 129, 0.15);
   color: #10B981;
-  padding: 6px 12px;
-  border-radius: 20px;
+  padding: clamp(0.3rem, 0.8vw, 0.4rem) clamp(0.5rem, 1.2vw, 0.75rem);
+  border-radius: clamp(1rem, 3vw, 1.25rem);
   border: 1px solid rgba(16, 185, 129, 0.3);
-  backdrop-filter: blur(10px);
-  font-size: 0.75rem;
+  backdrop-filter: blur(0.625rem);
+  font-size: clamp(0.675rem, 1vw, 0.75rem);
   font-weight: 600;
 }
 
