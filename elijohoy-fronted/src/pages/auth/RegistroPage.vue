@@ -7,39 +7,41 @@
           <div class="register-icon-wrapper q-mb-lg">
             <q-icon name="how_to_reg" size="44px" color="white" />
           </div>
-          <div class="text-h3 text-weighimport { defineComponent, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { Notify } from 'quasar'
-import { useAuthStore } from 'src/stores/auth'
-import { useTestStore } from 'src/stores/test' text-white q-mb-sm">
+          <div class="text-h4 text-weight-bold text-white q-mb-sm">
             ¡Únete a nosotros!
           </div>
-          <div class="text-body1 text-white-7">
-            Completa tu registro y comienza a descubrir tu vocación ideal
+          <div class="text-body2 text-white-7">
+            Completa tu registro en 3 simples pasos
           </div>
         </q-card-section>
 
-        <!-- Stepper -->
-        <q-card-section class="q-pt-none">
-          <q-stepper
+        <!-- Tabs Navigation (horizontal in one row) -->
+        <q-card-section class="q-pt-none q-px-md">
+          <q-tabs
             v-model="step"
-            ref="stepper"
-            color="yellow-9"
-            animated
-            header-nav
-            dark
-            flat
-            class="transparent-stepper"
+            dense
+            class="modern-tabs"
+            active-color="yellow-9"
+            indicator-color="yellow-9"
+            align="justify"
           >
-            <!-- Paso 1: Información Personal y Ubicación -->
-            <q-step
-              :name="1"
-              title="Datos Personales"
-              icon="person"
-              :done="step > 1"
-              active-icon="person"
-              done-icon="check"
-            >
+            <q-tab :name="1" icon="person" label="Datos" class="tab-step" />
+            <q-tab :name="2" icon="school" label="Institución" :disable="step < 2" class="tab-step" />
+            <q-tab :name="3" icon="lock" label="Credenciales" :disable="step < 3" class="tab-step" />
+          </q-tabs>
+        </q-card-section>
+
+        <!-- Content -->
+        <q-card-section class="q-pt-sm q-px-md">
+          <q-tab-panels
+            v-model="step"
+            animated
+            transition-prev="slide-right"
+            transition-next="slide-left"
+            class="transparent-panels"
+          >
+            <!-- Panel 1: Información Personal y Ubicación -->
+            <q-tab-panel :name="1" class="q-pa-none">
               <div class="q-gutter-md">
                 <div class="row q-col-gutter-sm">
                   <div class="col-12 col-sm-6">
@@ -114,57 +116,99 @@ import { useTestStore } from 'src/stores/test' text-white q-mb-sm">
 
                 <div class="row q-col-gutter-sm">
                   <div class="col-12 col-sm-6">
-                    <q-input
-                      v-model="form.ciudad"
-                      label="Ciudad"
-                      outlined
-                      color="purple-7"
-                      :rules="[val => !!val || 'Requerido']"
-                      lazy-rules
-                      class="modern-input"
-                    >
-                      <template v-slot:prepend>
-                        <q-icon name="location_city" color="purple-7" />
-                      </template>
-                    </q-input>
-                  </div>
-
-                  <div class="col-12 col-sm-6">
-                    <q-input
+                    <q-select
                       v-model="form.pais"
+                      :options="filteredCountries"
+                      option-label="name"
+                      option-value="name"
                       label="País"
                       outlined
+                      dense
+                      use-input
+                      input-debounce="300"
+                      @filter="filterCountries"
+                      @update:model-value="onCountryChange"
                       color="purple-7"
                       :rules="[val => !!val || 'Requerido']"
                       lazy-rules
                       class="modern-input"
+                      :loading="loadingCountries"
                     >
                       <template v-slot:prepend>
                         <q-icon name="public" color="purple-7" />
                       </template>
-                    </q-input>
+                      <template v-slot:no-option>
+                        <q-item>
+                          <q-item-section class="text-grey">
+                            No se encontraron países
+                          </q-item-section>
+                        </q-item>
+                      </template>
+                    </q-select>
+                  </div>
+
+                  <div class="col-12 col-sm-6">
+                    <q-select
+                      v-model="form.ciudad"
+                      :options="filteredCities"
+                      label="Ciudad"
+                      outlined
+                      dense
+                      use-input
+                      input-debounce="300"
+                      @filter="filterCities"
+                      color="purple-7"
+                      :rules="[val => !!val || 'Requerido']"
+                      lazy-rules
+                      class="modern-input"
+                      :loading="loadingCities"
+                      :disable="!form.pais"
+                    >
+                      <template v-slot:prepend>
+                        <q-icon name="location_city" color="purple-7" />
+                      </template>
+                      <template v-slot:no-option>
+                        <q-item>
+                          <q-item-section class="text-grey">
+                            {{ form.pais ? 'No se encontraron ciudades' : 'Selecciona un país primero' }}
+                          </q-item-section>
+                        </q-item>
+                      </template>
+                    </q-select>
+                  </div>
+                </div>
+
+                <div class="row q-mt-md">
+                  <div class="col-12">
+                    <q-btn
+                      unelevated
+                      @click="step = 2"
+                      color="yellow-9"
+                      text-color="purple-10"
+                      label="Siguiente"
+                      icon-right="arrow_forward"
+                      class="btn-gradient full-width"
+                      no-caps
+                    />
                   </div>
                 </div>
               </div>
-            </q-step>
+            </q-tab-panel>
 
-            <!-- Paso 2: Información Educativa -->
-            <q-step
-              :name="2"
-              title="Institución"
-              icon="school"
-              :done="step > 2"
-              active-icon="school"
-              done-icon="check"
-            >
+            <!-- Panel 2: Información Educativa -->
+            <q-tab-panel :name="2" class="q-pa-none">
               <div class="q-gutter-md">
+                <div class="text-center q-mb-md">
+                  <div class="text-caption text-white-7">
+                    Esta información es opcional y nos ayuda a personalizar tu experiencia
+                  </div>
+                </div>
+
                 <q-input
                   v-model="form.institucion_educativa"
-                  label="Institución Educativa"
+                  label="Institución Educativa (Opcional)"
                   outlined
                   color="purple-7"
-                  :rules="[val => !!val || 'Requerido']"
-                  lazy-rules
                   class="modern-input"
                 >
                   <template v-slot:prepend>
@@ -176,11 +220,9 @@ import { useTestStore } from 'src/stores/test' text-white q-mb-sm">
                   <div class="col-12 col-sm-4">
                     <q-input
                       v-model="form.grado"
-                      label="Grado"
+                      label="Grado (Opcional)"
                       outlined
                       color="purple-7"
-                      :rules="[val => !!val || 'Requerido']"
-                      lazy-rules
                       class="modern-input"
                       placeholder="Ej: 5to"
                     >
@@ -193,11 +235,9 @@ import { useTestStore } from 'src/stores/test' text-white q-mb-sm">
                   <div class="col-12 col-sm-4">
                     <q-input
                       v-model="form.seccion"
-                      label="Sección"
+                      label="Sección (Opcional)"
                       outlined
                       color="purple-7"
-                      :rules="[val => !!val || 'Requerido']"
-                      lazy-rules
                       class="modern-input"
                       placeholder="Ej: A"
                     >
@@ -211,11 +251,9 @@ import { useTestStore } from 'src/stores/test' text-white q-mb-sm">
                     <q-select
                       v-model="form.turno"
                       :options="turnoOptions"
-                      label="Turno"
+                      label="Turno (Opcional)"
                       outlined
                       color="purple-7"
-                      :rules="[val => !!val || 'Requerido']"
-                      lazy-rules
                       class="modern-input"
                     >
                       <template v-slot:prepend>
@@ -224,17 +262,47 @@ import { useTestStore } from 'src/stores/test' text-white q-mb-sm">
                     </q-select>
                   </div>
                 </div>
-              </div>
-            </q-step>
 
-            <!-- Paso 3: Credenciales -->
-            <q-step
-              :name="3"
-              title="Credenciales"
-              icon="lock"
-              active-icon="lock"
-              done-icon="check"
-            >
+                <div class="row q-col-gutter-sm q-mt-md">
+                  <div class="col-4">
+                    <q-btn
+                      flat
+                      color="yellow-9"
+                      @click="step = 1"
+                      label="Anterior"
+                      icon="arrow_back"
+                      class="full-width"
+                      no-caps
+                    />
+                  </div>
+                  <div class="col-4">
+                    <q-btn
+                      flat
+                      color="white"
+                      @click="step = 3"
+                      label="Omitir"
+                      class="full-width"
+                      no-caps
+                    />
+                  </div>
+                  <div class="col-4">
+                    <q-btn
+                      unelevated
+                      @click="step = 3"
+                      color="yellow-9"
+                      text-color="purple-10"
+                      label="Siguiente"
+                      icon-right="arrow_forward"
+                      class="btn-gradient full-width"
+                      no-caps
+                    />
+                  </div>
+                </div>
+              </div>
+            </q-tab-panel>
+
+            <!-- Panel 3: Credenciales -->
+            <q-tab-panel :name="3" class="q-pa-none">
               <div class="q-gutter-md">
                 <q-input
                   v-model="form.email"
@@ -320,46 +388,37 @@ import { useTestStore } from 'src/stores/test' text-white q-mb-sm">
                     </div>
                   </template>
                 </q-checkbox>
-              </div>
-            </q-step>
 
-            <template v-slot:navigation>
-              <q-stepper-navigation class="row q-gutter-sm">
-                <q-btn
-                  v-if="step > 1"
-                  flat
-                  color="yellow-9"
-                  @click="$refs.stepper.previous()"
-                  label="Anterior"
-                  icon="arrow_back"
-                  class="col"
-                />
-                <q-space v-if="step > 1" />
-                <q-btn
-                  v-if="step < 3"
-                  unelevated
-                  @click="$refs.stepper.next()"
-                  color="yellow-9"
-                  text-color="purple-10"
-                  label="Siguiente"
-                  icon-right="arrow_forward"
-                  class="btn-gradient col"
-                />
-                <q-btn
-                  v-if="step === 3"
-                  unelevated
-                  @click="register"
-                  color="yellow-9"
-                  text-color="purple-10"
-                  label="Crear Cuenta"
-                  icon-right="check_circle"
-                  class="btn-gradient col"
-                  :loading="loading"
-                  :disable="!acceptTerms"
-                />
-              </q-stepper-navigation>
-            </template>
-          </q-stepper>
+                <div class="row q-col-gutter-sm q-mt-md">
+                  <div class="col-6">
+                    <q-btn
+                      flat
+                      color="yellow-9"
+                      @click="step = 2"
+                      label="Anterior"
+                      icon="arrow_back"
+                      class="full-width"
+                      no-caps
+                    />
+                  </div>
+                  <div class="col-6">
+                    <q-btn
+                      unelevated
+                      @click="register"
+                      color="yellow-9"
+                      text-color="purple-10"
+                      label="Crear Cuenta"
+                      icon-right="check_circle"
+                      class="btn-gradient full-width"
+                      :loading="loading"
+                      :disable="!acceptTerms"
+                      no-caps
+                    />
+                  </div>
+                </div>
+              </div>
+            </q-tab-panel>
+          </q-tab-panels>
         </q-card-section>
 
         <!-- Footer -->
@@ -395,7 +454,7 @@ import { useTestStore } from 'src/stores/test' text-white q-mb-sm">
 </template>
 
 <script>
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Notify } from 'quasar'
 import { useAuthStore } from 'src/stores/auth'
@@ -408,7 +467,6 @@ export default defineComponent({
     const authStore = useAuthStore()
 
     const step = ref(1)
-    const stepper = ref(null)
 
     const form = ref({
       nombre: '',
@@ -419,7 +477,7 @@ export default defineComponent({
       password: '',
       confirm_password: '',
       ciudad: '',
-      pais: '',
+      pais: null,
       institucion_educativa: '',
       grado: '',
       seccion: '',
@@ -430,6 +488,14 @@ export default defineComponent({
     const showConfirmPassword = ref(false)
     const acceptTerms = ref(false)
     const loading = ref(false)
+
+    // Country and City data
+    const countries = ref([])
+    const cities = ref([])
+    const filteredCountries = ref([])
+    const filteredCities = ref([])
+    const loadingCountries = ref(false)
+    const loadingCities = ref(false)
 
     const generoOptions = ['Masculino', 'Femenino', 'Otro', 'Prefiero no decir']
     const turnoOptions = ['Mañana', 'Tarde', 'Noche']
@@ -442,6 +508,137 @@ export default defineComponent({
       val => /[0-9]/.test(val) || 'Debe contener al menos un número',
       val => /[!@#$%^&*(),.?":{}|<>]/.test(val) || 'Debe contener al menos un símbolo'
     ])
+
+    // Fetch countries from REST Countries API
+    const fetchCountries = async () => {
+      loadingCountries.value = true
+      try {
+        const response = await fetch('https://restcountries.com/v3.1/all?fields=name,cca2')
+        const data = await response.json()
+        countries.value = data
+          .map(country => ({
+            name: country.name.common,
+            code: country.cca2
+          }))
+          .sort((a, b) => a.name.localeCompare(b.name))
+        filteredCountries.value = countries.value
+        console.log(`Loaded ${countries.value.length} countries from REST Countries API`)
+      } catch (error) {
+        console.error('Error fetching countries:', error)
+        countries.value = [
+          { name: 'Perú', code: 'PE' },
+          { name: 'Argentina', code: 'AR' },
+          { name: 'Chile', code: 'CL' },
+          { name: 'Colombia', code: 'CO' },
+          { name: 'México', code: 'MX' },
+          { name: 'España', code: 'ES' }
+        ]
+        filteredCountries.value = countries.value
+      } finally {
+        loadingCountries.value = false
+      }
+    }
+
+    // Helper function to convert country code to name for API
+    const getCountryNameByCode = (code) => {
+      const country = countries.value.find(c => c.code === code)
+      return country ? country.name : code
+    }
+
+    // Fetch cities from countriesnow API directly by country (principales ciudades)
+    const fetchCitiesByCountry = async (countryCode) => {
+      if (!countryCode) return
+      
+      loadingCities.value = true
+      try {
+        // Using countriesnow API to get all cities of a country
+        const response = await fetch(
+          'https://countriesnow.space/api/v0.1/countries/cities',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              country: getCountryNameByCode(countryCode)
+            })
+          }
+        )
+        
+        if (response.ok) {
+          const data = await response.json()
+          console.log('Cities API response:', data)
+          
+          if (data.data && data.data.length > 0) {
+            // Get cities and sort alphabetically
+            const cityNames = [...new Set(data.data)]
+              .sort((a, b) => a.localeCompare(b))
+            cities.value = cityNames
+            filteredCities.value = cityNames
+            console.log(`Loaded ${cityNames.length} cities for country: ${countryCode}`)
+          } else {
+            cities.value = []
+            filteredCities.value = []
+            console.warn(`No cities found for country: ${countryCode}`)
+          }
+        } else {
+          console.error('Cities API error:', response.status)
+          cities.value = []
+          filteredCities.value = []
+        }
+      } catch (error) {
+        console.error('Error fetching cities:', error)
+        cities.value = []
+        filteredCities.value = []
+      } finally {
+        loadingCities.value = false
+      }
+    }
+
+    const filterCountries = (val, update) => {
+      if (val === '') {
+        update(() => {
+          filteredCountries.value = countries.value
+        })
+        return
+      }
+
+      update(() => {
+        const needle = val.toLowerCase()
+        filteredCountries.value = countries.value.filter(
+          country => country.name.toLowerCase().indexOf(needle) > -1
+        )
+      })
+    }
+
+    const filterCities = (val, update) => {
+      if (val === '') {
+        update(() => {
+          filteredCities.value = cities.value
+        })
+        return
+      }
+
+      update(() => {
+        const needle = val.toLowerCase()
+        filteredCities.value = cities.value.filter(
+          city => city.toLowerCase().indexOf(needle) > -1
+        )
+      })
+    }
+
+    const onCountryChange = (val) => {
+      if (val) {
+        // Reset city field
+        form.value.ciudad = ''
+        
+        // Fetch cities for the selected country
+        if (val.code) {
+          console.log(`Country changed to: ${val.name} (${val.code})`)
+          fetchCitiesByCountry(val.code)
+        }
+      }
+    }
 
     const register = async () => {
       if (!acceptTerms.value) {
@@ -457,7 +654,15 @@ export default defineComponent({
       loading.value = true
 
       try {
-        const payload = { ...form.value }
+        const payload = {
+          ...form.value,
+          pais: form.value.pais?.name || form.value.pais,
+          // Limpiar campos opcionales vacíos
+          institucion_educativa: form.value.institucion_educativa || null,
+          grado: form.value.grado || null,
+          seccion: form.value.seccion || null,
+          turno: form.value.turno || null
+        }
         delete payload.confirm_password
 
         const result = await authStore.register(payload)
@@ -514,9 +719,13 @@ export default defineComponent({
       }
     }
 
+    // Fetch countries on component mount
+    onMounted(() => {
+      fetchCountries()
+    })
+
     return {
       step,
-      stepper,
       form,
       showPassword,
       showConfirmPassword,
@@ -525,6 +734,13 @@ export default defineComponent({
       generoOptions,
       turnoOptions,
       passwordRules,
+      filteredCountries,
+      filteredCities,
+      loadingCountries,
+      loadingCities,
+      filterCountries,
+      filterCities,
+      onCountryChange,
       register
     }
   }
@@ -579,51 +795,49 @@ export default defineComponent({
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* Stepper transparente */
-.transparent-stepper {
-  background: transparent !important;
-}
-
-.transparent-stepper :deep(.q-stepper__header) {
+/* Modern Tabs (horizontal navigation) */
+.modern-tabs {
   background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  padding: 10px;
-  margin-bottom: 20px;
+  border-radius: clamp(0.75rem, 2vw, 1rem);
+  padding: clamp(0.25rem, 0.5vw, 0.375rem);
+  margin-bottom: clamp(0.75rem, 1.5vw, 1rem);
 }
 
-.transparent-stepper :deep(.q-stepper__tab) {
-  color: rgba(255, 255, 255, 0.7);
+.modern-tabs :deep(.q-tab) {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+  font-size: clamp(0.7rem, 1.3vw, 0.8rem);
+  min-height: clamp(2.5rem, 4vw, 3rem);
+  transition: all 0.3s ease;
+  flex: 1;
 }
 
-.transparent-stepper :deep(.q-stepper__tab--active) {
+.modern-tabs :deep(.q-tab--active) {
   color: #FDB813;
+  background: rgba(253, 184, 19, 0.15);
+  border-radius: clamp(0.5rem, 1.5vw, 0.75rem);
 }
 
-.transparent-stepper :deep(.q-stepper__tab--done) {
-  color: #10B981;
+.modern-tabs :deep(.q-tab--disabled) {
+  opacity: 0.4;
 }
 
-.transparent-stepper :deep(.q-stepper__dot) {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.5);
+.modern-tabs :deep(.q-tab__icon) {
+  font-size: clamp(1rem, 1.8vw, 1.125rem);
 }
 
-.transparent-stepper :deep(.q-stepper__dot--active) {
-  background: #FDB813;
-  border-color: #FDB813;
+.modern-tabs :deep(.q-tab__label) {
+  font-size: clamp(0.65rem, 1.1vw, 0.75rem);
+  margin-top: 0.25rem;
 }
 
-.transparent-stepper :deep(.q-stepper__dot--done) {
-  background: #10B981;
-  border-color: #10B981;
+/* Transparent panels */
+.transparent-panels {
+  background: transparent;
 }
 
-.transparent-stepper :deep(.q-stepper__line) {
-  background: rgba(255, 255, 255, 0.2) !important;
-}
-
-.transparent-stepper :deep(.q-stepper__line):after {
-  background: #FDB813 !important;
+.transparent-panels :deep(.q-tab-panel) {
+  padding: 0;
 }
 
 /* Inputs modernos */
