@@ -11,35 +11,30 @@
         <!-- Resultados -->
         <div v-else-if="perfil">
           <!-- Header con Avatar, Nombre, Dimensiones y Descripción -->
-          <q-card class="q-mb-lg" flat bordered>
+          <q-card class="q-mb-lg result-card-fullheight" flat bordered>
             <q-card-section class="bg-primary text-white">
               <div class="main-header-content">
-                <!-- Columna Izquierda: Avatar -->
-                <div class="avatar-column">
-                  <div class="avatar-container">
-                    <img 
-                      :src="avatarUrl" 
-                      :alt="perfil.tipo.nombre"
-                      class="avatar-image"
-                      @error="onImageError"
-                    />
-                  </div>
-                  
-                  <div class="title-info">
+                <!-- Avatar Grande -->
+                <div class="avatar-section">
+                  <img 
+                    :src="avatarUrl" 
+                    :alt="perfil.tipo.nombre"
+                    class="avatar-image"
+                    @error="onImageError"
+                  />
+                </div>
+
+                <!-- Información completa abajo -->
+                <div class="info-column">
+                  <!-- Título sobre las métricas -->
+                  <div class="title-header">
                     <div class="text-h3 text-weight-bold">
                       {{ perfil.tipo.nombre }}
                     </div>
                     <div class="text-h5 q-mt-xs">
                       {{ perfil.tipo.codigo }}
                     </div>
-                    <div class="text-subtitle1 q-mt-sm description-short">
-                      {{ perfil.tipo.descripcion_corta }}
-                    </div>
                   </div>
-                </div>
-
-                <!-- Columna Derecha: Dimensiones y Descripción -->
-                <div class="info-column">
                   <!-- Dimensiones -->
                   <div class="dimensions-wrapper">
                     <div class="text-h6 text-weight-bold q-mb-md">Tus Dimensiones</div>
@@ -316,6 +311,7 @@ async function reiniciarTest() {
   min-height: calc(100vh - 64px);
   height: 100%;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  overflow-y: auto;
 }
 
 /* Asegurar que el padding no cause overflow */
@@ -324,43 +320,50 @@ async function reiniciarTest() {
   width: 100%;
 }
 
+/* Card principal ocupa toda la altura de la ventana */
+.result-card-fullheight {
+  height: calc(100vh - 64px - 32px); /* Restar altura del header + padding del page */
+  display: flex;
+  flex-direction: column;
+}
+
+.result-card-fullheight .q-card__section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 /* Layout principal del header - Optimizado para ocupar todo el espacio */
 .main-header-content {
   display: flex;
-  gap: 20px;
+  gap: 30px;
   align-items: stretch;
-  min-height: 400px;
-}
-
-/* Columna del Avatar (izquierda) - Más ancha */
-.avatar-column {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 12px;
-  min-width: 300px;
-}
-
-.avatar-container {
-  background-color: rgba(255, 255, 255, 0.15);
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  flex: 1;
   overflow: hidden;
-  position: relative;
 }
 
-/* Avatar MÁS GRANDE con animaciones */
+/* Sección del Avatar (izquierda) - Ocupa la mayor parte */
+.avatar-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Avatar MÁS GRANDE sin contenedor */
 .avatar-image {
-  width: 280px;
-  height: 280px;
+  width: 100%;
+  height: 100%;
+  max-width: 900px;
+  max-height: 900px;
   object-fit: contain;
   display: block;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
 }
 
 /* Animación de flotación */
@@ -399,19 +402,34 @@ async function reiniciarTest() {
   width: 100%;
 }
 
-.description-short {
-  opacity: 0.95;
-  line-height: 1.3;
-  font-size: 0.95rem;
+.title-info .text-h3 {
+  font-size: 2.5rem;
 }
 
-/* Columna de Información (derecha) - Ocupa TODO el espacio */
+.title-info .text-h5 {
+  font-size: 1.5rem;
+}
+
+.description-short {
+  opacity: 0.95;
+  line-height: 1.4;
+  font-size: 1.05rem;
+}
+
+/* Columna de Información (derecha) - Ancho fijo */
 .info-column {
-  flex: 1;
+  flex: 0 0 400px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
   min-width: 0;
+}
+
+/* Título del perfil */
+.title-header {
+  text-align: center;
+  padding-bottom: 16px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .dimensions-wrapper {
@@ -470,24 +488,30 @@ async function reiniciarTest() {
 
 /* Responsive: Tablet */
 @media (max-width: 1024px) {
+  .result-card-fullheight {
+    height: auto;
+    min-height: calc(100vh - 64px - 24px);
+  }
+  
   .main-header-content {
     flex-direction: column;
     align-items: stretch;
-    min-height: auto;
+    overflow: visible;
+    gap: 20px;
   }
   
-  .avatar-column {
-    width: 100%;
-    min-width: auto;
-  }
-  
-  .info-column {
-    width: 100%;
+  .avatar-section {
+    padding: 10px;
   }
   
   .avatar-image {
-    width: 240px;
-    height: 240px;
+    max-width: 400px;
+    max-height: 400px;
+  }
+  
+  .info-column {
+    flex: 1;
+    width: 100%;
   }
 }
 
@@ -497,21 +521,27 @@ async function reiniciarTest() {
     padding: 12px !important;
   }
   
+  .result-card-fullheight {
+    height: auto;
+    min-height: calc(100vh - 64px - 24px);
+  }
+  
   .main-header-content {
     gap: 16px;
+    overflow: visible;
   }
   
-  .avatar-column {
-    gap: 10px;
-  }
-  
-  .avatar-container {
-    padding: 16px;
+  .avatar-section {
+    padding: 10px;
   }
   
   .avatar-image {
-    width: 200px;
-    height: 200px;
+    max-width: 300px;
+    max-height: 300px;
+  }
+  
+  .info-column {
+    gap: 16px;
   }
   
   .text-h3 {
@@ -549,21 +579,23 @@ async function reiniciarTest() {
     padding: 10px !important;
   }
   
+  .result-card-fullheight {
+    height: auto;
+    min-height: calc(100vh - 64px - 20px);
+  }
+  
   .main-header-content {
     gap: 12px;
+    overflow: visible;
   }
   
-  .avatar-column {
-    min-width: auto;
-  }
-  
-  .avatar-container {
-    padding: 12px;
+  .avatar-section {
+    padding: 5px;
   }
   
   .avatar-image {
-    width: 160px;
-    height: 160px;
+    max-width: 250px;
+    max-height: 250px;
   }
   
   .text-h3 {
@@ -606,13 +638,18 @@ async function reiniciarTest() {
 
 /* Low Height Screens */
 @media (max-height: 700px) {
+  .result-card-fullheight {
+    height: auto;
+    min-height: 500px;
+  }
+  
   .avatar-image {
-    width: 180px;
-    height: 180px;
+    max-width: 350px;
+    max-height: 350px;
   }
   
   .main-header-content {
-    min-height: 300px;
+    overflow: visible;
   }
 }
 

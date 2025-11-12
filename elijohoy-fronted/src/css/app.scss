@@ -360,9 +360,11 @@ html, body {
   overflow-x: hidden !important;
 }
 
-// Asegurar que el drawer sea overlay en móvil
-.q-drawer {
-  z-index: 3000 !important;
+// Asegurar que el drawer sea overlay SOLO en móvil/pequeñas pantallas
+@media (max-width: 1024px) {
+  .q-drawer {
+    z-index: 3000 !important;
+  }
 }
 
 .q-drawer--mini {

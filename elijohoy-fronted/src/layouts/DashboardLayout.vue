@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh lpR fFf">
+  <q-layout view="hHh Lpr fFf">
     <q-header elevated class="dashboard-header">
       <q-toolbar class="dashboard-toolbar">
         <q-btn
@@ -30,8 +30,6 @@
 
         <q-space />
 
-
-        <!-- User Profile Menu -->
         <q-btn-dropdown
           flat
           no-caps
@@ -87,10 +85,11 @@
       :width="260"
       :mini-width="80"
       :mini="miniState"
+      :mini-to-overlay="false"
       :breakpoint="1024"
       bordered
-      overlay
       elevated
+      behavior="desktop"
       class="dashboard-drawer"
       @mouseover="miniState = false"
       @mouseout="miniState = true"
@@ -174,7 +173,6 @@
           </q-list>
         </div>
 
-        <!-- Menú de Administración (solo para admin) -->
         <template v-if="isAdmin">
           <q-separator class="q-my-md" />
 
@@ -250,7 +248,8 @@ export default defineComponent({
     const router = useRouter()
     const authStore = useAuthStore()
     const $q = useQuasar()
-    const leftDrawerOpen = ref(false)
+    // Keep drawer open on desktop so content is always pushed and icons visible
+    const leftDrawerOpen = ref(true)
     const miniState = ref(false)
     const showLogoutDialog = ref(false)
 
@@ -261,6 +260,9 @@ export default defineComponent({
     const toggleLeftDrawer = () => {
       leftDrawerOpen.value = !leftDrawerOpen.value
     }
+
+    // Se eliminó la función pageContainerStyle y su lógica,
+    // ya que causaba conflicto con el margen automático de Quasar.
 
     const goToSettings = () => {
       router.push('/dashboard/configuraciones')
@@ -287,6 +289,7 @@ export default defineComponent({
     return {
       leftDrawerOpen,
       miniState,
+      // pageContainerStyle, // Eliminado
       authStore,
       isAdmin,
       toggleLeftDrawer,
@@ -324,10 +327,13 @@ export default defineComponent({
   overflow-x: hidden;
 }
 
+/* CORRECCIÓN CLAVE: Se eliminó 'margin: 0 !important;' del q-page-container 
+  para permitir que Quasar aplique el margen lateral y el contenido sea empujado 
+  por el q-drawer (evitando la superposición).
+*/
 :deep(.q-page-container) {
   overflow-x: hidden;
   padding: 0 !important;
-  margin: 0 !important;
 }
 
 :deep(.q-page) {
