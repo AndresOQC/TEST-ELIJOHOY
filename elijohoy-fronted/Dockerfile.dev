@@ -1,0 +1,23 @@
+# Desarrollo con hot-reload
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copiar archivos de dependencias
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+
+# Instalar dependencias
+RUN if [ -f yarn.lock ]; then yarn install; \
+    elif [ -f package-lock.json ]; then npm install; \
+    elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm install; \
+    else npm install; \
+    fi
+
+# Copiar el resto del código
+COPY . .
+
+# Exponer el puerto de desarrollo de Quasar
+EXPOSE 9000
+
+# Comando para modo desarrollo con hot-reload
+CMD ["npm", "run", "dev"]

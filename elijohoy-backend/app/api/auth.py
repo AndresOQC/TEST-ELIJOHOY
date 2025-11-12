@@ -35,7 +35,7 @@ def buscar_usuario_por_email():
 
 
 @auth_bp.route('/login', methods=['POST'])
-@limiter.limit("5 per minute")
+# @limiter.limit("5 per minute")  # Deshabilitado temporalmente para desarrollo
 def login():
     """Endpoint para login de usuario."""
     try:
@@ -107,7 +107,7 @@ def login():
         return jsonify({'success': False, 'message': 'Error interno del servidor'}), 500
 
 @auth_bp.route('/register', methods=['POST'])
-@limiter.limit("3 per minute")
+# @limiter.limit("3 per minute")  # Deshabilitado temporalmente para desarrollo
 def register():
     """Endpoint para registro de nuevo usuario."""
     try:
@@ -376,7 +376,7 @@ def update_profile():
         return jsonify({'success': False, 'message': 'Error interno del servidor'}), 500
 
 @auth_bp.route('/recover-password', methods=['POST'])
-@limiter.limit("3 per minute")
+# @limiter.limit("3 per minute")  # Deshabilitado temporalmente para desarrollo
 def recover_password():
     """Recuperar contraseña."""
     try:
@@ -431,7 +431,7 @@ def recover_password():
         return jsonify({'success': False, 'message': 'Error interno del servidor'}), 500
 
 @auth_bp.route('/reset-password', methods=['POST'])
-@limiter.limit("3 per minute")
+# @limiter.limit("3 per minute")  # Deshabilitado temporalmente para desarrollo
 def reset_password():
     """Restablecer contraseña con token."""
     try:

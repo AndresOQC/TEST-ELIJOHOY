@@ -9,7 +9,7 @@ import axios from 'axios'
 // for each client)
 
 const api = axios.create({ 
-  baseURL: 'https://elijohoy.com/api',
+  baseURL: 'http://localhost:5001/api',
   timeout: 10000,
   withCredentials: false, // Explicit setting for CORS
   headers: {

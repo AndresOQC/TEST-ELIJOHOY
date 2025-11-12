@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL
+  db:
+    image: postgres:15-alpine
+    container_name: elijhoy_db_prod
+    environment:
+      POSTGRES_USER: elijohoy_user
+      POSTGRES_PASSWORD: elijohoy_password
+      POSTGRES_DB: elijohoy_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./elijohoy-backend/migrations:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U elijohoy_user -d elijohoy_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - elijohoy_network
+
+  # API Backend Flask (Producción)
+  backend:
+    build:
+      context: ./elijohoy-backend
+      dockerfile: Dockerfile
+    container_name: elijhoy_backend_prod
+    environment:
+      FLASK_ENV: production
+      SECRET_KEY: ${SECRET_KEY:-change-this-in-production}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change-this-in-production}
+      DATABASE_URL: postgresql://elijohoy_user:elijohoy_password@db:5432/elijohoy_db
+      FRONTEND_URL: http://localhost
+      PORT: 5001
+    ports:
+      - "5001:5001"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - elijohoy_network
+    restart: unless-stopped
+
+  # Frontend Vue.js + Quasar (Producción con Nginx)
+  frontend:
+    build:
+      context: ./elijohoy-fronted
+      dockerfile: Dockerfile
+    container_name: elijhoy_frontend_prod
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - elijohoy_network
+    restart: unless-stopped
+
+volumes:
+  db_data:
+
+networks:
+  elijohoy_network:
+    driver: bridge
