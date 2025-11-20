@@ -268,7 +268,10 @@ export const useTestStore = defineStore('test', {
           throw new Error('Test incompleto')
         }
 
-        const response = await testService.finalizarTest(this.sesionActual.id_sesion);
+        // Guardar ID de sesión antes de limpiar
+        const idSesion = this.sesionActual.id_sesion;
+
+        const response = await testService.finalizarTest(idSesion);
         console.log('Respuesta del backend:', response);
 
         if (response.success) {
@@ -279,6 +282,8 @@ export const useTestStore = defineStore('test', {
           this.limpiarTest();
           // Restaurar resultados para que se puedan mostrar
           this.resultados = resultsToKeep;
+          // Agregar el ID de sesión a la respuesta para que TestPage pueda navegar
+          response.id_sesion = idSesion;
         }
 
         return response;

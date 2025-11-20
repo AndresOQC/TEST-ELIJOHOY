@@ -320,10 +320,10 @@ async function finalizar() {
           message: 'Test completado exitosamente'
         })
 
-        // Redirigir a resultados
+        // Redirigir a resultados usando el ID de sesión de la respuesta
         router.push({
           name: 'test-resultados',
-          params: { id: testStore.getSesion.id_sesion }
+          params: { id: response.id_sesion }
         })
       } else {
         throw new Error(response.message || 'Error al finalizar el test')
@@ -397,6 +397,16 @@ onMounted(async () => {
       testStore.respuestas = respuestas.value
       testStore.progreso = Object.keys(respuestas.value).length
       console.log('Progreso sincronizado:', testStore.progreso)
+      
+      // Si está autenticado y hay respuestas, sincronizarlas con el backend
+      if (authStore.isAuthenticated && testStore.progreso === 32) {
+        console.log('Sincronizando respuestas restauradas con el backend...')
+        try {
+          await testStore.sincronizarRespuestas(respuestas.value)
+        } catch (error) {
+          console.error('Error sincronizando respuestas:', error)
+        }
+      }
     }
 
     // Verificar si hay una finalización de test pendiente
