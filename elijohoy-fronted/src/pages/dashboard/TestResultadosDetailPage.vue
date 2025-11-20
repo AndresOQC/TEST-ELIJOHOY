@@ -621,8 +621,8 @@ async function compartirEmail() {
 .avatar-image {
   width: 100%;
   height: 100%;
-  max-width: 900px;
-  max-height: 900px;
+  max-width: 600px;
+  max-height: 600px;
   object-fit: contain;
   display: block;
   cursor: pointer;
@@ -767,11 +767,18 @@ async function compartirEmail() {
   
   .avatar-section {
     padding: 10px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .avatar-image {
-    max-width: 400px;
-    max-height: 400px;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    max-height: 500px;
+    object-fit: contain;
   }
   
   .info-column {
@@ -798,11 +805,18 @@ async function compartirEmail() {
   
   .avatar-section {
     padding: 10px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .avatar-image {
-    max-width: 300px;
-    max-height: 300px;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    max-height: 400px;
+    object-fit: contain;
   }
   
   .info-column {
@@ -856,11 +870,18 @@ async function compartirEmail() {
   
   .avatar-section {
     padding: 5px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .avatar-image {
-    max-width: 250px;
-    max-height: 250px;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    max-height: 350px;
+    object-fit: contain;
   }
   
   .text-h3 {
