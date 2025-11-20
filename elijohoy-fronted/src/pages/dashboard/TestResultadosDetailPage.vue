@@ -10,6 +10,8 @@
 
         <!-- Resultados -->
         <div v-else-if="perfil">
+          <!-- Container para las descargas -->
+          <div ref="resultadosRef" class="resultados-container">
           <!-- Header con Avatar, Nombre, Dimensiones y Descripción -->
           <q-card class="q-mb-lg result-card-fullheight" flat bordered>
             <q-card-section class="bg-primary text-white">
@@ -188,20 +190,131 @@
             </q-card-section>
           </q-card>
 
-          <!-- Acciones -->
-          <div class="q-mt-lg text-center">
-            <q-btn
-              label="Hacer Test Nuevamente"
-              color="primary"
-              @click="reiniciarTest"
-              class="q-mr-sm"
-            />
-            <q-btn
-              label="Ver Mis Tests"
-              color="secondary"
-              @click="$router.push('/dashboard/test-resultados')"
-              outline
-            />
+          <!-- Acciones de Descarga y Compartir -->
+          <q-card flat bordered class="q-mt-lg">
+            <q-card-section>
+              <div class="text-h6 text-weight-bold q-mb-md">Compartir mis Resultados</div>
+              
+              <!-- Botones de Descarga -->
+              <div class="q-mb-lg">
+                <div class="text-subtitle2 text-weight-bold q-mb-sm text-grey-8">Descargar</div>
+                <div class="row q-gutter-sm">
+                  <q-btn
+                    color="negative"
+                    label="Descargar PDF"
+                    icon="picture_as_pdf"
+                    unelevated
+                    @click="descargarPDF"
+                    :loading="descargando.pdf"
+                  />
+                  <q-btn
+                    color="info"
+                    label="Descargar Imagen"
+                    icon="image"
+                    unelevated
+                    @click="descargarImagen"
+                    :loading="descargando.imagen"
+                  />
+                  <q-btn
+                    color="primary"
+                    label="Copiar Resultado"
+                    icon="content_copy"
+                    unelevated
+                    @click="copiarAlPortapapeles"
+                  />
+                </div>
+              </div>
+
+              <!-- Botones de Redes Sociales -->
+              <div class="q-mb-lg">
+                <div class="text-subtitle2 text-weight-bold q-mb-sm text-grey-8">Compartir en Redes Sociales</div>
+                <div class="row q-gutter-sm wrap">
+                  <q-btn
+                    color="green"
+                    icon="wechat"
+                    round
+                    @click="compartirWhatsApp"
+                    size="lg"
+                  >
+                    <q-tooltip>WhatsApp</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    color="info"
+                    icon="photo_camera"
+                    round
+                    @click="compartirInstagram"
+                    size="lg"
+                  >
+                    <q-tooltip>Instagram</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    color="facebook"
+                    icon="facebook"
+                    round
+                    @click="compartirFacebook"
+                    size="lg"
+                  >
+                    <q-tooltip>Facebook</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    color="blue-10"
+                    icon="mail"
+                    round
+                    @click="compartirMessenger"
+                    size="lg"
+                  >
+                    <q-tooltip>Messenger</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    color="blue"
+                    icon="tag"
+                    round
+                    @click="compartirTwitter"
+                    size="lg"
+                  >
+                    <q-tooltip>X (Twitter)</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    color="linkedin"
+                    icon="business"
+                    round
+                    @click="compartirLinkedIn"
+                    size="lg"
+                  >
+                    <q-tooltip>LinkedIn</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    color="purple"
+                    icon="email"
+                    round
+                    @click="compartirEmail"
+                    size="lg"
+                  >
+                    <q-tooltip>Correo</q-tooltip>
+                  </q-btn>
+                </div>
+              </div>
+
+              <!-- Botones de Acciones -->
+              <div>
+                <div class="text-subtitle2 text-weight-bold q-mb-sm text-grey-8">Acciones</div>
+                <div class="row q-gutter-sm">
+                  <q-btn
+                    label="Hacer Test Nuevamente"
+                    color="primary"
+                    @click="reiniciarTest"
+                    unelevated
+                  />
+                  <q-btn
+                    label="Ver Mis Tests"
+                    color="secondary"
+                    @click="$router.push('/dashboard/test-resultados')"
+                    outline
+                  />
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
           </div>
         </div>
       </div>
@@ -214,6 +327,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useTestStore } from 'src/stores/test'
 import { useQuasar } from 'quasar'
+import shareService from 'src/services/share'
 
 const route = useRoute()
 const router = useRouter()
@@ -223,6 +337,11 @@ const $q = useQuasar()
 const loading = ref(false)
 const perfil = ref(null)
 const mostrarDescripcionCompleta = ref(false)
+const descargando = ref({
+  pdf: false,
+  imagen: false
+})
+const resultadosRef = ref(null)
 
 // Mapeo de códigos MBTI a nombres de archivo de avatar
 // Los archivos tienen formato: "CODIGO NombreSimple_GX.png"
@@ -302,6 +421,152 @@ async function reiniciarTest() {
       type: 'negative',
       message: 'Error al iniciar test'
     })
+  }
+}
+
+// ==================== Funciones de Descarga y Compartir ====================
+
+async function descargarPDF() {
+  if (!perfil.value) return
+
+  descargando.value.pdf = true
+  try {
+    const resultado = await shareService.descargarPDF(perfil.value, avatarUrl.value)
+    
+    if (resultado.success) {
+      $q.notify({
+        type: 'positive',
+        message: 'PDF descargado exitosamente',
+        icon: 'check_circle'
+      })
+    } else {
+      throw new Error(resultado.message)
+    }
+  } catch (error) {
+    console.error('Error descargando PDF:', error)
+    $q.notify({
+      type: 'negative',
+      message: 'Error al descargar PDF',
+      icon: 'error'
+    })
+  } finally {
+    descargando.value.pdf = false
+  }
+}
+
+async function descargarImagen() {
+  if (!perfil.value) return
+
+  descargando.value.imagen = true
+  try {
+    const resultado = await shareService.descargarImagen(perfil.value, avatarUrl.value)
+    
+    if (resultado.success) {
+      $q.notify({
+        type: 'positive',
+        message: 'Imagen descargada exitosamente',
+        icon: 'check_circle'
+      })
+    } else {
+      throw new Error(resultado.message)
+    }
+  } catch (error) {
+    console.error('Error descargando imagen:', error)
+    $q.notify({
+      type: 'negative',
+      message: 'Error al descargar imagen',
+      icon: 'error'
+    })
+  } finally {
+    descargando.value.imagen = false
+  }
+}
+
+async function copiarAlPortapapeles() {
+  if (!perfil.value) return
+
+  try {
+    const resultado = await shareService.copiarAlPortapapeles(perfil.value)
+    
+    if (resultado.success) {
+      $q.notify({
+        type: 'positive',
+        message: resultado.message,
+        icon: 'check_circle'
+      })
+    } else {
+      throw new Error(resultado.message)
+    }
+  } catch (error) {
+    console.error('Error copiando al portapapeles:', error)
+    $q.notify({
+      type: 'negative',
+      message: 'Error al copiar al portapapeles',
+      icon: 'error'
+    })
+  }
+}
+
+async function compartirWhatsApp() {
+  if (!perfil.value) return
+  try {
+    await shareService.compartirWhatsApp(perfil.value)
+  } catch (error) {
+    console.error('Error compartiendo en WhatsApp:', error)
+  }
+}
+
+async function compartirInstagram() {
+  if (!perfil.value) return
+  try {
+    await shareService.compartirInstagram(perfil.value)
+  } catch (error) {
+    console.error('Error compartiendo en Instagram:', error)
+  }
+}
+
+async function compartirFacebook() {
+  if (!perfil.value) return
+  try {
+    await shareService.compartirFacebook(perfil.value)
+  } catch (error) {
+    console.error('Error compartiendo en Facebook:', error)
+  }
+}
+
+async function compartirMessenger() {
+  if (!perfil.value) return
+  try {
+    await shareService.compartirMessenger(perfil.value)
+  } catch (error) {
+    console.error('Error compartiendo en Messenger:', error)
+  }
+}
+
+async function compartirTwitter() {
+  if (!perfil.value) return
+  try {
+    await shareService.compartirTwitter(perfil.value)
+  } catch (error) {
+    console.error('Error compartiendo en Twitter:', error)
+  }
+}
+
+async function compartirLinkedIn() {
+  if (!perfil.value) return
+  try {
+    await shareService.compartirLinkedIn(perfil.value)
+  } catch (error) {
+    console.error('Error compartiendo en LinkedIn:', error)
+  }
+}
+
+async function compartirEmail() {
+  if (!perfil.value) return
+  try {
+    await shareService.compartirEmail(perfil.value)
+  } catch (error) {
+    console.error('Error compartiendo por email:', error)
   }
 }
 </script>
@@ -695,6 +960,88 @@ async function reiniciarTest() {
   }
   to {
     opacity: 1;
+  }
+}
+
+/* Estilos para botones de compartir y descargar */
+.resultados-container {
+  animation: fadeInDown 0.5s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estilos para los botones de redes sociales */
+:deep(.q-btn--round) {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+:deep(.q-btn--round:hover) {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Color para Facebook */
+:deep(.q-btn.bg-facebook) {
+  background-color: #1877F2 !important;
+}
+
+/* Color para LinkedIn */
+:deep(.q-btn.bg-linkedin) {
+  background-color: #0A66C2 !important;
+}
+
+/* Mejorar aspecto de los botones de descarga y redes sociales */
+:deep(.q-btn) {
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+:deep(.q-btn:not(.q-btn--round)) {
+  border-radius: 8px;
+  padding: 12px 24px;
+}
+
+:deep(.q-btn--outline) {
+  border-width: 2px;
+}
+
+/* Card de acciones con mejor presentación */
+:deep(.q-card) {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+}
+
+/* Tooltip estilo */
+:deep(.q-tooltip) {
+  background-color: rgba(0, 0, 0, 0.9);
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+/* Responsive para botones de redes */
+@media (max-width: 768px) {
+  :deep(.q-btn--round) {
+    size: md;
+  }
+}
+
+@media (max-width: 480px) {
+  :deep(.q-btn:not(.q-btn--round)) {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+  
+  :deep(.q-btn--round) {
+    size: sm;
   }
 }
 </style>
