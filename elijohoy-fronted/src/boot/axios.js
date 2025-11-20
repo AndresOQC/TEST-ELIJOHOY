@@ -5,11 +5,13 @@ import axios from 'axios'
 // CONFIGURACIÓN DE API BASE URL
 // =============================================================================
 // Detectar automáticamente el entorno basado en el hostname
-// - Desarrollo: localhost o 127.0.0.1 -> usa localhost:5001
+// - Desarrollo: localhost, 127.0.0.1 o DevTunnels -> usa localhost:5001
 // - Producción: cualquier otro dominio -> usa el dominio actual con /api
 // =============================================================================
 
-const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+const isDevelopment = window.location.hostname === 'localhost' || 
+                     window.location.hostname === '127.0.0.1' ||
+                     window.location.hostname.includes('.devtunnels.ms')
 
 // Construir la URL base de la API según el entorno
 let API_BASE_URL
