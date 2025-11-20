@@ -393,6 +393,10 @@ onMounted(async () => {
     if (respuestasGuardadas) {
       respuestas.value = JSON.parse(respuestasGuardadas)
       console.log('Respuestas restauradas de localStorage:', respuestas.value)
+      // Sincronizar progreso en el store
+      testStore.respuestas = respuestas.value
+      testStore.progreso = Object.keys(respuestas.value).length
+      console.log('Progreso sincronizado:', testStore.progreso)
     }
 
     // Verificar si hay una finalización de test pendiente

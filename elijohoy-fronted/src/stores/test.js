@@ -69,6 +69,9 @@ export const useTestStore = defineStore('test', {
       try {
         const authStore = useAuthStore();
 
+        // Limpiar completamente el estado anterior antes de iniciar nuevo test
+        this.limpiarTest();
+
         if (authStore.isAuthenticated) {
           // Si autenticado, crear sesión en BD
           const response = await testService.iniciarTest();
@@ -270,6 +273,12 @@ export const useTestStore = defineStore('test', {
 
         if (response.success) {
           this.resultados = response.resultados;
+          // Guardar resultados antes de limpiar
+          const resultsToKeep = this.resultados;
+          // Limpiar estado después de finalizar exitosamente
+          this.limpiarTest();
+          // Restaurar resultados para que se puedan mostrar
+          this.resultados = resultsToKeep;
         }
 
         return response;
