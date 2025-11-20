@@ -150,8 +150,6 @@ const todasRespondidas = computed(() => {
 })
 
 async function finalizarTestAutomaticamente() {
-  console.log('Iniciando finalización automática del test...')
-
   // Verificar que todas las preguntas estén respondidas
   if (!todasRespondidas.value) {
     throw new Error('El test no está completo')
@@ -164,8 +162,6 @@ async function finalizarTestAutomaticamente() {
     if (authStore.isAuthenticated) {
       // Si no tiene sesión activa, crear una y sincronizar respuestas
       if (!testStore.getSesion) {
-        console.log('Creando sesión y sincronizando respuestas...')
-
         // 1. Crear sesión de test
         const sesionResponse = await testStore.iniciarTest()
         if (!sesionResponse.success) {
@@ -179,7 +175,6 @@ async function finalizarTestAutomaticamente() {
           const sincronizacionResponse = await testStore.sincronizarRespuestas(respuestasParseadas)
 
           if (sincronizacionResponse.success) {
-            console.log('Respuestas sincronizadas exitosamente')
             // Limpiar localStorage después de sincronizar
             localStorage.removeItem('testRespuestas')
           } else {
@@ -192,8 +187,6 @@ async function finalizarTestAutomaticamente() {
       const response = await testStore.finalizarTest()
 
       if (response.success) {
-        console.log('Test finalizado exitosamente')
-
         $q.notify({
           type: 'positive',
           message: '¡Test completado! Tus resultados han sido guardados.',
@@ -211,9 +204,6 @@ async function finalizarTestAutomaticamente() {
     } else {
       throw new Error('Usuario no autenticado')
     }
-  } catch (error) {
-    console.error('Error en finalización automática:', error)
-    throw error
   } finally {
     loading.value = false
   }
@@ -392,6 +382,10 @@ onMounted(async () => {
       } catch (error) {
         console.log('No hay sesiones existentes o error al cargar:', error.message)
       }
+    } else if (!authStore.isAuthenticated) {
+      // Si no está autenticado, intentar restaurar sesión local
+      console.log('👤 Usuario no autenticado, intentando restaurar sesión local...')
+      testStore.restaurarSesion()
     }
 
     // Cargar respuestas guardadas en localStorage si existen

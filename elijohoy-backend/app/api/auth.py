@@ -13,7 +13,7 @@ from app.models.sesion_test import SesionTest
 from app.utils.auth_utils import hash_password, verify_password, get_current_user, revoke_token
 from app.utils.validators import validate_user_data, sanitize_string
 from app.utils.email_utils import send_password_reset_email
-from datetime import datetime, timedelta, timedelta
+from datetime import datetime, timedelta
 import uuid
 import traceback
 
@@ -36,7 +36,7 @@ def buscar_usuario_por_email():
 
 
 @auth_bp.route('/login', methods=['POST'])
-# @limiter.limit("5 per minute")  # Deshabilitado temporalmente para desarrollo
+@limiter.limit("5 per minute")  # Protección contra ataques de fuerza bruta
 def login():
     """Endpoint para login de usuario."""
     try:
@@ -63,17 +63,23 @@ def login():
         
         # Actualizar último acceso
         user.ultimo_login = datetime.utcnow()
+        db.session.commit()
 
         # Crear tokens JWT
         access_token = create_access_token(identity=str(user.id))
         refresh_token = create_refresh_token(identity=str(user.id))
 
         # Guardar tokens en BD
-        access_jti = decode_token(access_token)['jti']
-        refresh_jti = decode_token(refresh_token)['jti']
+        try:
+            access_jti = decode_token(access_token)['jti']
+            refresh_jti = decode_token(refresh_token)['jti']
+        except Exception as e:
+            current_app.logger.error(f'Error descodificando tokens: {str(e)}')
+            return jsonify({'success': False, 'message': 'Error al generar tokens'}), 500
 
-        access_expires = datetime.utcnow() + timedelta(hours=1)  # Configurar según JWT_ACCESS_TOKEN_EXPIRES
-        refresh_expires = datetime.utcnow() + timedelta(days=30)  # Configurar según JWT_REFRESH_TOKEN_EXPIRES
+        # Usar configuración de duración de tokens
+        access_expires = datetime.utcnow() + current_app.config['JWT_ACCESS_TOKEN_EXPIRES']
+        refresh_expires = datetime.utcnow() + current_app.config['JWT_REFRESH_TOKEN_EXPIRES']
 
         token_access = Token(
             usuario_id=user.id,
@@ -104,11 +110,12 @@ def login():
         }), 200
         
     except Exception as e:
+        db.session.rollback()
         current_app.logger.error(f'Error en login: {str(e)}')
         return jsonify({'success': False, 'message': 'Error interno del servidor'}), 500
 
 @auth_bp.route('/register', methods=['POST'])
-# @limiter.limit("3 per minute")  # Deshabilitado temporalmente para desarrollo
+@limiter.limit("3 per minute")  # Protección contra ataques de fuerza bruta
 def register():
     """Endpoint para registro de nuevo usuario."""
     try:
@@ -176,11 +183,16 @@ def register():
         refresh_token = create_refresh_token(identity=str(nuevo_usuario.id))
 
         # Guardar tokens en BD
-        access_jti = decode_token(access_token)['jti']
-        refresh_jti = decode_token(refresh_token)['jti']
+        try:
+            access_jti = decode_token(access_token)['jti']
+            refresh_jti = decode_token(refresh_token)['jti']
+        except Exception as e:
+            current_app.logger.error(f'Error descodificando tokens: {str(e)}')
+            return jsonify({'success': False, 'message': 'Error al generar tokens'}), 500
 
-        access_expires = datetime.utcnow() + timedelta(hours=1)  # Configurar según JWT_ACCESS_TOKEN_EXPIRES
-        refresh_expires = datetime.utcnow() + timedelta(days=30)  # Configurar según JWT_REFRESH_TOKEN_EXPIRES
+        # Usar configuración de duración de tokens
+        access_expires = datetime.utcnow() + current_app.config['JWT_ACCESS_TOKEN_EXPIRES']
+        refresh_expires = datetime.utcnow() + current_app.config['JWT_REFRESH_TOKEN_EXPIRES']
 
         token_access = Token(
             usuario_id=nuevo_usuario.id,
@@ -221,12 +233,16 @@ def get_current_user_info():
     """Obtener información del usuario actual."""
     try:
         current_user_id = get_jwt_identity()
-        current_app.logger.info(f'Obteniendo usuario con ID: {current_user_id}')
         
-        if not current_user_id:
+        try:
+            current_user_id_int = int(current_user_id) if current_user_id else None
+        except (ValueError, TypeError):
+            return jsonify({'success': False, 'message': 'ID de usuario inválido'}), 401
+        
+        if not current_user_id_int:
             return jsonify({'success': False, 'message': 'Token JWT inválido'}), 422
         
-        user = Usuario.query.get(current_user_id)
+        user = Usuario.query.get(current_user_id_int)
         
         if not user:
             return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
@@ -236,7 +252,6 @@ def get_current_user_info():
         
         try:
             user_data = user.to_dict(include_roles=True)
-            current_app.logger.info(f'Usuario data generado correctamente para: {user.email}')
         except Exception as dict_error:
             current_app.logger.error(f'Error generando to_dict: {str(dict_error)}')
             # Datos básicos de fallback
@@ -263,20 +278,31 @@ def refresh():
     """Renovar access token usando refresh token."""
     try:
         current_user_id = get_jwt_identity()
-        user = Usuario.query.get(current_user_id)
+        try:
+            current_user_id_int = int(current_user_id) if current_user_id else None
+        except (ValueError, TypeError):
+            return jsonify({'success': False, 'message': 'ID de usuario inválido'}), 401
+        
+        user = Usuario.query.get(current_user_id_int)
         
         if not user or not user.activo:
             return jsonify({'success': False, 'message': 'Usuario no encontrado o inactivo'}), 401
         
         # Crear nuevo access token
-        new_access_token = create_access_token(identity=current_user_id)
+        new_access_token = create_access_token(identity=str(current_user_id_int))
 
-        # Guardar token en BD
-        access_jti = decode_token(new_access_token)['jti']
-        access_expires = datetime.utcnow() + timedelta(hours=1)
+        # Guardar token en BD con error handling
+        try:
+            access_jti = decode_token(new_access_token)['jti']
+        except Exception as e:
+            current_app.logger.error(f'Error descodificando token: {str(e)}')
+            return jsonify({'success': False, 'message': 'Error al generar token'}), 500
+        
+        # Usar configuración de duración
+        access_expires = datetime.utcnow() + current_app.config['JWT_ACCESS_TOKEN_EXPIRES']
 
         token_access = Token(
-            usuario_id=current_user_id,
+            usuario_id=current_user_id_int,
             jti=access_jti,
             tipo='access',
             fecha_expiracion=access_expires
@@ -286,10 +312,14 @@ def refresh():
 
         return jsonify({
             'success': True,
-            'access_token': new_access_token
+            'message': 'Token renovado exitosamente',
+            'data': {
+                'access_token': new_access_token
+            }
         }), 200
         
     except Exception as e:
+        db.session.rollback()
         current_app.logger.error(f'Error renovando token: {str(e)}')
         return jsonify({'success': False, 'message': 'Error interno del servidor'}), 500
 
@@ -325,12 +355,6 @@ def update_profile():
         if not data:
             return jsonify({'success': False, 'message': 'No se enviaron datos'}), 400
         
-        # Actualizar datos de usuario
-        if 'nombre' in data:
-            user.nombre = sanitize_string(data['nombre'], 100)
-        if 'apellidos' in data:
-            user.apellidos = sanitize_string(data['apellidos'], 100)
-        
         # Actualizar o crear perfil de alumno
         alumno = user.alumno
         if not alumno:
@@ -338,6 +362,10 @@ def update_profile():
             db.session.add(alumno)
         
         # Actualizar campos de alumno
+        if 'nombre' in data:
+            alumno.nombre = sanitize_string(data['nombre'], 100)
+        if 'apellidos' in data:
+            alumno.apellidos = sanitize_string(data['apellidos'], 100)
         if 'edad' in data:
             alumno.edad = data.get('edad')
         if 'genero' in data:
@@ -355,8 +383,7 @@ def update_profile():
         if 'turno' in data:
             alumno.turno = sanitize_string(data.get('turno', '').lower() if data.get('turno') else None, 20)
         
-        user.fecha_actualizacion = datetime.utcnow()
-        alumno.fecha_actualizacion = datetime.utcnow()
+        # No es necesario actualizar manualmente actualizado_en - SQLAlchemy lo hace automáticamente
         
         db.session.commit()
         
@@ -376,7 +403,7 @@ def update_profile():
         return jsonify({'success': False, 'message': 'Error interno del servidor'}), 500
 
 @auth_bp.route('/recover-password', methods=['POST'])
-# @limiter.limit("3 per minute")  # Deshabilitado temporalmente para desarrollo
+@limiter.limit("3 per minute")  # Protección contra ataques de fuerza bruta
 def recover_password():
     """Recuperar contraseña."""
     try:
@@ -437,7 +464,7 @@ def recover_password():
         return jsonify({'success': False, 'message': 'Error interno del servidor'}), 500
 
 @auth_bp.route('/reset-password', methods=['POST'])
-# @limiter.limit("3 per minute")  # Deshabilitado temporalmente para desarrollo
+@limiter.limit("3 per minute")  # Protección contra ataques de fuerza bruta
 def reset_password():
     """Restablecer contraseña con token."""
     try:

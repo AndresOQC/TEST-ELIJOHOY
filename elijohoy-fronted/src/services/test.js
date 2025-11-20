@@ -1,4 +1,4 @@
-import api from './api'
+import { api } from './api'
 
 /**
  * Servicio para gestionar el test de personalidad OEJTS
@@ -25,9 +25,6 @@ const testService = {
       await new Promise(resolve => setTimeout(resolve, 100))
       
       const token = sessionStorage.getItem('access_token')
-      console.log('🔍 Iniciando test - Token en sessionStorage:', !!token)
-      console.log('🔍 Token completo:', token ? token.substring(0, 50) + '...' : 'null')
-      
       if (!token) {
         throw new Error('No hay token de autenticación disponible')
       }
@@ -39,7 +36,6 @@ const testService = {
           'Content-Type': 'application/json'
         }
       })
-      console.log('🔍 Respuesta del servidor:', response.data)
       return response.data
     } catch (error) {
       console.error('❌ Error en iniciarTest:', error)
@@ -53,8 +49,6 @@ const testService = {
    */
   async guardarRespuesta(respuesta) {
     try {
-      console.log('🔍 Guardando respuesta - Token en sessionStorage:', !!sessionStorage.getItem('access_token'))
-      
       const response = await api.post('/test/responder', respuesta)
       return response.data
     } catch (error) {

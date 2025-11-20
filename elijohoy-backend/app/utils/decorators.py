@@ -14,16 +14,28 @@ def role_required(*roles):
             verify_jwt_in_request()
             user_id = get_jwt_identity()
 
+            try:
+                user_id = int(user_id) if user_id else None
+            except (ValueError, TypeError):
+                return jsonify({
+                    'success': False,
+                    'message': 'ID de usuario inválido'
+                }), 401
+
             usuario = Usuario.query.get(user_id)
             if not usuario:
                 return jsonify({
                     'success': False,
                     'message': 'Usuario no encontrado'
                 }), 404
+            
+            if not usuario.activo:
+                return jsonify({
+                    'success': False,
+                    'message': 'Usuario inactivo'
+                }), 403
 
             user_roles = usuario.get_roles()
-
-            # Verificar si el usuario tiene alguno de los roles requeridos
             if not any(role in user_roles for role in roles):
                 return jsonify({
                     'success': False,
@@ -45,12 +57,26 @@ def admin_required(fn):
         verify_jwt_in_request()
         user_id = get_jwt_identity()
 
+        try:
+            user_id = int(user_id) if user_id else None
+        except (ValueError, TypeError):
+            return jsonify({
+                'success': False,
+                'message': 'ID de usuario inválido'
+            }), 401
+
         usuario = Usuario.query.get(user_id)
         if not usuario:
             return jsonify({
                 'success': False,
                 'message': 'Usuario no encontrado'
             }), 404
+
+        if not usuario.activo:
+            return jsonify({
+                'success': False,
+                'message': 'Usuario inactivo'
+            }), 403
 
         if not usuario.has_role('administrador'):
             return jsonify({
@@ -72,12 +98,26 @@ def alumno_or_admin_required(fn):
         verify_jwt_in_request()
         user_id = get_jwt_identity()
 
+        try:
+            user_id = int(user_id) if user_id else None
+        except (ValueError, TypeError):
+            return jsonify({
+                'success': False,
+                'message': 'ID de usuario inválido'
+            }), 401
+
         usuario = Usuario.query.get(user_id)
         if not usuario:
             return jsonify({
                 'success': False,
                 'message': 'Usuario no encontrado'
             }), 404
+
+        if not usuario.activo:
+            return jsonify({
+                'success': False,
+                'message': 'Usuario inactivo'
+            }), 403
 
         if not (usuario.has_role('administrador') or usuario.has_role('alumno')):
             return jsonify({

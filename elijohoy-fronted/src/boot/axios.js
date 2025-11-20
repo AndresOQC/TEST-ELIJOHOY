@@ -53,7 +53,7 @@ api.interceptors.request.use(config => {
     const token = sessionStorage.getItem('access_token');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
-      console.log('🔑 Token enviado en request:', config.url, token.substring(0, 20) + '...');
+      // Token adjuntado (log removido por seguridad)
     } else {
       console.warn('⚠️ No hay token para request:', config.url);
     }
@@ -151,7 +151,7 @@ api.interceptors.response.use(
         }
       });
 
-      const access_token = response.data.data?.access_token || response.data.access_token;
+      const access_token = response.data.data?.access_token;
 
       if (access_token) {
         console.log('✅ Token refreshed successfully');

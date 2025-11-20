@@ -17,7 +17,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-elijohoy_user} -d ${POSTGRES_DB:-elijohoy_db}"]
       interval: 10s
-      timeout: 5s
+      timeout: 10s
       retries: 5
     networks:
       - elijohoy_network

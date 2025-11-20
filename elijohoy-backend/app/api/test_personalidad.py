@@ -31,7 +31,7 @@ def buscar_sesion_por_id():
 
 
 @bp.route('/preguntas', methods=['GET'])
-# @limiter.limit("10 per minute")  # Deshabilitado temporalmente para desarrollo
+@limiter.limit("10 per minute")  # Protección contra abuso de API
 def obtener_preguntas():
     """Obtener todas las preguntas activas del test ordenadas."""
     try:
@@ -227,7 +227,7 @@ def eliminar_pregunta(id_pregunta):
 
 
 @bp.route('/iniciar', methods=['POST'])
-# @limiter.limit("10 per minute")  # Deshabilitado temporalmente para desarrollo
+@limiter.limit("10 per minute")  # Protección contra abuso de API
 @jwt_required(optional=True)
 def iniciar_test():
     """Iniciar una nueva sesión de test (anónima o autenticada)."""
@@ -288,7 +288,7 @@ def iniciar_test():
 
 
 @bp.route('/responder', methods=['POST'])
-# @limiter.limit("100 per minute")  # Deshabilitado temporalmente para desarrollo
+@limiter.limit("100 per minute")  # Protección contra abuso de API
 def guardar_respuesta():
     """Guardar una respuesta individual del test."""
     try:
@@ -380,7 +380,7 @@ def guardar_respuesta():
 
 
 @bp.route('/finalizar/<int:id_sesion>', methods=['POST'])
-# @limiter.limit("5 per minute")  # Deshabilitado temporalmente para desarrollo
+@limiter.limit("5 per minute")  # Protección contra abuso de API
 def finalizar_test(id_sesion):
     """Finalizar test y calcular resultados."""
     try:

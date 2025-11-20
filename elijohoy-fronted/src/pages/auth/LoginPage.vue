@@ -163,12 +163,9 @@ export default defineComponent({
           const pendingFinalization = localStorage.getItem('pendingTestFinalization')
 
           if (pendingFinalization === 'true') {
-            console.log('Finalización de test pendiente, redirigiendo al test...')
             // Mantener el indicador para que el test se finalice automáticamente
             router.push('/dashboard/test')
           } else if (respuestasGuardadas) {
-            console.log('Detectadas respuestas de test, se sincronizarán en la página del test...')
-            
             Notify.create({
               message: 'Respuestas detectadas, continuando con el test...',
               color: 'positive',

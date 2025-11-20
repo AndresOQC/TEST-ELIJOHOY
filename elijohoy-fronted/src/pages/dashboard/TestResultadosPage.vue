@@ -144,7 +144,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useAuthStore } from 'src/stores/auth'
-import api from 'src/services/api'
+import { api } from 'src/services/api'
 
 const router = useRouter()
 const $q = useQuasar()

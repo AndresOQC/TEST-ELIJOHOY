@@ -93,6 +93,11 @@ export const useTestStore = defineStore('test', {
           this.progreso = 0;
           this.resultados = null;
           this.tiempoInicio = Date.now();
+          
+          // Guardar sesión local en localStorage para recuperación
+          localStorage.setItem('testSesionLocal', JSON.stringify(this.sesionActual));
+          localStorage.setItem('testRespuestas', JSON.stringify(this.respuestas));
+          
           console.log('Test iniciado localmente (no autenticado)');
           return { success: true, sesion: this.sesionActual };
         }
@@ -139,11 +144,11 @@ export const useTestStore = defineStore('test', {
             console.error('Error guardando respuesta en BD:', response.message);
           }
         } else {
-          // Si no autenticado, guardar en localStorage
+          // Si no autenticado, guardar respuestas en localStorage
           localStorage.setItem('testRespuestas', JSON.stringify(this.respuestas));
+          // También guardar sesión local para recuperación
+          localStorage.setItem('testSesionLocal', JSON.stringify(this.sesionActual));
         }
-
-        console.log(`Progreso actualizado: ${this.progreso}/32 preguntas respondidas.`);
 
         // Reiniciar tiempo para siguiente pregunta
         this.tiempoInicio = Date.now();
@@ -217,17 +222,24 @@ export const useTestStore = defineStore('test', {
     },
 
     /**
-     * Restaurar sesión desde localStorage
+     * Restaurar sesión desde localStorage (para usuarios no autenticados)
      */
     restaurarSesion() {
       try {
-        const sesionGuardada = JSON.parse(localStorage.getItem('testSesion'));
-        if (sesionGuardada) {
-          this.sesionActual = sesionGuardada;
-          console.log('Sesión restaurada desde localStorage:', this.sesionActual);
+        // Intentar restaurar sesión local (usuarios no autenticados)
+        const sesionLocalGuardada = localStorage.getItem('testSesionLocal');
+        if (sesionLocalGuardada) {
+          this.sesionActual = JSON.parse(sesionLocalGuardada);
+          console.log('Sesión local restaurada desde localStorage:', this.sesionActual);
+          return true;
         }
+        
+        // Si no hay sesión local guardada
+        console.log('No hay sesión local guardada en localStorage');
+        return false;
       } catch (error) {
         console.error('Error al restaurar la sesión desde localStorage:', error);
+        return false;
       }
     },
 

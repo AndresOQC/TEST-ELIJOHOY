@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Base de datos PostgreSQL
   db:
@@ -17,7 +15,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U elijohoy_user -d elijohoy_db"]
       interval: 10s
-      timeout: 5s
+      timeout: 10s
       retries: 5
     networks:
       - elijohoy_network
@@ -33,9 +31,12 @@ services:
     environment:
       FLASK_ENV: development
       DATABASE_URL: postgresql://elijohoy_user:elijohoy_password@db:5432/elijohoy_db
+      POSTGRES_USER: elijohoy_user
+      POSTGRES_PASSWORD: elijohoy_password
+      POSTGRES_DB: elijohoy_db
       FRONTEND_URL: http://localhost:9000
       PASSWORD_RESET_URL: http://localhost:9000/auth/restablecer-password
-      ALLOWED_ORIGINS: http://localhost:9000,http://127.0.0.1:9000,http://localhost:80
+      ALLOWED_ORIGINS: http://localhost:9000,http://127.0.0.1:9000,http://localhost:80,http://localhost:5001,http://127.0.0.1:5001
       PORT: 5001
     ports:
       - "5001:5001"
