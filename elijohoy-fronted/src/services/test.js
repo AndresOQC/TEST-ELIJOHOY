@@ -18,24 +18,12 @@ const testService = {
 
   /**
    * Iniciar una nueva sesión de test
+   * @param {Object} data - Datos opcionales como id_sesion_anterior
    */
-  async iniciarTest() {
+  async iniciarTest(data = {}) {
     try {
-      // Esperar un poco para asegurar que el token esté disponible
-      await new Promise(resolve => setTimeout(resolve, 100))
-      
-      const token = sessionStorage.getItem('access_token')
-      if (!token) {
-        throw new Error('No hay token de autenticación disponible')
-      }
-      
-      // Hacer la petición manualmente con el token para asegurar que se envía
-      const response = await api.post('/test/iniciar', {}, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      })
+      // Simplemente hacer la petición - el interceptor de axios agregará el token automáticamente
+      const response = await api.post('/test/iniciar', data)
       return response.data
     } catch (error) {
       console.error('❌ Error en iniciarTest:', error)

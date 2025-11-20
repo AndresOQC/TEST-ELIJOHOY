@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import AuthService from 'src/services/auth'
+import { useTestStore } from 'src/stores/test'
 
 export const useAuthStore = defineStore('auth', () => {
   // State
@@ -113,6 +114,18 @@ export const useAuthStore = defineStore('auth', () => {
       sessionStorage.clear()
       user.value = null
       isAuthenticated.value = false
+      
+      // Limpiar también el estado del test al hacer logout
+      const testStore = useTestStore()
+      testStore.limpiarTest()
+      
+      // Limpiar localStorage de test si el usuario hizo logout
+      // Esto evita que datos de sesiones anteriores interfieran
+      localStorage.removeItem('testSesionLocal')
+      localStorage.removeItem('testRespuestas')
+      localStorage.removeItem('pendingTestFinalization')
+      
+      console.log('✅ Logout completado y datos de test limpiados')
     }
   }
 

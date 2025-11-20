@@ -68,46 +68,101 @@ export const useTestStore = defineStore('test', {
     async iniciarTest() {
       try {
         const authStore = useAuthStore();
+        authStore.initializeAuth();
 
-        // Limpiar completamente el estado anterior antes de iniciar nuevo test
-        this.limpiarTest();
+        console.log('🔍 Iniciando test...');
+        console.log('  - Autenticado:', authStore.isAuthenticated);
+        console.log('  - Sesión anterior:', this.sesionActual?.id_sesion);
+
+        // Verificar si hay respuestas guardadas en localStorage
+        const respuestasGuardadas = localStorage.getItem('testRespuestas');
+        const respuestasPreviasCount = respuestasGuardadas ? Object.keys(JSON.parse(respuestasGuardadas)).length : 0;
 
         if (authStore.isAuthenticated) {
-          // Si autenticado, crear sesión en BD
-          const response = await testService.iniciarTest();
-          console.log('Respuesta al iniciar test:', response);
+          // ==================== CASO: Usuario autenticado ====================
+          console.log('🔐 Usuario autenticado, creando sesión en BD...');
+
+          // Preparar datos para la solicitud
+          const requestData = {};
+          
+          // Si hay sesión local anterior, intentar reutilizarla
+          const sesionLocal = localStorage.getItem('testSesionLocal');
+          if (sesionLocal) {
+            const sesionLocalParsed = JSON.parse(sesionLocal);
+            if (sesionLocalParsed.id_sesion && !sesionLocalParsed.id_sesion.startsWith('local-')) {
+              // Es una sesión con ID numérico, puede reutilizarse
+              requestData.id_sesion_anterior = sesionLocalParsed.id_sesion;
+              console.log('📝 Sesión anterior encontrada:', sesionLocalParsed.id_sesion);
+            }
+          }
+
+          // Limpiar sesión anterior del estado local
+          this.sesionActual = null;
+          this.progreso = 0;
+          this.resultados = null;
+
+          // Crear nueva sesión en BD (o reutilizar la anterior)
+          const response = await testService.iniciarTest(requestData);
+          console.log('✅ Respuesta al iniciar test (autenticado):', response);
 
           if (response.success) {
             this.sesionActual = response.sesion;
+            // Inicializar respuestas vacías para nueva sesión autenticada
             this.respuestas = {};
             this.progreso = 0;
-            this.resultados = null;
             this.tiempoInicio = Date.now();
+            
+            // Si hay respuestas guardadas anteriormente (del test anónimo),
+            // se sincronizarán en finalizarTestAutomaticamente()
+            if (respuestasPreviasCount > 0) {
+              console.log(`📝 Se encontraron ${respuestasPreviasCount} respuestas previas de sesión anónima`);
+            }
+            
             return response;
+          } else {
+            throw new Error(response.message || 'Error al crear sesión de test');
           }
         } else {
-          // Si no autenticado, inicializar localmente
-          this.sesionActual = {
-            id_sesion: 'local-' + Date.now(),
-            estado: 'iniciado',
-            fecha_inicio: new Date().toISOString()
-          };
-          this.respuestas = {};
-          this.progreso = 0;
+          // ==================== CASO: Usuario no autenticado ====================
+          console.log('👤 Usuario no autenticado, usando sesión local...');
+
+          // Si hay respuestas previas guardadas, reutilizar sesión anterior
+          const sesionLocal = localStorage.getItem('testSesionLocal');
+          
+          if (respuestasPreviasCount > 0 && sesionLocal) {
+            // Reutilizar sesión anterior
+            console.log('♻️ Reutilizando sesión local anterior');
+            this.sesionActual = JSON.parse(sesionLocal);
+            this.respuestas = JSON.parse(respuestasGuardadas);
+            this.progreso = respuestasPreviasCount;
+          } else {
+            // Crear nueva sesión local
+            console.log('✨ Creando nueva sesión local');
+            this.limpiarTest();
+            
+            this.sesionActual = {
+              id_sesion: 'local-' + Date.now(),
+              estado: 'iniciado',
+              fecha_inicio: new Date().toISOString()
+            };
+            this.respuestas = {};
+            this.progreso = 0;
+            
+            localStorage.setItem('testSesionLocal', JSON.stringify(this.sesionActual));
+            localStorage.setItem('testRespuestas', JSON.stringify(this.respuestas));
+          }
+
           this.resultados = null;
           this.tiempoInicio = Date.now();
-          
-          // Guardar sesión local en localStorage para recuperación
-          localStorage.setItem('testSesionLocal', JSON.stringify(this.sesionActual));
-          localStorage.setItem('testRespuestas', JSON.stringify(this.respuestas));
-          
-          console.log('Test iniciado localmente (no autenticado)');
-          return { success: true, sesion: this.sesionActual };
-        }
 
-        return { success: false, message: 'Error al iniciar test' };
+          console.log('✅ Sesión local inicializada:', this.sesionActual.id_sesion);
+          return { 
+            success: true, 
+            sesion: this.sesionActual 
+          };
+        }
       } catch (error) {
-        console.error('Error al iniciar test:', error);
+        console.error('❌ Error al iniciar test:', error);
         throw error;
       }
     },

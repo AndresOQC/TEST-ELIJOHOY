@@ -168,13 +168,13 @@ async function finalizarTestAutomaticamente() {
           throw new Error('Error al crear sesión de test')
         }
 
-        // 2. Sincronizar respuestas del localStorage a la BD
-        const respuestasGuardadas = localStorage.getItem('testRespuestas')
-        if (respuestasGuardadas) {
-          const respuestasParseadas = JSON.parse(respuestasGuardadas)
-          const sincronizacionResponse = await testStore.sincronizarRespuestas(respuestasParseadas)
+        // 2. Sincronizar respuestas desde respuestas.value a la BD
+        if (Object.keys(respuestas.value).length > 0) {
+          console.log('Sincronizando respuestas en finalizarTestAutomaticamente:', Object.keys(respuestas.value).length)
+          const sincronizacionResponse = await testStore.sincronizarRespuestas(respuestas.value)
 
           if (sincronizacionResponse.success) {
+            console.log('Respuestas sincronizadas exitosamente en finalizarTestAutomaticamente')
             // Limpiar localStorage después de sincronizar
             localStorage.removeItem('testRespuestas')
           } else {
@@ -289,11 +289,10 @@ async function finalizar() {
             throw new Error('Error al crear sesión de test')
           }
 
-          // 2. Sincronizar respuestas del localStorage a la BD
-          const respuestasGuardadas = localStorage.getItem('testRespuestas')
-          if (respuestasGuardadas) {
-            const respuestasParseadas = JSON.parse(respuestasGuardadas)
-            const sincronizacionResponse = await testStore.sincronizarRespuestas(respuestasParseadas)
+          // 2. Sincronizar respuestas del ESTADO actual a la BD
+          if (Object.keys(respuestas.value).length > 0) {
+            console.log('Sincronizando respuestas:', Object.keys(respuestas.value).length)
+            const sincronizacionResponse = await testStore.sincronizarRespuestas(respuestas.value)
 
             if (sincronizacionResponse.success) {
               console.log('Respuestas sincronizadas exitosamente')
@@ -397,16 +396,6 @@ onMounted(async () => {
       testStore.respuestas = respuestas.value
       testStore.progreso = Object.keys(respuestas.value).length
       console.log('Progreso sincronizado:', testStore.progreso)
-      
-      // Si está autenticado y hay respuestas, sincronizarlas con el backend
-      if (authStore.isAuthenticated && testStore.progreso === 32) {
-        console.log('Sincronizando respuestas restauradas con el backend...')
-        try {
-          await testStore.sincronizarRespuestas(respuestas.value)
-        } catch (error) {
-          console.error('Error sincronizando respuestas:', error)
-        }
-      }
     }
 
     // Verificar si hay una finalización de test pendiente
