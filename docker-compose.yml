@@ -35,7 +35,7 @@ services:
       DATABASE_URL: postgresql://elijohoy_user:elijohoy_password@db:5432/elijohoy_db
       FRONTEND_URL: http://localhost:9000
       PASSWORD_RESET_URL: http://localhost:9000/auth/restablecer-password
-      ALLOWED_ORIGINS: http://localhost:9000,http://127.0.0.1:9000,http://localhost:80
+      ALLOWED_ORIGINS: http://localhost:9000,http://localhost:9001,http://127.0.0.1:9000,http://127.0.0.1:9001,http://localhost:80
       PORT: 5001
     ports:
       - "5001:5001"
