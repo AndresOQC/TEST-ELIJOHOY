@@ -471,14 +471,14 @@ def reset_password():
         current_app.logger.info('=== Inicio reset-password ===')
         data = request.get_json()
         current_app.logger.info(f'Data recibida: {data}')
-        
+
         if not data or not data.get('token') or not data.get('new_password'):
             return jsonify({'success': False, 'message': 'Token y nueva contraseña son requeridos'}), 400
-        
+
         token_string = data['token']
         new_password = data['new_password']
         current_app.logger.info(f'Token recibido: {token_string[:20]}...')
-        
+
         # Validar la nueva contraseña
         password_errors = []
         if len(new_password) < 8:
@@ -491,28 +491,28 @@ def reset_password():
             password_errors.append('La contraseña debe contener al menos un número')
         if not any(c in '!@#$%^&*(),.?":{}|<>' for c in new_password):
             password_errors.append('La contraseña debe contener al menos un símbolo')
-        
+
         if password_errors:
             current_app.logger.warning(f'Errores de validación de contraseña: {password_errors}')
             return jsonify({
-                'success': False, 
+                'success': False,
                 'message': 'Contraseña no válida',
                 'errors': password_errors
             }), 400
-        
+
         # Verificar el token
         current_app.logger.info('Verificando token...')
         reset_token = Token.verify_password_reset_token(token_string)
-        
+
         if not reset_token:
             current_app.logger.warning('Token inválido o expirado')
             return jsonify({
                 'success': False,
                 'message': 'Token inválido o expirado'
             }), 400
-        
+
         current_app.logger.info(f'Token válido para usuario_id: {reset_token.usuario_id}')
-        
+
         # Obtener el usuario
         user = Usuario.query.get(reset_token.usuario_id)
         if not user or not user.activo:
@@ -521,38 +521,106 @@ def reset_password():
                 'success': False,
                 'message': 'Usuario no encontrado'
             }), 404
-        
+
         current_app.logger.info(f'Usuario encontrado: {user.email}')
-        
+
         # Cambiar la contraseña
         user.password_hash = hash_password(new_password)
         user.actualizado_en = datetime.utcnow()
         current_app.logger.info('Contraseña hasheada y usuario actualizado')
-        
+
         # Marcar el token como usado
         reset_token.use_token()
         current_app.logger.info('Token marcado como usado')
-        
+
         # Revocar todos los tokens JWT activos del usuario
         existing_tokens = Token.query.filter_by(usuario_id=user.id, revocado=False).all()
         for token in existing_tokens:
             token.revocado = True
         current_app.logger.info(f'Revocados {len(existing_tokens)} tokens JWT')
-        
+
         db.session.commit()
         current_app.logger.info('Cambios guardados en BD')
-        
+
         current_app.logger.info(f'Contraseña restablecida para usuario {user.email}')
-        
+
         return jsonify({
             'success': True,
             'message': 'Contraseña restablecida exitosamente'
         }), 200
-        
+
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f'Error restableciendo contraseña: {str(e)}')
         current_app.logger.error(f'Tipo de error: {type(e).__name__}')
         import traceback
         current_app.logger.error(f'Traceback: {traceback.format_exc()}')
+        return jsonify({'success': False, 'message': 'Error interno del servidor'}), 500
+
+
+@auth_bp.route('/change-password', methods=['POST'])
+@jwt_required()
+def change_password():
+    """Cambiar contraseña del usuario autenticado."""
+    try:
+        user = get_current_user()
+        if not user or not user.activo:
+            return jsonify({'success': False, 'message': 'Usuario no encontrado'}), 404
+
+        data = request.get_json()
+        if not data:
+            return jsonify({'success': False, 'message': 'No se enviaron datos'}), 400
+
+        current_password = data.get('current_password')
+        new_password = data.get('new_password')
+
+        if not current_password or not new_password:
+            return jsonify({
+                'success': False,
+                'message': 'Contraseña actual y nueva contraseña son requeridas'
+            }), 400
+
+        # Verificar contraseña actual
+        if not verify_password(current_password, user.password_hash):
+            return jsonify({
+                'success': False,
+                'message': 'La contraseña actual es incorrecta'
+            }), 400
+
+        # Validar la nueva contraseña
+        password_errors = []
+        if len(new_password) < 8:
+            password_errors.append('La contraseña debe tener al menos 8 caracteres')
+        if not any(c.isupper() for c in new_password):
+            password_errors.append('La contraseña debe contener al menos una mayúscula')
+        if not any(c.islower() for c in new_password):
+            password_errors.append('La contraseña debe contener al menos una minúscula')
+        if not any(c.isdigit() for c in new_password):
+            password_errors.append('La contraseña debe contener al menos un número')
+        if not any(c in '!@#$%^&*(),.?":{}|<>' for c in new_password):
+            password_errors.append('La contraseña debe contener al menos un símbolo')
+
+        if password_errors:
+            return jsonify({
+                'success': False,
+                'message': 'Contraseña no válida',
+                'errors': password_errors
+            }), 400
+
+        # Cambiar la contraseña
+        user.password_hash = hash_password(new_password)
+        user.fecha_actualizacion = datetime.utcnow()
+
+        db.session.commit()
+
+        current_app.logger.info(f'Contraseña cambiada para usuario {user.email}')
+
+        return jsonify({
+            'success': True,
+            'message': 'Contraseña cambiada exitosamente'
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f'Error cambiando contraseña: {str(e)}')
         return jsonify({'success': False, 'message': 'Error interno del servidor'}), 500

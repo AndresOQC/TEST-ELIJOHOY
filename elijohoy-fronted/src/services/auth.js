@@ -219,7 +219,7 @@ export class AuthService {
         token,
         new_password: newPassword
       })
-      
+
       return {
         success: response.data.success,
         message: response.data.message
@@ -229,6 +229,31 @@ export class AuthService {
       return {
         success: false,
         message: error.response?.data?.message || 'Error restableciendo contraseña'
+      }
+    }
+  }
+
+  /**
+   * Change password (while logged in)
+   */
+  static async changePassword(currentPassword, newPassword) {
+    try {
+      const response = await api.post('/auth/change-password', {
+        current_password: currentPassword,
+        new_password: newPassword
+      })
+
+      return {
+        success: response.data.success,
+        message: response.data.message,
+        errors: response.data.errors
+      }
+    } catch (error) {
+      console.error('Change password error:', error)
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Error cambiando contraseña',
+        errors: error.response?.data?.errors
       }
     }
   }
