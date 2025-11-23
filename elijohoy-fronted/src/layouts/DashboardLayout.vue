@@ -81,18 +81,13 @@
 
     <q-drawer
       v-model="leftDrawerOpen"
-      show-if-above
       :width="260"
-      :mini-width="80"
-      :mini="miniState"
-      :mini-to-overlay="false"
-      :breakpoint="1024"
+      :breakpoint="0"
       bordered
       elevated
-      behavior="desktop"
       class="dashboard-drawer"
-      @mouseover="miniState = false"
-      @mouseout="miniState = true"
+      :overlay="$q.screen.lt.md"
+      :behavior="$q.screen.lt.md ? 'mobile' : 'desktop'"
     >
       <q-scroll-area class="fit">
         <div class="q-pa-md">
@@ -234,9 +229,8 @@
 <script>
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useQuasar } from 'quasar'
+import { Notify, useQuasar } from 'quasar'
 import ConfirmDialog from 'src/components/common/ConfirmDialog.vue'
-import { Notify } from 'quasar'
 import { useAuthStore } from 'src/stores/auth'
 
 export default defineComponent({
@@ -248,8 +242,8 @@ export default defineComponent({
     const router = useRouter()
     const authStore = useAuthStore()
     const $q = useQuasar()
-    // Keep drawer open on desktop so content is always pushed and icons visible
-    const leftDrawerOpen = ref(true)
+    // Iniciar con menú abierto en pantallas grandes, cerrado en móviles
+    const leftDrawerOpen = ref($q.screen.gt.sm)
     const miniState = ref(false)
     const showLogoutDialog = ref(false)
 
