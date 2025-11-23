@@ -91,7 +91,16 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const logout = () => {
+    // Limpiar sessionStorage
     sessionStorage.clear()
+    // Limpiar localStorage de datos de autenticación
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('refresh_token')
+    localStorage.removeItem('user')
+    localStorage.removeItem('user_data')
+    localStorage.removeItem('user_token')
+    localStorage.removeItem('idUsuario')
+    // Limpiar estado
     user.value = null
     isAuthenticated.value = false
   }
