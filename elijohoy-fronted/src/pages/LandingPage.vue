@@ -45,18 +45,11 @@
 
           <div class="col-12 col-md-6 text-center q-mt-lg">
             <div class="hero-image-wrapper">
-              <div class="floating-card card-1">
-                <q-icon name="psychology" size="40px" color="purple-7" />
-                <div class="text-weight-bold q-mt-sm">Test Vocacional</div>
-              </div>
-              <div class="floating-card card-2">
-                <q-icon name="school" size="40px" color="amber-8" />
-                <div class="text-weight-bold q-mt-sm">Orientación</div>
-              </div>
-              <div class="floating-card card-3">
-                <q-icon name="trending_up" size="40px" color="pink-7" />
-                <div class="text-weight-bold q-mt-sm">Seguimiento</div>
-              </div>
+              <img
+                src="/hero-avatars-rocket.png"
+                alt="Avatares MBTI con cohete despegando"
+                class="hero-rocket-image"
+              />
             </div>
           </div>
         </div>
@@ -930,52 +923,27 @@ export default defineComponent({
 /* Hero Image */
 .hero-image-wrapper {
   position: relative;
-  height: clamp(250px, 35vh, 450px);
+  height: clamp(300px, 45vh, 500px);
   animation: fadeInRight 1.2s ease-out 0.4s both;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.floating-card {
-  position: absolute;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(1.25rem);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: clamp(0.75rem, 2vw, 1.25rem);
-  padding: clamp(1rem, 2.5vw, 1.5rem);
-  box-shadow: 0 0.75rem 2.5rem rgba(15, 23, 42, 0.15);
-  text-align: center;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: floatCard 4s ease-in-out infinite;
+.hero-rocket-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3));
+  animation: floatRocket 4s ease-in-out infinite;
 }
 
-.floating-card:hover {
-  transform: translateY(-0.5rem) scale(1.05);
-  box-shadow: 0 1.25rem 3.75rem rgba(15, 23, 42, 0.25);
-}
-
-.card-1 {
-  top: 10%;
-  left: 10%;
-  animation-delay: 0s;
-}
-
-.card-2 {
-  top: 50%;
-  right: 10%;
-  animation-delay: 1.5s;
-}
-
-.card-3 {
-  bottom: 10%;
-  left: 30%;
-  animation-delay: 3s;
-}
-
-@keyframes floatCard {
+@keyframes floatRocket {
   0%, 100% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateY(0);
   }
   50% {
-    transform: translateY(-0.9375rem) rotate(1deg);
+    transform: translateY(-15px);
   }
 }
 
@@ -1258,20 +1226,12 @@ export default defineComponent({
   }
 
   .hero-image-wrapper {
-    height: 300px;
-    margin-top: 40px;
+    height: 280px;
+    margin-top: 30px;
   }
 
-  .floating-card {
-    padding: 15px;
-  }
-
-  .floating-card .q-icon {
-    font-size: 32px !important;
-  }
-
-  .floating-card .text-weight-bold {
-    font-size: 0.85rem;
+  .hero-rocket-image {
+    max-height: 280px;
   }
 
   .features-section,
