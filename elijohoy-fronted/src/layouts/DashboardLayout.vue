@@ -66,7 +66,7 @@
 
             <q-separator />
 
-            <q-item clickable v-close-popup @click="showLogoutDialog = true">
+            <q-item clickable v-close-popup @click="confirmLogout">
               <q-item-section avatar>
                 <q-icon name="logout" color="negative" />
               </q-item-section>
@@ -216,13 +216,6 @@
       <router-view />
     </q-page-container>
 
-    <ConfirmDialog
-      v-model="showLogoutDialog"
-      title="Cerrar Sesión"
-      message="¿Estás seguro que deseas cerrar sesión?"
-      icon="logout"
-      @ok="confirmLogout"
-    />
   </q-layout>
 </template>
 
@@ -235,9 +228,6 @@ import { useAuthStore } from 'src/stores/auth'
 
 export default defineComponent({
   name: 'DashboardLayout',
-  components: {
-    ConfirmDialog
-  },
   setup() {
     const router = useRouter()
     const authStore = useAuthStore()
@@ -245,7 +235,6 @@ export default defineComponent({
     // Iniciar con menú cerrado siempre
     const leftDrawerOpen = ref(false)
     const miniState = ref(false)
-    const showLogoutDialog = ref(false)
     let lastScrollY = 0
 
     // Función para cerrar el menú al hacer scroll hacia abajo
@@ -306,7 +295,6 @@ export default defineComponent({
       isAdmin,
       toggleLeftDrawer,
       goToSettings,
-      showLogoutDialog,
       confirmLogout,
       $q
     }
