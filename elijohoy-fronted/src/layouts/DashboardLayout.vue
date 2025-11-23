@@ -83,11 +83,12 @@
 
     <q-drawer
       v-model="leftDrawerOpen"
-      show-if-above
       :width="260"
-      :breakpoint="1024"
+      :breakpoint="0"
       bordered
       class="dashboard-drawer"
+      :overlay="$q.screen.lt.md"
+      :behavior="$q.screen.lt.md ? 'mobile' : 'desktop'"
     >
       <q-scroll-area class="fit">
         <div class="q-pa-md">
@@ -202,7 +203,7 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import ConfirmDialog from 'src/components/common/ConfirmDialog.vue'
-import { Notify } from 'quasar'
+import { Notify, useQuasar } from 'quasar'
 import { useAuthStore } from 'src/stores/auth'
 
 export default defineComponent({
@@ -213,7 +214,9 @@ export default defineComponent({
   setup() {
     const router = useRouter()
     const authStore = useAuthStore()
-    const leftDrawerOpen = ref(false)
+    const $q = useQuasar()
+    // Iniciar con menú abierto en pantallas grandes, cerrado en móviles
+    const leftDrawerOpen = ref($q.screen.gt.sm)
     const showLogoutDialog = ref(false)
 
     const isAdmin = computed(() => {
@@ -253,7 +256,8 @@ export default defineComponent({
       toggleLeftDrawer,
       goToSettings,
       showLogoutDialog,
-      confirmLogout
+      confirmLogout,
+      $q
     }
   }
 })
