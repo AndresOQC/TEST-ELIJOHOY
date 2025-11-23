@@ -269,7 +269,10 @@ export default defineComponent({
         icon: 'check_circle',
         position: 'top'
       })
-      router.push('/auth/login')
+      // Usar replace para que no pueda volver atrás y recargar la página
+      router.replace('/auth/login').then(() => {
+        window.location.reload()
+      })
     }
 
     // Check authentication on mount and add scroll listener
