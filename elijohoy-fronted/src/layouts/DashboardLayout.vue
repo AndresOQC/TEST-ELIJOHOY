@@ -223,7 +223,6 @@
 import { defineComponent, ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Notify, useQuasar } from 'quasar'
-import ConfirmDialog from 'src/components/common/ConfirmDialog.vue'
 import { useAuthStore } from 'src/stores/auth'
 
 export default defineComponent({
