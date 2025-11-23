@@ -41,6 +41,7 @@ const routes = [
       { path: 'test', name: 'test', component: () => import('pages/dashboard/TestPage.vue') },
       { path: 'test-resultados', component: () => import('pages/dashboard/TestResultadosPage.vue') },
       { path: 'test-resultados/:id', name: 'test-resultados', component: () => import('pages/dashboard/TestResultadosDetailPage.vue') },
+      { path: 'admin', name: 'admin-dashboard', component: () => import('pages/dashboard/AdminDashboardPage.vue'), meta: { requiresAdmin: true } },
       { path: 'admin/preguntas', name: 'admin-preguntas', component: () => import('pages/dashboard/AdminPreguntasPage.vue'), meta: { requiresAdmin: true } }
     ]
   },

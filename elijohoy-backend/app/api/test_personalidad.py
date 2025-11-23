@@ -738,6 +738,94 @@ def toggle_pregunta_activa(id_pregunta):
             'message': f'Error al actualizar estado: {str(e)}'
         }), 500
 
+@bp.route('/admin/dashboard-stats', methods=['GET'])
+@jwt_required()
+@admin_required
+def obtener_dashboard_stats():
+    """Obtener estadísticas completas para el dashboard de admin."""
+    try:
+        from sqlalchemy import func
+        from app.models.alumno import Alumno
+
+        # Total de tests completados
+        total_tests = SesionTest.query.filter_by(completado=True).count()
+
+        # Total de usuarios registrados
+        total_usuarios = Usuario.query.filter_by(activo=True).count()
+
+        # Tests por tipo de personalidad
+        tests_por_tipo = db.session.query(
+            SesionTest.tipo_personalidad,
+            func.count(SesionTest.id_sesion).label('cantidad')
+        ).filter(
+            SesionTest.completado == True,
+            SesionTest.tipo_personalidad != None
+        ).group_by(SesionTest.tipo_personalidad).all()
+
+        tipos_distribucion = [
+            {'tipo': t[0], 'cantidad': t[1]}
+            for t in tests_por_tipo
+        ]
+
+        # Tests completados en los últimos 30 días
+        from datetime import datetime, timedelta
+        fecha_30_dias = datetime.utcnow() - timedelta(days=30)
+        tests_ultimo_mes = SesionTest.query.filter(
+            SesionTest.completado == True,
+            SesionTest.fecha_fin >= fecha_30_dias
+        ).count()
+
+        # Obtener lista de usuarios con sus tests completados
+        usuarios_con_tests = db.session.query(
+            Usuario.id,
+            Usuario.email,
+            Alumno.nombre,
+            Alumno.apellidos,
+            Alumno.institucion_educativa,
+            SesionTest.tipo_personalidad,
+            SesionTest.fecha_fin,
+            SesionTest.id_sesion
+        ).join(
+            Alumno, Usuario.id == Alumno.usuario_id
+        ).join(
+            SesionTest, Usuario.id == SesionTest.id_usuario
+        ).filter(
+            SesionTest.completado == True
+        ).order_by(SesionTest.fecha_fin.desc()).all()
+
+        lista_usuarios = [
+            {
+                'id_usuario': u[0],
+                'email': u[1],
+                'nombre': u[2],
+                'apellidos': u[3],
+                'institucion': u[4],
+                'tipo_personalidad': u[5],
+                'fecha_test': u[6].isoformat() if u[6] else None,
+                'id_sesion': u[7]
+            }
+            for u in usuarios_con_tests
+        ]
+
+        return jsonify({
+            'success': True,
+            'stats': {
+                'total_tests': total_tests,
+                'total_usuarios': total_usuarios,
+                'tests_ultimo_mes': tests_ultimo_mes,
+                'distribucion_tipos': tipos_distribucion
+            },
+            'usuarios_tests': lista_usuarios
+        }), 200
+
+    except Exception as e:
+        current_app.logger.error(f'Error en dashboard stats: {str(e)}')
+        return jsonify({
+            'success': False,
+            'message': f'Error al obtener estadísticas: {str(e)}'
+        }), 500
+
+
 @bp.route('/admin/sesiones/reenviar-token', methods=['POST'])
 @jwt_required()
 @admin_required
