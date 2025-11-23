@@ -183,13 +183,29 @@
             <q-list class="menu-list">
               <q-item
                 clickable
+                :active="$route.path === '/dashboard/admin'"
+                @click="$router.push('/dashboard/admin')"
+                active-class="active-menu-item"
+                class="menu-item admin-menu-item"
+              >
+                <q-item-section avatar>
+                  <q-icon name="analytics" color="orange-8" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>Panel de Estadísticas</q-item-label>
+                  <q-item-label caption>Tests y usuarios</q-item-label>
+                </q-item-section>
+              </q-item>
+
+              <q-item
+                clickable
                 :active="$route.path === '/dashboard/admin/preguntas'"
                 @click="$router.push('/dashboard/admin/preguntas')"
                 active-class="active-menu-item"
-                class="menu-item"
+                class="menu-item admin-menu-item"
               >
                 <q-item-section avatar>
-                  <q-icon name="help_outline" />
+                  <q-icon name="help_outline" color="orange-8" />
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>Administrar Preguntas</q-item-label>
@@ -566,6 +582,14 @@ export default defineComponent({
 .active-menu-item :deep(.q-item__section),
 .active-menu-item :deep(.q-item__label) {
   color: white !important;
+}
+
+.admin-menu-item:hover {
+  background: rgba(251, 146, 60, 0.15);
+}
+
+.admin-menu-item.active-menu-item {
+  background: linear-gradient(135deg, #F97316 0%, #EA580C 100%) !important;
 }
 
 /* Mobile Responsiveness */
