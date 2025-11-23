@@ -1,190 +1,167 @@
 <template>
-  <q-page class="configuraciones-page q-pa-lg">
-    <div class="row q-gutter-lg">
+  <q-page class="configuraciones-page">
+    <div class="configuraciones-container">
       <!-- Page Header -->
-      <div class="col-12">
-        <div class="page-header">
-          <h1 class="text-h4 text-weight-bold text-primary q-mb-sm">
-            Configuraciones
-          </h1>
-          <p class="text-body1 text-grey-7">
-            Administra tu perfil
-          </p>
-        </div>
+      <div class="page-header">
+        <h1 class="text-h4 text-weight-bold text-primary q-mb-sm">
+          Configuraciones
+        </h1>
+        <p class="text-body1 text-grey-7">
+          Administra tu perfil
+        </p>
       </div>
 
-      <!-- Profile Information -->
-      <div class="col-12 col-md-8">
+      <!-- Content Row -->
+      <div class="content-row">
+        <!-- Profile Information -->
         <q-card class="profile-card" flat bordered>
           <q-card-section>
-            <div class="row items-center q-mb-md">
+            <div class="card-header">
               <q-icon name="person" size="32px" color="primary" class="q-mr-sm" />
               <div class="text-h6 text-weight-bold">Información del Perfil</div>
             </div>
-            
+
             <q-form @submit="updateProfile" class="q-gutter-md">
-              <div class="row q-gutter-md">
-                <div class="col-12 col-sm-6">
-                  <q-input
-                    v-model="profileForm.nombre"
-                    label="Nombre"
-                    outlined
-                    color="purple-7"
-                    :rules="[val => !!val || 'El nombre es requerido']"
-                    lazy-rules
-                  >
-                    <template v-slot:prepend>
-                      <q-icon name="badge" color="purple-7" />
-                    </template>
-                  </q-input>
-                </div>
+              <div class="form-row">
+                <q-input
+                  v-model="profileForm.nombre"
+                  label="Nombre"
+                  outlined
+                  color="purple-7"
+                  :rules="[val => !!val || 'El nombre es requerido']"
+                  lazy-rules
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="badge" color="purple-7" />
+                  </template>
+                </q-input>
 
-                <div class="col-12 col-sm-6">
-                  <q-input
-                    v-model="profileForm.apellidos"
-                    label="Apellidos"
-                    outlined
-                    color="purple-7"
-                    :rules="[val => !!val || 'Los apellidos son requeridos']"
-                    lazy-rules
-                  >
-                    <template v-slot:prepend>
-                      <q-icon name="badge" color="purple-7" />
-                    </template>
-                  </q-input>
-                </div>
+                <q-input
+                  v-model="profileForm.apellidos"
+                  label="Apellidos"
+                  outlined
+                  color="purple-7"
+                  :rules="[val => !!val || 'Los apellidos son requeridos']"
+                  lazy-rules
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="badge" color="purple-7" />
+                  </template>
+                </q-input>
               </div>
 
-              <div class="row q-gutter-md">
-                <div class="col-12 col-sm-6">
-                  <q-input
-                    v-model="profileForm.email"
-                    label="Correo Electrónico"
-                    type="email"
-                    outlined
-                    readonly
-                    color="purple-7"
-                    hint="El email no se puede modificar"
-                  >
-                    <template v-slot:prepend>
-                      <q-icon name="email" color="purple-7" />
-                    </template>
-                  </q-input>
-                </div>
+              <div class="form-row">
+                <q-input
+                  v-model="profileForm.email"
+                  label="Correo Electrónico"
+                  type="email"
+                  outlined
+                  readonly
+                  color="purple-7"
+                  hint="El email no se puede modificar"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="email" color="purple-7" />
+                  </template>
+                </q-input>
 
-                <div class="col-12 col-sm-6">
-                  <q-input
-                    v-model="profileForm.edad"
-                    type="number"
-                    label="Edad"
-                    outlined
-                    color="purple-7"
-                    :rules="[val => !!val || 'La edad es requerida', val => val > 0 || 'Edad inválida']"
-                    lazy-rules
-                  >
-                    <template v-slot:prepend>
-                      <q-icon name="cake" color="purple-7" />
-                    </template>
-                  </q-input>
-                </div>
+                <q-input
+                  v-model="profileForm.edad"
+                  type="number"
+                  label="Edad"
+                  outlined
+                  color="purple-7"
+                  :rules="[val => !!val || 'La edad es requerida', val => val > 0 || 'Edad inválida']"
+                  lazy-rules
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="cake" color="purple-7" />
+                  </template>
+                </q-input>
               </div>
 
-              <div class="row q-gutter-md">
-                <div class="col-12 col-sm-6">
-                  <q-select
-                    v-model="profileForm.genero"
-                    :options="['Masculino', 'Femenino', 'Otro']"
-                    label="Género"
-                    outlined
-                    color="purple-7"
-                  >
-                    <template v-slot:prepend>
-                      <q-icon name="wc" color="purple-7" />
-                    </template>
-                  </q-select>
-                </div>
+              <div class="form-row">
+                <q-select
+                  v-model="profileForm.genero"
+                  :options="['Masculino', 'Femenino', 'Otro']"
+                  label="Género"
+                  outlined
+                  color="purple-7"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="wc" color="purple-7" />
+                  </template>
+                </q-select>
 
-                <div class="col-12 col-sm-6">
-                  <q-input
-                    v-model="profileForm.ciudad"
-                    label="Ciudad"
-                    outlined
-                    color="purple-7"
-                  >
-                    <template v-slot:prepend>
-                      <q-icon name="location_city" color="purple-7" />
-                    </template>
-                  </q-input>
-                </div>
+                <q-input
+                  v-model="profileForm.ciudad"
+                  label="Ciudad"
+                  outlined
+                  color="purple-7"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="location_city" color="purple-7" />
+                  </template>
+                </q-input>
               </div>
 
-              <div class="row q-gutter-md">
-                <div class="col-12 col-sm-6">
-                  <q-input
-                    v-model="profileForm.pais"
-                    label="País"
-                    outlined
-                    color="purple-7"
-                  >
-                    <template v-slot:prepend>
-                      <q-icon name="public" color="purple-7" />
-                    </template>
-                  </q-input>
-                </div>
+              <div class="form-row">
+                <q-input
+                  v-model="profileForm.pais"
+                  label="País"
+                  outlined
+                  color="purple-7"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="public" color="purple-7" />
+                  </template>
+                </q-input>
 
-                <div class="col-12 col-sm-6">
-                  <q-input
-                    v-model="profileForm.institucion_educativa"
-                    label="Institución Educativa"
-                    outlined
-                    color="purple-7"
-                  >
-                    <template v-slot:prepend>
-                      <q-icon name="school" color="purple-7" />
-                    </template>
-                  </q-input>
-                </div>
+                <q-input
+                  v-model="profileForm.institucion_educativa"
+                  label="Institución Educativa"
+                  outlined
+                  color="purple-7"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="school" color="purple-7" />
+                  </template>
+                </q-input>
               </div>
 
-              <div class="row q-gutter-md">
-                <div class="col-12 col-sm-4">
-                  <q-input
-                    v-model="profileForm.grado"
-                    label="Grado"
-                    outlined
-                    color="purple-7"
-                  >
-                    <template v-slot:prepend>
-                      <q-icon name="grade" color="purple-7" />
-                    </template>
-                  </q-input>
-                </div>
+              <div class="form-row-3">
+                <q-input
+                  v-model="profileForm.grado"
+                  label="Grado"
+                  outlined
+                  color="purple-7"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="grade" color="purple-7" />
+                  </template>
+                </q-input>
 
-                <div class="col-12 col-sm-4">
-                  <q-input
-                    v-model="profileForm.seccion"
-                    label="Sección"
-                    outlined
-                    color="purple-7"
-                  >
-                    <template v-slot:prepend>
-                      <q-icon name="class" color="purple-7" />
-                    </template>
-                  </q-input>
-                </div>
+                <q-input
+                  v-model="profileForm.seccion"
+                  label="Sección"
+                  outlined
+                  color="purple-7"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="class" color="purple-7" />
+                  </template>
+                </q-input>
 
-                <div class="col-12 col-sm-4">
-                  <q-input
-                    v-model="profileForm.turno"
-                    label="Turno"
-                    outlined
-                    color="purple-7"
-                  >
-                    <template v-slot:prepend>
-                      <q-icon name="schedule" color="purple-7" />
-                    </template>
-                  </q-input>
-                </div>
+                <q-input
+                  v-model="profileForm.turno"
+                  label="Turno"
+                  outlined
+                  color="purple-7"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="schedule" color="purple-7" />
+                  </template>
+                </q-input>
               </div>
 
               <div class="text-right">
@@ -201,72 +178,73 @@
             </q-form>
           </q-card-section>
         </q-card>
-      </div>
 
-      <!-- Account Settings -->
-      <div class="col-12 col-md-4">
-        <q-card class="account-card" flat bordered>
-          <q-card-section>
-            <div class="row items-center q-mb-md">
-              <q-icon name="security" size="32px" color="secondary" class="q-mr-sm" />
-              <div class="text-h6 text-weight-bold">Configuración de Cuenta</div>
-            </div>
-            
-            <div class="q-gutter-sm">
-              <q-btn
-                outline
-                color="primary"
-                icon="lock"
-                label="Cambiar Contraseña"
-                @click="showPasswordDialog = true"
-                class="full-width"
-                no-caps
-              />
-              
-              <q-btn
-                outline
-                color="negative"
-                icon="logout"
-                label="Cerrar Sesión"
-                @click="logout"
-                class="full-width"
-                no-caps
-              />
-            </div>
-          </q-card-section>
-        </q-card>
+        <!-- Sidebar Cards -->
+        <div class="sidebar-cards">
+          <!-- Account Settings -->
+          <q-card class="account-card" flat bordered>
+            <q-card-section>
+              <div class="card-header">
+                <q-icon name="security" size="32px" color="secondary" class="q-mr-sm" />
+                <div class="text-h6 text-weight-bold">Configuración de Cuenta</div>
+              </div>
 
-        <!-- Account Status -->
-        <q-card class="status-card q-mt-md" flat bordered>
-          <q-card-section>
-            <div class="text-h6 text-weight-bold q-mb-md">Estado de la Cuenta</div>
-            
-            <div class="q-gutter-sm">
-              <div class="row items-center">
-                <q-icon 
-                  :name="user.email_verificado ? 'verified' : 'error'"
-                  :color="user.email_verificado ? 'positive' : 'negative'"
-                  class="q-mr-sm"
+              <div class="buttons-container">
+                <q-btn
+                  outline
+                  color="primary"
+                  icon="lock"
+                  label="Cambiar Contraseña"
+                  @click="showPasswordDialog = true"
+                  class="full-width"
+                  no-caps
                 />
-                <span>Email {{ user.email_verificado ? 'Verificado' : 'No Verificado' }}</span>
-              </div>
-              
-              <div class="row items-center">
-                <q-icon
-                  name="check_circle"
-                  color="positive"
-                  class="q-mr-sm"
+
+                <q-btn
+                  outline
+                  color="negative"
+                  icon="logout"
+                  label="Cerrar Sesión"
+                  @click="logout"
+                  class="full-width"
+                  no-caps
                 />
-                <span>Cuenta Activa</span>
               </div>
-              
-              <div class="row items-center">
-                <q-icon name="schedule" color="info" class="q-mr-sm" />
-                <span>Miembro desde {{ formatDate(user.creado_en) }}</span>
+            </q-card-section>
+          </q-card>
+
+          <!-- Account Status -->
+          <q-card class="status-card" flat bordered>
+            <q-card-section>
+              <div class="text-h6 text-weight-bold q-mb-md">Estado de la Cuenta</div>
+
+              <div class="status-items">
+                <div class="status-item">
+                  <q-icon
+                    :name="user.email_verificado ? 'verified' : 'error'"
+                    :color="user.email_verificado ? 'positive' : 'negative'"
+                    class="q-mr-sm"
+                  />
+                  <span>Email {{ user.email_verificado ? 'Verificado' : 'No Verificado' }}</span>
+                </div>
+
+                <div class="status-item">
+                  <q-icon
+                    name="check_circle"
+                    color="positive"
+                    class="q-mr-sm"
+                  />
+                  <span>Cuenta Activa</span>
+                </div>
+
+                <div class="status-item">
+                  <q-icon name="schedule" color="info" class="q-mr-sm" />
+                  <span>Miembro desde {{ formatDate(user.creado_en) }}</span>
+                </div>
               </div>
-            </div>
-          </q-card-section>
-        </q-card>
+            </q-card-section>
+          </q-card>
+        </div>
       </div>
     </div>
 
@@ -555,27 +533,91 @@ export default defineComponent({
 
 <style scoped>
 .configuraciones-page {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #F3F4F6, #FFFFFF);
+  padding: 1.5rem;
+  overflow-x: hidden;
+}
+
+.configuraciones-container {
   max-width: 1200px;
   margin: 0 auto;
-  background: linear-gradient(to bottom, #F3F4F6, #FFFFFF);
-  min-height: calc(100vh - 64px);
-  height: 100%;
-  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .page-header {
-  margin-bottom: 32px;
-  padding-top: 20px;
+  margin-bottom: 0.5rem;
 }
 
 .page-header h1 {
   color: #7C3AED !important;
 }
 
+/* Card Header */
+.card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* Content Row - Flexbox */
+.content-row {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.profile-card {
+  flex: 2 1 500px;
+  min-width: 300px;
+}
+
+.sidebar-cards {
+  flex: 1 1 280px;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Form Rows */
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.form-row-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+/* Buttons Container */
+.buttons-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Status Items */
+.status-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+}
+
 .profile-card,
 .account-card,
 .status-card {
-  border-radius: 20px;
+  border-radius: 1.25rem;
   border: 2px solid #E5E7EB;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
@@ -597,7 +639,7 @@ export default defineComponent({
 
 .profile-card :deep(.q-field__control) {
   background: #F9FAFB;
-  border-radius: 12px;
+  border-radius: 0.75rem;
 }
 
 .profile-card :deep(.q-field__control):hover {
@@ -606,9 +648,9 @@ export default defineComponent({
 
 .profile-card :deep(.q-btn[type="submit"]) {
   background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%);
-  border-radius: 12px;
+  border-radius: 0.75rem;
   font-weight: 600;
-  padding: 12px 32px;
+  padding: 0.75rem 2rem;
   box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
   transition: all 0.3s ease;
 }
@@ -619,7 +661,7 @@ export default defineComponent({
 }
 
 .account-card :deep(.q-btn) {
-  border-radius: 12px;
+  border-radius: 0.75rem;
   font-weight: 600;
   transition: all 0.3s ease;
 }
@@ -633,69 +675,52 @@ export default defineComponent({
   background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
 }
 
+/* Responsive */
 @media (max-width: 768px) {
   .configuraciones-page {
-    min-height: calc(100vh - 60px);
-    padding: 16px;
+    padding: 1rem;
+  }
+
+  .content-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .profile-card,
+  .sidebar-cards {
+    flex: 1 1 auto;
+    min-width: 100%;
   }
 
   .profile-card,
   .account-card,
   .status-card {
-    border-radius: 16px;
+    border-radius: 1rem;
   }
-  
+
   .page-header h1 {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
   }
-  
-  .page-header {
-    margin-bottom: 24px;
+
+  .form-row,
+  .form-row-3 {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 480px) {
   .configuraciones-page {
-    padding: 12px;
+    padding: 0.75rem;
   }
-  
+
   .profile-card,
   .account-card,
   .status-card {
-    border-radius: 14px;
+    border-radius: 0.875rem;
   }
-  
-  .page-header h1 {
-    font-size: 1.5rem;
-  }
-  
-  .page-header {
-    margin-bottom: 20px;
-    padding-top: 10px;
-  }
-}
 
-@media (max-height: 700px) {
-  .configuraciones-page {
-    padding: 16px;
-  }
-  
-  .page-header {
-    margin-bottom: 16px;
-    padding-top: 10px;
-  }
-  
   .page-header h1 {
-    font-size: 1.4rem;
-    margin-bottom: 4px !important;
-  }
-  
-  .page-header p {
-    font-size: 0.875rem;
-  }
-  
-  .profile-card :deep(.q-card-section) {
-    padding: 16px;
+    font-size: 1.3rem;
   }
 }
 </style>
