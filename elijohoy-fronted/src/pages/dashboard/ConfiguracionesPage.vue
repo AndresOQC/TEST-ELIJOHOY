@@ -332,6 +332,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useAuthStore } from 'src/stores/auth'
+import { AuthService } from 'src/services/auth'
 
 export default defineComponent({
   name: 'ConfiguracionesPage',
@@ -430,23 +431,37 @@ export default defineComponent({
 
     const changePassword = async () => {
       passwordLoading.value = true
-      
+
       try {
-        // This would call an API endpoint to change password
-        // For now, just show success message
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        
-        $q.notify({
-          message: 'Contraseña cambiada exitosamente',
-          color: 'positive',
-          icon: 'check'
-        })
-        
-        showPasswordDialog.value = false
-        passwordForm.value = {
-          current_password: '',
-          new_password: '',
-          confirm_password: ''
+        const result = await AuthService.changePassword(
+          passwordForm.value.current_password,
+          passwordForm.value.new_password
+        )
+
+        if (result.success) {
+          $q.notify({
+            message: 'Contraseña cambiada exitosamente',
+            color: 'positive',
+            icon: 'check'
+          })
+
+          showPasswordDialog.value = false
+          passwordForm.value = {
+            current_password: '',
+            new_password: '',
+            confirm_password: ''
+          }
+        } else {
+          // Mostrar mensaje de error
+          let errorMsg = result.message || 'Error cambiando la contraseña'
+          if (result.errors && result.errors.length > 0) {
+            errorMsg = result.errors.join(', ')
+          }
+          $q.notify({
+            message: errorMsg,
+            color: 'negative',
+            icon: 'error'
+          })
         }
       } catch (error) {
         console.error('Change password error:', error)
