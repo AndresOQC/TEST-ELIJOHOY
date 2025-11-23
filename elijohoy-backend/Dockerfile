@@ -1,5 +1,5 @@
 # Usar imagen oficial de Python
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 # Establecer directorio de trabajo
 WORKDIR /app
@@ -10,8 +10,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 # Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
     gcc \
     postgresql-client \
+    libpq-dev \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copiar archivos de requisitos

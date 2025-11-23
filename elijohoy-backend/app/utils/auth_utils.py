@@ -20,7 +20,12 @@ def require_roles(*roles):
         @jwt_required()
         def wrapper(*args, **kwargs):
             current_user_id = get_jwt_identity()
-            user = Usuario.query.get(current_user_id)
+            try:
+                current_user_id_int = int(current_user_id) if current_user_id else None
+            except (ValueError, TypeError):
+                return jsonify({'error': 'ID de usuario inválido'}), 401
+                
+            user = Usuario.query.get(current_user_id_int)
             
             if not user or not user.activo:
                 return jsonify({'error': 'Usuario no encontrado o inactivo'}), 401
@@ -38,7 +43,11 @@ def get_current_user():
     try:
         current_user_id = get_jwt_identity()
         if current_user_id:
-            return Usuario.query.get(current_user_id)
+            try:
+                current_user_id_int = int(current_user_id)
+            except (ValueError, TypeError):
+                return None
+            return Usuario.query.get(current_user_id_int)
     except:
         pass
     return None

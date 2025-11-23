@@ -5,11 +5,13 @@ import axios from 'axios'
 // CONFIGURACIÓN DE API BASE URL
 // =============================================================================
 // Detectar automáticamente el entorno basado en el hostname
-// - Desarrollo: localhost o 127.0.0.1 -> usa localhost:5001
+// - Desarrollo: localhost, 127.0.0.1 o DevTunnels -> usa localhost:5001
 // - Producción: cualquier otro dominio -> usa el dominio actual con /api
 // =============================================================================
 
-const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+const isDevelopment = window.location.hostname === 'localhost' || 
+                     window.location.hostname === '127.0.0.1' ||
+                     window.location.hostname.includes('.devtunnels.ms')
 
 // Construir la URL base de la API según el entorno
 let API_BASE_URL
@@ -53,7 +55,7 @@ api.interceptors.request.use(config => {
     const token = sessionStorage.getItem('access_token');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
-      console.log('🔑 Token enviado en request:', config.url, token.substring(0, 20) + '...');
+      // Token adjuntado (log removido por seguridad)
     } else {
       console.warn('⚠️ No hay token para request:', config.url);
     }
@@ -151,7 +153,7 @@ api.interceptors.response.use(
         }
       });
 
-      const access_token = response.data.data?.access_token || response.data.access_token;
+      const access_token = response.data.data?.access_token;
 
       if (access_token) {
         console.log('✅ Token refreshed successfully');

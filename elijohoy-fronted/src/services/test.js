@@ -1,4 +1,4 @@
-import api from './api'
+import { api } from './api'
 
 /**
  * Servicio para gestionar el test de personalidad OEJTS
@@ -18,28 +18,12 @@ const testService = {
 
   /**
    * Iniciar una nueva sesión de test
+   * @param {Object} data - Datos opcionales como id_sesion_anterior
    */
-  async iniciarTest() {
+  async iniciarTest(data = {}) {
     try {
-      // Esperar un poco para asegurar que el token esté disponible
-      await new Promise(resolve => setTimeout(resolve, 100))
-      
-      const token = sessionStorage.getItem('access_token')
-      console.log('🔍 Iniciando test - Token en sessionStorage:', !!token)
-      console.log('🔍 Token completo:', token ? token.substring(0, 50) + '...' : 'null')
-      
-      if (!token) {
-        throw new Error('No hay token de autenticación disponible')
-      }
-      
-      // Hacer la petición manualmente con el token para asegurar que se envía
-      const response = await api.post('/test/iniciar', {}, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      })
-      console.log('🔍 Respuesta del servidor:', response.data)
+      // Simplemente hacer la petición - el interceptor de axios agregará el token automáticamente
+      const response = await api.post('/test/iniciar', data)
       return response.data
     } catch (error) {
       console.error('❌ Error en iniciarTest:', error)
@@ -53,8 +37,6 @@ const testService = {
    */
   async guardarRespuesta(respuesta) {
     try {
-      console.log('🔍 Guardando respuesta - Token en sessionStorage:', !!sessionStorage.getItem('access_token'))
-      
       const response = await api.post('/test/responder', respuesta)
       return response.data
     } catch (error) {

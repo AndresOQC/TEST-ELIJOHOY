@@ -45,21 +45,11 @@ export default defineRouter(function (/* { store, ssrContext } */) {
         next('/dashboard')
         return
       }
-      
-      // Check if profile completion is required for dashboard access
-      if (to.path.startsWith('/dashboard') && authStore.needsProfileCompletion) {
-        next('/auth/completar-perfil')
-        return
-      }
     }
     
     // Redirect authenticated users away from auth pages
     if (to.path.startsWith('/auth/') && authStore.isAuthenticated) {
-      if (authStore.needsProfileCompletion) {
-        next('/auth/completar-perfil')
-      } else {
-        next('/dashboard')
-      }
+      next('/dashboard')
       return
     }
     

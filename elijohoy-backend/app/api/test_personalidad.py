@@ -31,7 +31,7 @@ def buscar_sesion_por_id():
 
 
 @bp.route('/preguntas', methods=['GET'])
-# @limiter.limit("10 per minute")  # Deshabilitado temporalmente para desarrollo
+@limiter.limit("10 per minute")  # Protección contra abuso de API
 def obtener_preguntas():
     """Obtener todas las preguntas activas del test ordenadas."""
     try:
@@ -227,10 +227,14 @@ def eliminar_pregunta(id_pregunta):
 
 
 @bp.route('/iniciar', methods=['POST'])
-# @limiter.limit("10 per minute")  # Deshabilitado temporalmente para desarrollo
+@limiter.limit("10 per minute")  # Protección contra abuso de API
 @jwt_required(optional=True)
 def iniciar_test():
-    """Iniciar una nueva sesión de test (anónima o autenticada)."""
+    """Iniciar una nueva sesión de test (anónima o autenticada).
+    
+    Si el usuario ya tiene una sesión anónima anterior, se puede pasar en el body
+    para reutilizarla y asociarla al usuario autenticado.
+    """
     try:
         # Obtener datos de la solicitud
         data = request.get_json() or {}
@@ -250,6 +254,23 @@ def iniciar_test():
         except Exception as e:
             current_app.logger.info(f'❌ Usuario no autenticado en /iniciar: {str(e)}')
             pass
+
+        # Verificar si hay una sesión anterior para reutilizar
+        id_sesion_anterior = data.get('id_sesion_anterior')
+        if id_sesion_anterior and id_usuario:
+            # Si hay sesión anterior y usuario autenticado, intentar reutilizarla
+            sesion_anterior = SesionTest.query.get(id_sesion_anterior)
+            if sesion_anterior and sesion_anterior.id_usuario is None and not sesion_anterior.completado:
+                # Es una sesión anónima incompleta, asociarla al usuario actual
+                sesion_anterior.id_usuario = id_usuario
+                sesion_anterior.token_anonimo = None  # Limpiar token anónimo
+                db.session.commit()
+                current_app.logger.info(f'✅ Sesión anterior reutilizada y asociada al usuario: id={sesion_anterior.id_sesion}, usuario={id_usuario}')
+                
+                return jsonify({
+                    'success': True,
+                    'sesion': sesion_anterior.to_dict()
+                }), 201
 
         # Generar token anónimo si no está autenticado
         token_anonimo = None
@@ -288,7 +309,7 @@ def iniciar_test():
 
 
 @bp.route('/responder', methods=['POST'])
-# @limiter.limit("100 per minute")  # Deshabilitado temporalmente para desarrollo
+@limiter.limit("100 per minute")  # Protección contra abuso de API
 def guardar_respuesta():
     """Guardar una respuesta individual del test."""
     try:
@@ -380,7 +401,7 @@ def guardar_respuesta():
 
 
 @bp.route('/finalizar/<int:id_sesion>', methods=['POST'])
-# @limiter.limit("5 per minute")  # Deshabilitado temporalmente para desarrollo
+@limiter.limit("5 per minute")  # Protección contra abuso de API
 def finalizar_test(id_sesion):
     """Finalizar test y calcular resultados."""
     try:

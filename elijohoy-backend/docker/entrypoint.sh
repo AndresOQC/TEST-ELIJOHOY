@@ -4,7 +4,7 @@ set -e
 echo "🟢 Entrypoint: esperando a la base de datos..."
 
 # Esperar a que PostgreSQL esté listo
-until PGPASSWORD=elijohoy_password psql -h db -U elijohoy_user -d elijohoy_db -c '\q' 2>/dev/null; do
+until PGPASSWORD="${POSTGRES_PASSWORD:-elijohoy_password}" psql -h db -U "${POSTGRES_USER:-elijohoy_user}" -d "${POSTGRES_DB:-elijohoy_db}" -c '\q' 2>/dev/null; do
   echo "⏳ Esperando a PostgreSQL..."
   sleep 2
 done

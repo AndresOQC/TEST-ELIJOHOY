@@ -240,7 +240,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
-import api from 'src/services/api'
+import { api } from 'src/services/api'
 import testService from 'src/services/test'
 
 const $q = useQuasar()

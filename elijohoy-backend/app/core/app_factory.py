@@ -124,8 +124,7 @@ def register_commands(app):
                 usuario_id=admin_user.id,
                 nombre=nombre,
                 apellidos=apellidos,
-                edad=edad,
-                email=email
+                edad=edad
             )
             db.session.add(admin_alumno)
 

@@ -334,3 +334,48 @@ body {
     display: none !important;
   }
 }
+
+// Fix para el drawer y prevenir desplazamiento horizontal
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100vw;
+  position: relative;
+}
+
+.q-layout,
+.q-page-container {
+  overflow-x: hidden !important;
+  max-width: 100vw;
+}
+
+.q-page {
+  max-width: 100%;
+  overflow-x: hidden !important;
+  box-sizing: border-box;
+}
+
+.q-header {
+  height: 64px !important;
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+}
+
+// Asegurar que el drawer sea overlay SOLO en móvil/pequeñas pantallas
+@media (max-width: 1024px) {
+  .q-drawer {
+    z-index: 3000 !important;
+  }
+}
+
+.q-drawer--mini {
+  .q-item__label,
+  .q-item-label {
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+}
+
+// Eliminar cualquier espacio blanco entre header y contenido
+.q-layout__section--marginal {
+  background: transparent;
+}
