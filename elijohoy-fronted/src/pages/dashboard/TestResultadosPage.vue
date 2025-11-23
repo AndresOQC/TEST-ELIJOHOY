@@ -1,54 +1,43 @@
 <template>
-  <q-page class="test-resultados-page q-pa-lg">
-    <div class="row q-col-gutter-lg">
+  <q-page class="test-resultados-page">
+    <div class="test-resultados-container">
       <!-- Page Header -->
-      <div class="col-12">
-        <div class="page-header">
-          <div class="row items-center">
-            <q-icon name="quiz" size="48px" color="purple-7" class="q-mr-md" />
-            <div>
-              <h1 class="text-h4 text-weight-bold" style="color: #7C3AED;">
-                Resultados de Tests
-              </h1>
-              <p class="text-body1 text-grey-7">
-                {{ isAdmin ? 'Administra todos los tests realizados' : 'Tus tests vocacionales completados' }}
-              </p>
-            </div>
+      <div class="page-header">
+        <div class="header-content">
+          <q-icon name="quiz" size="48px" color="purple-7" class="header-icon" />
+          <div>
+            <h1 class="text-h4 text-weight-bold" style="color: #7C3AED;">
+              Resultados de Tests
+            </h1>
+            <p class="text-body1 text-grey-7">
+              {{ isAdmin ? 'Administra todos los tests realizados' : 'Tus tests vocacionales completados' }}
+            </p>
           </div>
         </div>
       </div>
 
       <!-- Filtros y Estadísticas -->
-      <div class="col-12" v-if="isAdmin">
-        <q-card flat bordered class="q-mb-lg">
-          <q-card-section>
-            <div class="row q-gutter-md items-center">
-              <div class="col-auto">
-                <div class="text-h6 text-weight-bold">Estadísticas</div>
-              </div>
-              <div class="col-auto">
-                <q-chip color="primary" text-color="white">
-                  Total: {{ sesiones.length }}
-                </q-chip>
-              </div>
-              <div class="col-auto">
-                <q-chip color="positive" text-color="white">
-                  Completados: {{ sesionesCompletadas.length }}
-                </q-chip>
-              </div>
-              <div class="col-auto">
-                <q-chip color="warning" text-color="white">
-                  Pendientes: {{ sesionesPendientes.length }}
-                </q-chip>
-              </div>
+      <q-card v-if="isAdmin" flat bordered class="stats-card">
+        <q-card-section>
+          <div class="stats-content">
+            <div class="text-h6 text-weight-bold">Estadísticas</div>
+            <div class="stats-chips">
+              <q-chip color="primary" text-color="white">
+                Total: {{ sesiones.length }}
+              </q-chip>
+              <q-chip color="positive" text-color="white">
+                Completados: {{ sesionesCompletadas.length }}
+              </q-chip>
+              <q-chip color="warning" text-color="white">
+                Pendientes: {{ sesionesPendientes.length }}
+              </q-chip>
             </div>
-          </q-card-section>
-        </q-card>
-      </div>
+          </div>
+        </q-card-section>
+      </q-card>
 
       <!-- Lista de Sesiones -->
-      <div class="col-12">
-        <q-card flat bordered>
+      <q-card flat bordered class="sessions-card">
           <q-card-section>
             <div v-if="loading" class="text-center q-py-xl">
               <q-spinner color="primary" size="50px" />
@@ -138,7 +127,6 @@
             </div>
           </q-card-section>
         </q-card>
-      </div>
     </div>
   </q-page>
 </template>
@@ -255,22 +243,62 @@ onMounted(() => {
 <style scoped>
 .test-resultados-page {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: calc(100vh - 64px);
-  height: 100%;
-  padding: 24px;
+  min-height: 100vh;
+  padding: 1.5rem;
+  overflow-x: hidden;
+}
+
+.test-resultados-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .page-header {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: 1rem;
+  padding: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.header-icon {
+  flex-shrink: 0;
+}
+
+.stats-card {
+  border-radius: 1rem;
+}
+
+.stats-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.stats-chips {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sessions-card {
+  border-radius: 1rem;
+}
+
 .sesion-item {
-  border-radius: 8px;
-  margin-bottom: 8px;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
   transition: all 0.2s ease;
 }
 
@@ -279,72 +307,52 @@ onMounted(() => {
 }
 
 .sesiones-list {
-  max-height: 70vh;
+  max-height: 60vh;
   overflow-y: auto;
 }
 
+/* Responsive */
 @media (max-width: 768px) {
   .test-resultados-page {
-    min-height: calc(100vh - 60px);
-    padding: 16px;
+    padding: 1rem;
   }
-  
+
+  .test-resultados-container {
+    gap: 1rem;
+  }
+
   .page-header {
-    padding: 16px;
+    padding: 1rem;
   }
-  
+
   .page-header h1 {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
   }
-  
-  .page-header .q-icon {
+
+  .header-icon {
     font-size: 36px !important;
   }
-  
+
   .sesiones-list {
-    max-height: 65vh;
+    max-height: 55vh;
   }
 }
 
 @media (max-width: 480px) {
   .test-resultados-page {
-    padding: 12px;
+    padding: 0.75rem;
   }
-  
-  .page-header {
-    padding: 12px;
-  }
-  
-  .page-header h1 {
-    font-size: 1.5rem;
-  }
-  
-  .page-header .q-icon {
-    font-size: 32px !important;
-    margin-right: 8px !important;
-  }
-}
 
-@media (max-height: 700px) {
-  .test-resultados-page {
-    padding: 16px;
-  }
-  
   .page-header {
-    padding: 16px;
+    padding: 0.75rem;
   }
-  
+
   .page-header h1 {
-    font-size: 1.4rem;
-    margin-bottom: 4px !important;
+    font-size: 1.3rem;
   }
-  
-  .page-header p {
-    font-size: 0.875rem;
-  }
-  
-  .sesiones-list {
-    max-height: 60vh;
+
+  .header-icon {
+    font-size: 32px !important;
   }
 }
 </style>
