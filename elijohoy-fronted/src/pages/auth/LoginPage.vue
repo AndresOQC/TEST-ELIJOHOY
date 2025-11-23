@@ -125,6 +125,7 @@ import { defineComponent, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Notify } from 'quasar'
 import { useAuthStore } from 'src/stores/auth'
+import { useTestStore } from 'src/stores/test'
 
 export default defineComponent({
   name: 'LoginPage',
@@ -132,6 +133,7 @@ export default defineComponent({
   setup() {
     const router = useRouter()
     const authStore = useAuthStore()
+    const testStore = useTestStore()
 
     const form = ref({
       email: '',
@@ -158,24 +160,68 @@ export default defineComponent({
 
           // Verificar si hay respuestas de test en localStorage
           const respuestasGuardadas = localStorage.getItem('testRespuestas')
-
-          // Verificar si hay una finalización de test pendiente
           const pendingFinalization = localStorage.getItem('pendingTestFinalization')
 
-          if (pendingFinalization === 'true') {
-            // Mantener el indicador para que el test se finalice automáticamente
-            router.push('/dashboard/test')
-          } else if (respuestasGuardadas) {
-            Notify.create({
-              message: 'Respuestas detectadas, continuando con el test...',
-              color: 'positive',
-              icon: 'save',
-              position: 'top'
-            })
-            router.push('/dashboard/test')
-          } else {
-            router.push('/dashboard')
+          // Si hay test pendiente de finalización, procesarlo aquí
+          if ((pendingFinalization === 'true' || respuestasGuardadas) && respuestasGuardadas) {
+            console.log('Finalizando test pendiente después del login...')
+            localStorage.removeItem('pendingTestFinalization')
+
+            try {
+              const respuestasParseadas = JSON.parse(respuestasGuardadas)
+              const cantidadRespuestas = Object.keys(respuestasParseadas).length
+
+              if (cantidadRespuestas >= 32) {
+                Notify.create({
+                  message: 'Procesando tu test...',
+                  color: 'info',
+                  icon: 'hourglass_empty',
+                  position: 'top'
+                })
+
+                // 1. Crear sesión de test
+                const sesionResponse = await testStore.iniciarTest()
+                if (!sesionResponse.success) {
+                  throw new Error('Error al crear sesión de test')
+                }
+
+                // 2. Sincronizar respuestas
+                const sincResponse = await testStore.sincronizarRespuestas(respuestasParseadas)
+                if (!sincResponse.success) {
+                  throw new Error('Error al sincronizar respuestas')
+                }
+
+                // 3. Finalizar test
+                const finResponse = await testStore.finalizarTest()
+                if (finResponse.success) {
+                  // Limpiar localStorage
+                  localStorage.removeItem('testRespuestas')
+
+                  Notify.create({
+                    message: '¡Test completado! Mostrando tus resultados...',
+                    color: 'positive',
+                    icon: 'check_circle',
+                    position: 'top'
+                  })
+
+                  // Redirigir a resultados
+                  router.push(`/dashboard/test-resultados/${testStore.getSesion.id_sesion}`)
+                  return
+                }
+              }
+            } catch (testError) {
+              console.error('Error al finalizar test:', testError)
+              Notify.create({
+                message: 'Error al procesar el test. Ve a Test Resultados.',
+                color: 'warning',
+                icon: 'warning',
+                position: 'top'
+              })
+            }
           }
+
+          // Si no hay test pendiente o falló, ir al dashboard
+          router.push('/dashboard')
         } else {
           Notify.create({
             message: result.message || 'Credenciales incorrectas',
