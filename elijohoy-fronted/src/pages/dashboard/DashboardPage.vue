@@ -1,169 +1,154 @@
 <template>
-  <q-page class="dashboard-page q-pa-lg">
-    <div class="row q-gutter-lg">
+  <q-page class="dashboard-page">
+    <div class="dashboard-container">
       <!-- Welcome Section -->
-      <div class="col-12">
-        <q-card class="welcome-card" flat bordered>
-          <q-card-section class="row items-center">
-            <div class="col">
-              <div class="text-h4 text-weight-bold text-primary q-mb-sm">
-                ¡Bienvenido de nuevo, {{ authStore.userName }}!
+      <q-card class="welcome-card" flat bordered>
+        <q-card-section class="welcome-content">
+          <div class="welcome-text">
+            <div class="text-h4 text-weight-bold text-primary q-mb-sm">
+              ¡Bienvenido de nuevo, {{ authStore.userName }}!
+            </div>
+            <div class="text-body1 text-grey-7">
+              Estamos aquí para ayudarte a descubrir tu futuro académico y profesional.
+            </div>
+          </div>
+          <div class="welcome-icon">
+            <q-icon
+              name="waving_hand"
+              size="64px"
+              color="warning"
+            />
+          </div>
+        </q-card-section>
+      </q-card>
+
+      <!-- Profile & Actions Row -->
+      <div class="cards-row">
+        <!-- Profile Status -->
+        <q-card class="profile-status-card" flat bordered>
+          <q-card-section>
+            <div class="card-header">
+              <q-icon name="person" size="32px" color="primary" class="q-mr-sm" />
+              <div class="text-h6 text-weight-bold">Estado del Perfil</div>
+            </div>
+
+            <div class="q-mb-md">
+              <div class="text-body2 text-grey-7 q-mb-xs">Completitud del perfil</div>
+              <q-linear-progress
+                :value="profileCompletion"
+                size="12px"
+                color="positive"
+                class="q-mb-xs"
+              />
+              <div class="text-caption text-right">{{ Math.round(profileCompletion * 100) }}%</div>
+            </div>
+
+            <div class="profile-info">
+              <div class="chips-container">
+                <q-chip
+                  :color="user.email_verificado ? 'positive' : 'negative'"
+                  :icon="user.email_verificado ? 'verified' : 'error'"
+                  text-color="white"
+                  size="sm"
+                >
+                  Email {{ user.email_verificado ? 'Verificado' : 'No Verificado' }}
+                </q-chip>
+
+                <q-chip
+                  :color="user.perfil_completo ? 'positive' : 'warning'"
+                  :icon="user.perfil_completo ? 'check_circle' : 'pending'"
+                  text-color="white"
+                  size="sm"
+                >
+                  Perfil {{ user.perfil_completo ? 'Completo' : 'Incompleto' }}
+                </q-chip>
               </div>
-              <div class="text-body1 text-grey-7">
-                Estamos aquí para ayudarte a descubrir tu futuro académico y profesional.
+
+              <div class="text-body2">
+                <div><strong>Institución:</strong> {{ user.institucion_educativa || 'No especificada' }}</div>
+                <div><strong>Grado:</strong> {{ user.grado || 'No especificado' }}</div>
               </div>
             </div>
-            <div class="col-auto">
-              <q-icon 
-                name="waving_hand" 
-                size="64px" 
-                color="warning"
-                class="q-ml-md"
+          </q-card-section>
+        </q-card>
+
+        <!-- Quick Actions -->
+        <q-card class="quick-actions-card" flat bordered>
+          <q-card-section>
+            <div class="card-header">
+              <q-icon name="flash_on" size="32px" color="secondary" class="q-mr-sm" />
+              <div class="text-h6 text-weight-bold">Acciones Rápidas</div>
+            </div>
+
+            <div class="actions-buttons">
+              <q-btn
+                unelevated
+                color="primary"
+                icon="quiz"
+                label="Ver Test Resultados"
+                @click="$router.push('/dashboard/test-resultados')"
+                class="full-width"
+                no-caps
+              />
+
+              <q-btn
+                outline
+                color="secondary"
+                icon="settings"
+                label="Configuraciones"
+                @click="$router.push('/dashboard/configuraciones')"
+                class="full-width"
+                no-caps
               />
             </div>
           </q-card-section>
         </q-card>
       </div>
 
-      <!-- Profile & Actions Row -->
-      <div class="col-12">
-        <div class="cards-horizontal-container">
-          <!-- Profile Status -->
-          <q-card class="profile-status-card card-half" flat bordered>
-            <q-card-section>
-              <div class="row items-center q-mb-md">
-                <q-icon name="person" size="32px" color="primary" class="q-mr-sm" />
-                <div class="text-h6 text-weight-bold">Estado del Perfil</div>
-              </div>
-              
-              <div class="q-mb-md">
-                <div class="text-body2 text-grey-7 q-mb-xs">Completitud del perfil</div>
-                <q-linear-progress 
-                  :value="profileCompletion" 
-                  size="12px" 
-                  color="positive"
-                  class="q-mb-xs"
-                />
-                <div class="text-caption text-right">{{ Math.round(profileCompletion * 100) }}%</div>
-              </div>
-              
-              <div class="profile-info">
-                <div class="row q-gutter-sm q-mb-sm">
-                  <q-chip 
-                    :color="user.email_verificado ? 'positive' : 'negative'"
-                    :icon="user.email_verificado ? 'verified' : 'error'"
-                    text-color="white"
-                    size="sm"
-                  >
-                    Email {{ user.email_verificado ? 'Verificado' : 'No Verificado' }}
-                  </q-chip>
-                  
-                  <q-chip 
-                    :color="user.perfil_completo ? 'positive' : 'warning'"
-                    :icon="user.perfil_completo ? 'check_circle' : 'pending'"
-                    text-color="white"
-                    size="sm"
-                  >
-                    Perfil {{ user.perfil_completo ? 'Completo' : 'Incompleto' }}
-                  </q-chip>
-                </div>
-                
-                <div class="text-body2">
-                  <div><strong>Institución:</strong> {{ user.institucion_educativa || 'No especificada' }}</div>
-                  <div><strong>Grado:</strong> {{ user.grado || 'No especificado' }}</div>
-                </div>
-              </div>
-            </q-card-section>
-          </q-card>
-
-          <!-- Quick Actions -->
-          <q-card class="quick-actions-card card-half" flat bordered>
-            <q-card-section>
-              <div class="row items-center q-mb-md">
-                <q-icon name="flash_on" size="32px" color="secondary" class="q-mr-sm" />
-                <div class="text-h6 text-weight-bold">Acciones Rápidas</div>
-              </div>
-              
-              <div class="q-gutter-sm">
-                <q-btn
-                  unelevated
-                  color="primary"
-                  icon="quiz"
-                  label="Ver Test Resultados"
-                  @click="$router.push('/dashboard/test-resultados')"
-                  class="full-width"
-                  no-caps
-                />
-                
-                <q-btn
-                  outline
-                  color="secondary"
-                  icon="settings"
-                  label="Configuraciones"
-                  @click="$router.push('/dashboard/configuraciones')"
-                  class="full-width"
-                  no-caps
-                />
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
-      </div>
-
       <!-- Statistics -->
-      <div class="col-12">
-        <q-card class="stats-card" flat bordered>
-          <q-card-section>
-            <div class="row items-center q-mb-md">
-              <q-icon name="analytics" size="32px" color="info" class="q-mr-sm" />
-              <div class="text-h6 text-weight-bold">Tu Progreso</div>
+      <q-card class="stats-card" flat bordered>
+        <q-card-section>
+          <div class="card-header">
+            <q-icon name="analytics" size="32px" color="info" class="q-mr-sm" />
+            <div class="text-h6 text-weight-bold">Tu Progreso</div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="text-h3 text-weight-bold text-primary">0</div>
+              <div class="text-body2 text-grey-7">Tests Completados</div>
             </div>
-            
-            <div class="row q-gutter-lg">
-              <div class="col-12 col-sm-4 text-center">
-                <div class="stat-item">
-                  <div class="text-h3 text-weight-bold text-primary">0</div>
-                  <div class="text-body2 text-grey-7">Tests Completados</div>
-                </div>
-              </div>
-              
-              <div class="col-12 col-sm-4 text-center">
-                <div class="stat-item">
-                  <div class="text-h3 text-weight-bold text-secondary">0</div>
-                  <div class="text-body2 text-grey-7">Carreras Exploradas</div>
-                </div>
-              </div>
-              
-              <div class="col-12 col-sm-4 text-center">
-                <div class="stat-item">
-                  <div class="text-h3 text-weight-bold text-positive">{{ daysSinceRegistration }}</div>
-                  <div class="text-body2 text-grey-7">Días en ElijoHoy</div>
-                </div>
-              </div>
+
+            <div class="stat-item">
+              <div class="text-h3 text-weight-bold text-secondary">0</div>
+              <div class="text-body2 text-grey-7">Carreras Exploradas</div>
             </div>
-          </q-card-section>
-        </q-card>
-      </div>
+
+            <div class="stat-item">
+              <div class="text-h3 text-weight-bold text-positive">{{ daysSinceRegistration }}</div>
+              <div class="text-body2 text-grey-7">Días en ElijoHoy</div>
+            </div>
+          </div>
+        </q-card-section>
+      </q-card>
 
       <!-- Recent Activity -->
-      <div class="col-12">
-        <q-card class="activity-card" flat bordered>
-          <q-card-section>
-            <div class="row items-center q-mb-md">
-              <q-icon name="history" size="32px" color="primary" class="q-mr-sm" />
-              <div class="text-h6 text-weight-bold">Actividad Reciente</div>
+      <q-card class="activity-card" flat bordered>
+        <q-card-section>
+          <div class="card-header">
+            <q-icon name="history" size="32px" color="primary" class="q-mr-sm" />
+            <div class="text-h6 text-weight-bold">Actividad Reciente</div>
+          </div>
+
+          <div class="text-center q-pa-lg">
+            <q-icon name="inbox" size="64px" color="grey-5" class="q-mb-md" />
+            <div class="text-h6 text-grey-6">No hay actividad reciente</div>
+            <div class="text-body2 text-grey-5">
+              Completa tu primer test vocacional para comenzar a ver tu actividad aquí
             </div>
-            
-            <div class="text-center q-pa-lg">
-              <q-icon name="inbox" size="64px" color="grey-5" class="q-mb-md" />
-              <div class="text-h6 text-grey-6">No hay actividad reciente</div>
-              <div class="text-body2 text-grey-5">
-                Completa tu primer test vocacional para comenzar a ver tu actividad aquí
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
+          </div>
+        </q-card-section>
+      </q-card>
     </div>
   </q-page>
 </template>
@@ -226,15 +211,80 @@ export default defineComponent({
 
 <style scoped>
 .dashboard-page {
-  max-width: 1200px;
-  margin: 0 auto;
+  min-height: 100vh;
   background: linear-gradient(135deg,
     rgba(99, 102, 241, 0.05) 0%,
     rgba(236, 72, 153, 0.05) 50%,
     rgba(245, 158, 11, 0.05) 100%);
-  min-height: calc(100vh - 64px);
-  height: 100%;
-  padding: 24px;
+  padding: 1.5rem;
+  overflow-x: hidden;
+}
+
+.dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Welcome Card */
+.welcome-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.welcome-text {
+  flex: 1;
+  min-width: 250px;
+}
+
+.welcome-icon {
+  flex-shrink: 0;
+}
+
+/* Cards Row */
+.cards-row {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.cards-row > .q-card {
+  flex: 1 1 300px;
+  min-width: 280px;
+}
+
+/* Card Header */
+.card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* Chips Container */
+.chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Actions Buttons */
+.actions-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
 }
 
 .welcome-card {
@@ -432,22 +482,24 @@ export default defineComponent({
   left: 100%;
 }
 
-/* Contenedor horizontal para las tarjetas */
-.cards-horizontal-container {
-  display: flex;
-  gap: 24px;
-  width: 100%;
-}
-
-.card-half {
-  flex: 1;
-  min-width: 0;
-}
-
+/* Responsive */
 @media (max-width: 768px) {
   .dashboard-page {
-    min-height: calc(100vh - 60px);
-    padding: 16px;
+    padding: 1rem;
+  }
+
+  .dashboard-container {
+    gap: 1rem;
+  }
+
+  .cards-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .cards-row > .q-card {
+    flex: 1 1 auto;
+    min-width: 100%;
   }
 
   .welcome-card,
@@ -455,84 +507,53 @@ export default defineComponent({
   .quick-actions-card,
   .stats-card,
   .activity-card {
-    border-radius: 20px;
+    border-radius: 1.25rem;
   }
 
   .stat-item {
-    padding: 20px;
-    margin-bottom: 16px;
+    padding: 1rem;
   }
 
-  /* Forzar columnas en móvil */
-  .cards-horizontal-container {
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .card-half {
-    flex: none;
-  }
-  
   .text-h4 {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
   }
-  
+
   .text-h6 {
-    font-size: 1.1rem;
+    font-size: 1rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 480px) {
   .dashboard-page {
-    padding: 12px;
+    padding: 0.75rem;
   }
-  
+
   .welcome-card,
   .profile-status-card,
   .quick-actions-card,
   .stats-card,
   .activity-card {
-    border-radius: 16px;
+    border-radius: 1rem;
   }
-  
-  .text-h4 {
-    font-size: 1.5rem;
-  }
-  
-  .stat-item {
-    padding: 16px;
-  }
-  
-  .text-h3 {
-    font-size: 2rem;
-  }
-}
 
-@media (max-height: 700px) {
-  .dashboard-page {
-    padding: 12px;
-  }
-  
-  .welcome-card :deep(.q-card-section) {
-    padding: 12px;
-  }
-  
   .text-h4 {
-    font-size: 1.4rem;
-    margin-bottom: 4px !important;
+    font-size: 1.3rem;
   }
-  
+
   .stat-item {
-    padding: 16px;
+    padding: 0.875rem;
   }
-  
+
   .text-h3 {
-    font-size: 1.8rem;
+    font-size: 1.75rem;
   }
-  
+
   .profile-info {
-    padding: 16px;
-    margin-top: 16px;
+    padding: 0.875rem;
   }
 }
 </style>
