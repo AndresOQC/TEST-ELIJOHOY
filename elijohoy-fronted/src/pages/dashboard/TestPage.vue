@@ -150,62 +150,74 @@ const todasRespondidas = computed(() => {
 })
 
 async function finalizarTestAutomaticamente() {
-  // Verificar que todas las preguntas estén respondidas
-  if (!todasRespondidas.value) {
-    throw new Error('El test no está completo')
+  console.log('Iniciando finalización automática del test...')
+
+  // Para la finalización automática, confiamos en que las respuestas están completas
+  // ya que el usuario completó el test antes de ir al login
+  const respuestasGuardadas = localStorage.getItem('testRespuestas')
+  if (!respuestasGuardadas) {
+    throw new Error('No hay respuestas guardadas')
   }
 
-  loading.value = true
+  const respuestasParseadas = JSON.parse(respuestasGuardadas)
+  const cantidadRespuestas = Object.keys(respuestasParseadas).length
+  console.log(`Respuestas encontradas: ${cantidadRespuestas}`)
+
+  // Verificar que hay al menos 32 respuestas (el test tiene 32 preguntas)
+  if (cantidadRespuestas < 32) {
+    throw new Error(`Test incompleto: ${cantidadRespuestas}/32 respuestas`)
+  }
 
   try {
-    // Si está autenticado, verificar si necesita crear sesión y sincronizar
-    if (authStore.isAuthenticated) {
-      // Si no tiene sesión activa, crear una y sincronizar respuestas
-      if (!testStore.getSesion) {
-        // 1. Crear sesión de test
-        const sesionResponse = await testStore.iniciarTest()
-        if (!sesionResponse.success) {
-          throw new Error('Error al crear sesión de test')
-        }
-
-        // 2. Sincronizar respuestas desde respuestas.value a la BD
-        if (Object.keys(respuestas.value).length > 0) {
-          console.log('Sincronizando respuestas en finalizarTestAutomaticamente:', Object.keys(respuestas.value).length)
-          const sincronizacionResponse = await testStore.sincronizarRespuestas(respuestas.value)
-
-          if (sincronizacionResponse.success) {
-            console.log('Respuestas sincronizadas exitosamente en finalizarTestAutomaticamente')
-            // Limpiar localStorage después de sincronizar
-            localStorage.removeItem('testRespuestas')
-          } else {
-            throw new Error('Error al sincronizar respuestas')
-          }
-        }
-      }
-
-      // Finalizar test
-      const response = await testStore.finalizarTest()
-
-      if (response.success) {
-        $q.notify({
-          type: 'positive',
-          message: '¡Test completado! Tus resultados han sido guardados.',
-          icon: 'check_circle'
-        })
-
-        // Redirigir a resultados
-        router.push({
-          name: 'test-resultados',
-          params: { id: testStore.getSesion.id_sesion }
-        })
-      } else {
-        throw new Error(response.message || 'Error al finalizar el test')
-      }
-    } else {
+    // Verificar autenticación
+    if (!authStore.isAuthenticated) {
       throw new Error('Usuario no autenticado')
     }
-  } finally {
-    loading.value = false
+
+    // Crear sesión si no existe
+    if (!testStore.getSesion) {
+      console.log('Creando sesión de test...')
+      const sesionResponse = await testStore.iniciarTest()
+      if (!sesionResponse.success) {
+        throw new Error('Error al crear sesión de test')
+      }
+    }
+
+    // Sincronizar respuestas
+    console.log('Sincronizando respuestas...')
+    const sincronizacionResponse = await testStore.sincronizarRespuestas(respuestasParseadas)
+
+    if (sincronizacionResponse.success) {
+      console.log('Respuestas sincronizadas exitosamente')
+      localStorage.removeItem('testRespuestas')
+    } else {
+      throw new Error('Error al sincronizar respuestas')
+    }
+
+    // Finalizar test
+    console.log('Finalizando test...')
+    const response = await testStore.finalizarTest()
+
+    if (response.success) {
+      console.log('Test finalizado exitosamente, redirigiendo a resultados...')
+
+      $q.notify({
+        type: 'positive',
+        message: '¡Test completado! Redirigiendo a tus resultados...',
+        icon: 'check_circle'
+      })
+
+      // Redirigir a resultados
+      router.push({
+        name: 'test-resultados',
+        params: { id: testStore.getSesion.id_sesion }
+      })
+    } else {
+      throw new Error(response.message || 'Error al finalizar el test')
+    }
+  } catch (err) {
+    console.error('Error en finalización automática:', err)
+    throw err
   }
 }
 
@@ -400,22 +412,33 @@ onMounted(async () => {
 
     // Verificar si hay una finalización de test pendiente
     const pendingFinalization = localStorage.getItem('pendingTestFinalization')
-    if (pendingFinalization === 'true' && authStore.isAuthenticated && respuestasGuardadas) {
+    if (pendingFinalization === 'true' && authStore.isAuthenticated) {
       console.log('Finalización de test pendiente detectada, procediendo automáticamente...')
 
-      // Limpiar el indicador
+      // Limpiar el indicador ANTES de procesar para evitar bucles
       localStorage.removeItem('pendingTestFinalization')
 
-      // Proceder con la finalización automática
-      try {
-        // Simular click en finalizar para procesar automáticamente
-        await finalizarTestAutomaticamente()
-      } catch (error) {
-        console.error('Error en finalización automática:', error)
+      // Verificar que hay respuestas
+      if (respuestasGuardadas && Object.keys(respuestas.value).length > 0) {
+        // Proceder con la finalización automática
+        try {
+          loading.value = true
+          await finalizarTestAutomaticamente()
+        } catch (err) {
+          console.error('Error en finalización automática:', err)
+          loading.value = false
+          $q.notify({
+            type: 'negative',
+            message: 'Error al finalizar el test. Por favor presiona "Finalizar Test".',
+            icon: 'error'
+          })
+        }
+      } else {
+        console.warn('No hay respuestas guardadas para finalizar')
         $q.notify({
-          type: 'negative',
-          message: 'Error al finalizar el test automáticamente',
-          icon: 'error'
+          type: 'warning',
+          message: 'No se encontraron respuestas del test. Complete el test nuevamente.',
+          icon: 'warning'
         })
       }
     }
