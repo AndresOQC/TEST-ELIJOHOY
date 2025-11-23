@@ -573,10 +573,10 @@ async function compartirEmail() {
 
 <style scoped>
 .q-page {
-  min-height: calc(100vh - 64px);
-  height: 100%;
+  min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   overflow-y: auto;
+  padding: 1rem;
 }
 
 /* Asegurar que el padding no cause overflow */
@@ -585,9 +585,9 @@ async function compartirEmail() {
   width: 100%;
 }
 
-/* Card principal ocupa toda la altura de la ventana */
+/* Card principal - altura automática */
 .result-card-fullheight {
-  height: calc(100vh - 64px - 32px); /* Restar altura del header + padding del page */
+  min-height: auto;
   display: flex;
   flex-direction: column;
 }
@@ -596,33 +596,32 @@ async function compartirEmail() {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 
-/* Layout principal del header - Optimizado para ocupar todo el espacio */
+/* Layout principal del header - Flexbox responsivo */
 .main-header-content {
   display: flex;
-  gap: 30px;
-  align-items: stretch;
-  flex: 1;
-  overflow: hidden;
+  gap: 1.5rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
 }
 
-/* Sección del Avatar (izquierda) - Ocupa la mayor parte */
+/* Sección del Avatar (izquierda) */
 .avatar-section {
-  flex: 1;
+  flex: 1 1 300px;
+  min-width: 250px;
+  max-width: 500px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 1rem;
 }
 
-/* Avatar MÁS GRANDE sin contenedor */
+/* Avatar responsivo */
 .avatar-image {
   width: 100%;
-  height: 100%;
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 400px;
+  height: auto;
   object-fit: contain;
   display: block;
   cursor: pointer;
@@ -681,13 +680,14 @@ async function compartirEmail() {
   font-size: 1.05rem;
 }
 
-/* Columna de Información (derecha) - Ancho fijo */
+/* Columna de Información (derecha) - Ancho flexible */
 .info-column {
-  flex: 0 0 400px;
+  flex: 1 1 350px;
+  min-width: 280px;
+  max-width: 450px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  min-width: 0;
+  gap: 1.25rem;
 }
 
 /* Título del perfil */
@@ -751,38 +751,24 @@ async function compartirEmail() {
   padding: 20px !important;
 }
 
-/* Responsive: Tablet */
+/* Responsive: Tablet y menor */
 @media (max-width: 1024px) {
-  .result-card-fullheight {
-    height: auto;
-    min-height: calc(100vh - 64px - 24px);
-  }
-  
   .main-header-content {
     flex-direction: column;
-    align-items: stretch;
-    overflow: visible;
-    gap: 20px;
-  }
-  
-  .avatar-section {
-    padding: 10px;
-    width: 100%;
-    display: flex;
     align-items: center;
-    justify-content: center;
   }
-  
-  .avatar-image {
-    width: 100%;
-    height: auto;
+
+  .avatar-section {
     max-width: 100%;
-    max-height: 500px;
-    object-fit: contain;
+    width: 100%;
   }
-  
+
+  .avatar-image {
+    max-width: 350px;
+  }
+
   .info-column {
-    flex: 1;
+    max-width: 100%;
     width: 100%;
   }
 }
@@ -790,152 +776,100 @@ async function compartirEmail() {
 /* Responsive: Mobile */
 @media (max-width: 768px) {
   .q-page {
-    padding: 12px !important;
+    padding: 0.75rem;
   }
-  
-  .result-card-fullheight {
-    height: auto;
-    min-height: calc(100vh - 64px - 24px);
-  }
-  
+
   .main-header-content {
-    gap: 16px;
-    overflow: visible;
+    gap: 1rem;
   }
-  
-  .avatar-section {
-    padding: 10px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
+
   .avatar-image {
-    width: 100%;
-    height: auto;
-    max-width: 100%;
-    max-height: 400px;
-    object-fit: contain;
+    max-width: 300px;
   }
-  
+
   .info-column {
-    gap: 16px;
+    gap: 1rem;
+    min-width: 100%;
   }
-  
+
   .text-h3 {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
   }
-  
+
   .text-h5 {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
-  
+
   .text-h6 {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
   }
-  
+
   .dimension-label {
-    font-size: 0.88rem;
+    font-size: 0.85rem;
   }
-  
+
   .dimension-score {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
   }
-  
+
   .description-wrapper {
-    padding: 12px;
+    padding: 0.75rem;
   }
-  
+
   :deep(.q-card-section) {
-    padding: 16px !important;
+    padding: 1rem !important;
   }
 }
 
 /* Responsive: Small Mobile */
 @media (max-width: 480px) {
   .q-page {
-    padding: 10px !important;
+    padding: 0.5rem;
   }
-  
-  .result-card-fullheight {
-    height: auto;
-    min-height: calc(100vh - 64px - 20px);
-  }
-  
+
   .main-header-content {
-    gap: 12px;
-    overflow: visible;
+    gap: 0.75rem;
   }
-  
+
   .avatar-section {
-    padding: 5px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 0.5rem;
   }
-  
+
   .avatar-image {
-    width: 100%;
-    height: auto;
-    max-width: 100%;
-    max-height: 350px;
-    object-fit: contain;
+    max-width: 250px;
   }
-  
+
   .text-h3 {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
   }
-  
+
   .text-h5 {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
-  
+
   .text-h6 {
-    font-size: 0.9rem;
-  }
-  
-  .text-subtitle1 {
-    font-size: 0.82rem;
-  }
-  
-  .dimension-label {
     font-size: 0.85rem;
   }
-  
-  .dimension-score {
-    font-size: 0.78rem;
-    margin-left: 8px;
-  }
-  
-  .description-wrapper {
-    padding: 10px;
-  }
-  
-  .description-text {
-    font-size: 0.88rem;
-  }
-  
-  :deep(.q-card-section) {
-    padding: 12px !important;
-  }
-}
 
-/* Low Height Screens */
-@media (max-height: 700px) {
-  .result-card-fullheight {
-    height: auto;
-    min-height: 500px;
+  .dimension-label {
+    font-size: 0.8rem;
   }
-  
-  .avatar-image {
-    max-width: 350px;
-    max-height: 350px;
+
+  .dimension-score {
+    font-size: 0.75rem;
+    margin-left: 0.5rem;
   }
-  
-  .main-header-content {
-    overflow: visible;
+
+  .description-wrapper {
+    padding: 0.6rem;
+  }
+
+  .description-text {
+    font-size: 0.85rem;
+  }
+
+  :deep(.q-card-section) {
+    padding: 0.75rem !important;
   }
 }
 
