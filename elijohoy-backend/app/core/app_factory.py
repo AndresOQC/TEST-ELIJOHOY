@@ -17,13 +17,18 @@ def create_app(config_name=None):
     # Inicializar extensiones
     db.init_app(app)
     jwt.init_app(app)
+    # Configurar CORS para todas las rutas de la API
     cors.init_app(
-        app, 
-        resources={r"/*": {"origins": app.config['ALLOWED_ORIGINS']}},
+        app,
+        origins=app.config['ALLOWED_ORIGINS'],
         supports_credentials=True,
-        allow_headers=["Content-Type", "Authorization"],
-        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+        allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+        expose_headers=["Content-Type", "Authorization"]
     )
+
+    # Log de CORS para debug
+    app.logger.info(f"CORS configurado para orígenes: {app.config['ALLOWED_ORIGINS']}")
     mail.init_app(app)
     limiter.init_app(app)
     
