@@ -923,7 +923,7 @@ export default defineComponent({
 /* Hero Image */
 .hero-image-wrapper {
   position: relative;
-  height: clamp(300px, 45vh, 500px);
+  height: clamp(400px, 60vh, 650px);
   animation: fadeInRight 1.2s ease-out 0.4s both;
   display: flex;
   align-items: center;
@@ -931,19 +931,22 @@ export default defineComponent({
 }
 
 .hero-rocket-image {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 120%;
+  max-height: 120%;
+  width: auto;
+  height: auto;
   object-fit: contain;
   filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3));
   animation: floatRocket 4s ease-in-out infinite;
+  transform: scale(1.3);
 }
 
 @keyframes floatRocket {
   0%, 100% {
-    transform: translateY(0);
+    transform: scale(1.3) translateY(0);
   }
   50% {
-    transform: translateY(-15px);
+    transform: scale(1.3) translateY(-15px);
   }
 }
 
@@ -1226,12 +1229,13 @@ export default defineComponent({
   }
 
   .hero-image-wrapper {
-    height: 280px;
-    margin-top: 30px;
+    height: 350px;
+    margin-top: 20px;
   }
 
   .hero-rocket-image {
-    max-height: 280px;
+    max-height: 350px;
+    transform: scale(1.2);
   }
 
   .features-section,
