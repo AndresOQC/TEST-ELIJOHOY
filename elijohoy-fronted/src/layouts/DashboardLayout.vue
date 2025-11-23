@@ -227,7 +227,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed, onMounted } from 'vue'
+import { defineComponent, ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Notify, useQuasar } from 'quasar'
 import ConfirmDialog from 'src/components/common/ConfirmDialog.vue'
@@ -242,10 +242,21 @@ export default defineComponent({
     const router = useRouter()
     const authStore = useAuthStore()
     const $q = useQuasar()
-    // Iniciar con menú abierto en pantallas grandes, cerrado en móviles
-    const leftDrawerOpen = ref($q.screen.gt.sm)
+    // Iniciar con menú cerrado siempre
+    const leftDrawerOpen = ref(false)
     const miniState = ref(false)
     const showLogoutDialog = ref(false)
+    let lastScrollY = 0
+
+    // Función para cerrar el menú al hacer scroll hacia abajo
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      // Si el usuario hace scroll hacia abajo y el menú está abierto, cerrarlo
+      if (currentScrollY > lastScrollY && leftDrawerOpen.value) {
+        leftDrawerOpen.value = false
+      }
+      lastScrollY = currentScrollY
+    }
 
     const isAdmin = computed(() => {
       return authStore.userRoles?.includes('administrador') || false
@@ -273,11 +284,18 @@ export default defineComponent({
       router.push('/auth/login')
     }
 
-    // Check authentication on mount
+    // Check authentication on mount and add scroll listener
     onMounted(() => {
       if (!authStore.isAuthenticated) {
         router.push('/auth/login')
       }
+      // Agregar listener para cerrar menú al hacer scroll
+      window.addEventListener('scroll', handleScroll, { passive: true })
+    })
+
+    // Limpiar el listener cuando se desmonte el componente
+    onUnmounted(() => {
+      window.removeEventListener('scroll', handleScroll)
     })
 
     return {
