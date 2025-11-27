@@ -76,7 +76,8 @@ export default defineConfig((/* ctx */) => {
       // https: true,
       host: '0.0.0.0', // Permitir acceso desde fuera del contenedor
       port: 9000,
-      open: false // No abrir browser en Docker
+      open: false, // No abrir browser en Docker
+      allowedHosts: ['elijohoy.com', 'www.elijohoy.com', 'localhost', '127.0.0.1', '.elijohoy.com']
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework
