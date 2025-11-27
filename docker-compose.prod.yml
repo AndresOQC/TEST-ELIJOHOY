@@ -100,17 +100,17 @@ services:
     stdin_open: true
     tty: true
 
-  # Nginx Reverse Proxy con SSL
+  # Nginx Reverse Proxy con SSL (Puerto estándar para el proyecto)
   nginx:
     build:
       context: ./nginx
       dockerfile: Dockerfile
     container_name: elijohoy_nginx_prod
     ports:
-      - "8080:80"
-      - "8443:443"
+      - "80:80"
+      - "443:443"
     volumes:
-      # Certificados SSL de Let's Encrypt del host
+      # Certificados SSL desde el host (read-only)
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - /var/lib/letsencrypt:/var/lib/letsencrypt:ro
       # Directorio para renovación de certificados
