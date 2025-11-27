@@ -10,3 +10,12 @@ logs/
 .idea/
 *.log
 
+# Ignorar archivos .env EXCEPTO .env.production
+.env
+.env.local
+.env.*.local
+elijohoy-backend/.env
+
+# Permitir .env.production
+!.env.production
+
