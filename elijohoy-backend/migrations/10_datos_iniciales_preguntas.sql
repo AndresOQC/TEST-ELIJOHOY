@@ -11,7 +11,8 @@
 --   JP = Juicio/Percepción
 -- ============================================================================
 
-INSERT INTO preguntas (id_pregunta, texto_izquierda, texto_derecha, dimension, peso, orden) VALUES
+INSERT INTO preguntas (id_pregunta, texto_izquierda, texto_derecha, dimension, peso, orden) 
+SELECT t.* FROM (VALUES
 -- Dimensión JP (Juicio/Percepción)
 (1, 'Hace listas de tareas', 'Confía en su memoria', 'JP', 1, 1),
 (5, 'Mantiene su cuarto limpio y ordenado', 'Deja las cosas donde sea', 'JP', 1, 5),
@@ -50,5 +51,7 @@ INSERT INTO preguntas (id_pregunta, texto_izquierda, texto_derecha, dimension, p
 (20, 'Al describir un evento, dice qué pasó', 'Al describir un evento, dice qué significó', 'SN', 1, 20),
 (24, 'Quiere la visión general', 'Quiere conocer los detalles', 'SN', -1, 24),
 (28, 'Teórico y conceptual', 'Empírico y práctico', 'SN', -1, 28),
-(32, 'Le gusta saber "quién", "qué", "cuándo"', 'Le gusta saber "por qué"', 'SN', 1, 32);
+(32, 'Le gusta saber "quién", "qué", "cuándo"', 'Le gusta saber "por qué"', 'SN', 1, 32)
+) AS t(id_pregunta, texto_izquierda, texto_derecha, dimension, peso, orden)
+WHERE NOT EXISTS (SELECT 1 FROM preguntas WHERE id_pregunta = t.id_pregunta);
 

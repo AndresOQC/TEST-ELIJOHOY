@@ -1,5 +1,6 @@
 -- Inserción de los 16 tipos de personalidad MBTI
-INSERT INTO tipos_personalidad (codigo, nombre, descripcion_corta, descripcion_completa, fortalezas, debilidades, carreras_sugeridas, famosos_tipo, porcentaje_poblacion) VALUES
+INSERT INTO tipos_personalidad (codigo, nombre, descripcion_corta, descripcion_completa, fortalezas, debilidades, carreras_sugeridas, famosos_tipo, porcentaje_poblacion) 
+SELECT * FROM (VALUES
 ('INTJ', 'El Arquitecto', 'Estratega imaginativo con un plan para todo', 'Los INTJ son pensadores estratégicos que destacan por su capacidad de planificación a largo plazo. Confían en su intuición y razonamiento lógico para resolver problemas complejos.', 'Pensamiento estratégico, independencia, determinación, creatividad', 'Arrogancia, dificultad para expresar emociones, excesivamente críticos', 'Científico, ingeniero, estratega empresarial, programador', 'Elon Musk, Isaac Newton, Friedrich Nietzsche', 2.1),
 
 ('INTP', 'El Lógico', 'Innovador filosófico, sediento de conocimiento', 'Los INTP son pensadores analíticos que aman las teorías abstractas y disfrutan explorando ideas complejas. Son innovadores naturales.', 'Pensamiento lógico, creatividad, objetividad, curiosidad intelectual', 'Insensibilidad, distracción, dificultad para seguir reglas', 'Científico, filósofo, matemático, arquitecto de software', 'Albert Einstein, Charles Darwin, Bill Gates', 3.3),
@@ -30,4 +31,6 @@ INSERT INTO tipos_personalidad (codigo, nombre, descripcion_corta, descripcion_c
 
 ('ESTP', 'El Emprendedor', 'Personas inteligentes, enérgicas y muy perceptivas que disfrutan el riesgo', 'Los ESTP son personas energéticas que viven al máximo y disfrutan de la acción. Son pragmáticos, directos y espontáneos.', 'Audacia, racionalidad, sociabilidad, percepción', 'Impacientes, intolerantes, asumir riesgos, insensibles', 'Emprendedor, agente de ventas, detective, paramédico', 'Donald Trump, Ernest Hemingway, Madonna', 4.3),
 
-('ESFP', 'El Animador', 'Artistas espontáneos, enérgicos y entusiastas que nunca aburrirán a su audiencia', 'Los ESFP son personas orientadas a disfrutar la vida que aman estar rodeadas de gente. Son espontáneos, energéticos y divertidos.', 'Audacia, estética, sociabilidad, practicidad', 'Sensibles, evitan conflictos, se aburren fácilmente, dificulta para planificar', 'Animador, actor, artista, diseñador de eventos', 'Elvis Presley, Marilyn Monroe, Jamie Oliver', 8.5);
+('ESFP', 'El Animador', 'Artistas espontáneos, enérgicos y entusiastas que nunca aburrirán a su audiencia', 'Los ESFP son personas orientadas a disfrutar la vida que aman estar rodeadas de gente. Son espontáneos, energéticos y divertidos.', 'Audacia, estética, sociabilidad, practicidad', 'Sensibles, evitan conflictos, se aburren fácilmente, dificulta para planificar', 'Animador, actor, artista, diseñador de eventos', 'Elvis Presley, Marilyn Monroe, Jamie Oliver', 8.5)
+) AS t(codigo, nombre, descripcion_corta, descripcion_completa, fortalezas, debilidades, carreras_sugeridas, famosos_tipo, porcentaje_poblacion)
+WHERE NOT EXISTS (SELECT 1 FROM tipos_personalidad WHERE codigo = t.codigo);

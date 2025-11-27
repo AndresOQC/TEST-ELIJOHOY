@@ -16,7 +16,7 @@ python run_migrations.py || echo "⚠️  run_migrations devolvió error (contin
 
 if [ "$FLASK_ENV" = "production" ]; then
   echo "🚀 Iniciando gunicorn..."
-  exec gunicorn -w 4 -b 0.0.0.0:${PORT:-5001} app:app
+  exec gunicorn -w 4 -b 0.0.0.0:${PORT:-5001} "app.core.app_factory:create_app()"
 else
   echo "🐍 Iniciando Flask (development)..."
   exec python app.py

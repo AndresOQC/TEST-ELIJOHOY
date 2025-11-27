@@ -1,5 +1,5 @@
 -- Eliminada tabla estudiantes incompleta
-CREATE TABLE alumnos (
+CREATE TABLE IF NOT EXISTS alumnos (
     id SERIAL PRIMARY KEY,
     usuario_id INTEGER UNIQUE NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
     nombre VARCHAR(100) NOT NULL,
