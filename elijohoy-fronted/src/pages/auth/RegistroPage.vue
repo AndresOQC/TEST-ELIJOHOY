@@ -543,6 +543,26 @@ export default defineComponent({
 
     // Helper function to convert country code to name for API
     const getCountryNameByCode = (code) => {
+      // Mapeo de países comunes que pueden tener nombres diferentes en la API
+      const countryMapping = {
+        'PE': 'Peru',
+        'US': 'United States',
+        'MX': 'Mexico',
+        'AR': 'Argentina',
+        'CL': 'Chile',
+        'CO': 'Colombia',
+        'EC': 'Ecuador',
+        'BR': 'Brazil',
+        'ES': 'Spain',
+        'GB': 'United Kingdom'
+      }
+      
+      // Si existe mapeo directo, usarlo
+      if (countryMapping[code]) {
+        return countryMapping[code]
+      }
+      
+      // Sino, buscar por código
       const country = countries.value.find(c => c.code === code)
       return country ? country.name : code
     }
@@ -552,6 +572,9 @@ export default defineComponent({
       if (!countryCode) return
       
       loadingCities.value = true
+      const countryName = getCountryNameByCode(countryCode)
+      console.log(`Buscando ciudades para: ${countryName} (código: ${countryCode})`)
+      
       try {
         // Using countriesnow API to get all cities of a country
         const response = await fetch(
@@ -562,7 +585,7 @@ export default defineComponent({
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              country: getCountryNameByCode(countryCode)
+              country: countryName
             })
           }
         )

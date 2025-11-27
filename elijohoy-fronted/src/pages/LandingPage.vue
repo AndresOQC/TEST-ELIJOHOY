@@ -352,16 +352,6 @@
             class="faq-support-btn"
             no-caps
           />
-          <q-btn
-            flat
-            color="purple-7"
-            label="Ver Guías Completas"
-            href="https://www.gob.pe/orientacionvocacional"
-            target="_blank"
-            icon="library_books"
-            class="faq-guide-btn"
-            no-caps
-          />
         </div>
       </div>
     </div>
@@ -516,101 +506,22 @@
 
           <div class="col-12 col-md-3">
             <div class="text-h6 q-mb-sm">Recursos</div>
-            <div class="q-gutter-sm">
-              <q-btn
-                flat
-                no-caps
-                label="Guía de Carreras"
-                href="https://www.gob.pe/orientacionvocacional"
-                target="_blank"
-                class="footer-link q-pa-none"
-                color="grey-5"
-                size="sm"
-              />
-              <br>
-              <q-btn
-                flat
-                no-caps
-                label="Test Vocacional Online"
-                href="https://www.ucas.com/ucas-tariff-calculator"
-                target="_blank"
-                class="footer-link q-pa-none"
-                color="grey-5"
-                size="sm"
-              />
-              <br>
-              <q-btn
-                flat
-                no-caps
-                label="Orientación Profesional"
-                href="https://www.bls.gov/ooh/"
-                target="_blank"
-                class="footer-link q-pa-none"
-                color="grey-5"
-                size="sm"
-              />
-              <br>
-              <q-btn
-                flat
-                no-caps
-                label="Blog de Carreras"
-                href="https://www.careers.gov/"
-                target="_blank"
-                class="footer-link q-pa-none"
-                color="grey-5"
-                size="sm"
-              />
-            </div>
-          </div>
+          </div> <!-- Closing div added here -->
 
           <div class="col-12 col-md-3">
             <div class="text-h6 q-mb-sm">Contacto</div>
             <p class="text-body2 text-grey-5">
               <q-icon name="email" size="sm" class="q-mr-xs" />
-              contacto@elijohoy.com
+              andresquilichechavez@gmail.com
             </p>
             <p class="text-body2 text-grey-5">
               <q-icon name="phone" size="sm" class="q-mr-xs" />
-              +51 999 999 999
+              +51 973791654
             </p>
             <p class="text-body2 text-grey-5">
               <q-icon name="location_on" size="sm" class="q-mr-xs" />
               Lima, Perú
             </p>
-            <div class="q-mt-md">
-              <q-btn
-                flat
-                round
-                icon="fab fa-facebook"
-                size="sm"
-                color="grey-5"
-                class="q-mx-xs social-btn"
-              />
-              <q-btn
-                flat
-                round
-                icon="fab fa-twitter"
-                size="sm"
-                color="grey-5"
-                class="q-mx-xs social-btn"
-              />
-              <q-btn
-                flat
-                round
-                icon="fab fa-instagram"
-                size="sm"
-                color="grey-5"
-                class="q-mx-xs social-btn"
-              />
-              <q-btn
-                flat
-                round
-                icon="fab fa-linkedin"
-                size="sm"
-                color="grey-5"
-                class="q-mx-xs social-btn"
-              />
-            </div>
           </div>
         </div>
 
