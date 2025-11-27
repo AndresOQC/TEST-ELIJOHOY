@@ -10,15 +10,13 @@ services:
     volumes:
       - elijohoy_db_data_prod:/var/lib/postgresql/data
       - ./elijohoy-backend/migrations:/docker-entrypoint-initdb.d:ro
-    ports:
-      - "5433:5432"
+    networks:
+      - elijohoy_network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-elijohoy_user} -d ${POSTGRES_DB:-elijohoy_db}"]
       interval: 10s
       timeout: 10s
       retries: 5
-    networks:
-      - elijohoy_network
     restart: always
 
   # API Backend Flask (Producción con Gunicorn)
@@ -27,41 +25,109 @@ services:
       context: ./elijohoy-backend
       dockerfile: Dockerfile
     container_name: elijohoy_backend_prod
-    env_file:
-      - ./elijohoy-backend/.env
     environment:
+      # Flask y entorno
       FLASK_ENV: production
+      FLASK_APP: app.py
+      
+      # Base de datos
       DATABASE_URL: postgresql://${POSTGRES_USER:-elijohoy_user}:${POSTGRES_PASSWORD:-elijohoy_password}@db:5432/${POSTGRES_DB:-elijohoy_db}
-      FRONTEND_URL: ${FRONTEND_URL:-https://elijohoy.com}
-      PASSWORD_RESET_URL: ${PASSWORD_RESET_URL:-https://elijohoy.com/auth/restablecer-password}
-      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-https://elijohoy.com,https://www.elijohoy.com}
+      POSTGRES_USER: ${POSTGRES_USER:-elijohoy_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-elijohoy_password}
+      POSTGRES_DB: ${POSTGRES_DB:-elijohoy_db}
+      
+      # URLs y CORS
+      FRONTEND_URL: ${FRONTEND_URL:-https://elijohoy.com:8443}
+      PASSWORD_RESET_URL: ${PASSWORD_RESET_URL:-https://elijohoy.com:8443/auth/restablecer-password}
+      PASSWORD_RESET_TOKEN_EXPIRES: ${PASSWORD_RESET_TOKEN_EXPIRES:-3600}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-https://elijohoy.com:8443,http://elijohoy.com:8080}
+      
+      # Seguridad
+      SECRET_KEY: ${SECRET_KEY}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ACCESS_TOKEN_EXPIRES: ${JWT_ACCESS_TOKEN_EXPIRES:-3600}
+      JWT_REFRESH_TOKEN_EXPIRES: ${JWT_REFRESH_TOKEN_EXPIRES:-86400}
+      
+      # Email
+      MAIL_SERVER: ${MAIL_SERVER:-smtp.gmail.com}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USE_TLS: ${MAIL_USE_TLS:-true}
+      MAIL_USE_SSL: ${MAIL_USE_SSL:-false}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_DEFAULT_SENDER: ${MAIL_DEFAULT_SENDER}
+      
+      # Rate Limiting y Logging
+      RATELIMIT_STORAGE_URL: ${RATELIMIT_STORAGE_URL:-memory://}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      LOG_FILE: ${LOG_FILE:-logs/app.log}
+      
+      # Puerto
       PORT: 5001
-    ports:
-      - "5001:5001"
+    volumes:
+      - ./AVATAR:/app/static/avatars
     depends_on:
       db:
         condition: service_healthy
     networks:
       - elijohoy_network
     restart: always
-    # Gunicorn se inicia automáticamente por entrypoint.sh cuando FLASK_ENV=production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
-  # Frontend Vue.js + Quasar (Producción con Nginx)
+  # Frontend Vue.js + Quasar (Dev server con HMR)
   frontend:
     build:
       context: ./elijohoy-fronted
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: elijohoy_frontend_prod
     environment:
-      - NODE_ENV=production
-    ports:
-      - "80:80"
-      - "443:443"
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./elijohoy-fronted:/app
+      - /app/node_modules
+      - /app/.quasar
     depends_on:
       - backend
     networks:
       - elijohoy_network
     restart: always
+    stdin_open: true
+    tty: true
+
+  # Nginx Reverse Proxy con SSL
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: elijohoy_nginx_prod
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      # Certificados SSL de Let's Encrypt del host
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/lib/letsencrypt:/var/lib/letsencrypt:ro
+      # Directorio para renovación de certificados
+      - ./nginx/certbot:/var/www/certbot
+      # Logs
+      - ./nginx/logs:/var/log/nginx
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - elijohoy_network
+    restart: always
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
 
 volumes:
   elijohoy_db_data_prod:

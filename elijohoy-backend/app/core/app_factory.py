@@ -57,11 +57,22 @@ def create_app(config_name=None):
         })
 
     @app.route('/health')
+    @app.route('/api/health')
     def health():
+        """Health check endpoint para Docker y Nginx."""
+        try:
+            # Verificar conexión a la base de datos
+            db.session.execute(db.text('SELECT 1'))
+            db_status = 'connected'
+        except Exception as e:
+            app.logger.error(f"Database health check failed: {e}")
+            db_status = 'disconnected'
+        
         return jsonify({
             'status': 'healthy',
-            'database': 'connected' if db.engine else 'disconnected'
-        })
+            'database': db_status,
+            'environment': app.config.get('ENV', 'unknown')
+        }), 200 if db_status == 'connected' else 503
 
     return app
 

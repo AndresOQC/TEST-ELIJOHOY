@@ -15,8 +15,16 @@ echo "🔁 Ejecutando migraciones (run_migrations.py)..."
 python run_migrations.py || echo "⚠️  run_migrations devolvió error (continuando)"
 
 if [ "$FLASK_ENV" = "production" ]; then
-  echo "🚀 Iniciando gunicorn..."
-  exec gunicorn -w 4 -b 0.0.0.0:${PORT:-5001} "app.core.app_factory:create_app()"
+  echo "🚀 Iniciando gunicorn (workers: 4, timeout: 120s)..."
+  exec gunicorn -w 4 \
+    -b 0.0.0.0:${PORT:-5001} \
+    --timeout 120 \
+    --graceful-timeout 30 \
+    --keep-alive 5 \
+    --access-logfile - \
+    --error-logfile - \
+    --log-level info \
+    "app.core.app_factory:create_app()"
 else
   echo "🐍 Iniciando Flask (development)..."
   exec python app.py
