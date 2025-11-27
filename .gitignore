@@ -2,12 +2,11 @@
 node_modules/
 elijohoy-fronted/node_modules/
 elijohoy-backend/node_modules/
-*.env
 *.pyc
 __pycache__/
 logs/
 .DS_Store
-.env
 .vscode/
 .idea/
 *.log
+
